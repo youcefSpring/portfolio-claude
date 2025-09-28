@@ -65,4 +65,29 @@ class TagController extends Controller
         return redirect()->route('admin.tags.index')
             ->with('success', 'Tag deleted successfully.');
     }
+
+    public function bulkDeleteUnused(): RedirectResponse
+    {
+        // Find tags that are not used by any projects, blog posts, or publications
+        $unusedTags = Tag::whereDoesntHave('projects')
+            ->whereDoesntHave('blogPosts')
+            ->whereDoesntHave('publications')
+            ->get();
+
+        $deletedCount = $unusedTags->count();
+
+        if ($deletedCount > 0) {
+            // Delete all unused tags
+            Tag::whereDoesntHave('projects')
+                ->whereDoesntHave('blogPosts')
+                ->whereDoesntHave('publications')
+                ->delete();
+
+            return redirect()->route('admin.tags.index')
+                ->with('success', "Successfully deleted {$deletedCount} unused tag(s).");
+        }
+
+        return redirect()->route('admin.tags.index')
+            ->with('info', 'No unused tags found to delete.');
+    }
 }

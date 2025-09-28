@@ -38,6 +38,14 @@ class Tag extends Model
     }
 
     /**
+     * Get all of the publications that are assigned this tag.
+     */
+    public function publications(): MorphToMany
+    {
+        return $this->morphedByMany(Publication::class, 'taggable');
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot()
@@ -74,6 +82,7 @@ class Tag extends Model
         return collect([
             'projects' => $this->projects,
             'blog_posts' => $this->blogPosts,
+            'publications' => $this->publications,
         ])->filter(fn($collection) => $collection->isNotEmpty());
     }
 

@@ -60,12 +60,12 @@
 
                 <!-- Publication Info -->
                 <div class="row text-center">
-                    @if($publication->published_date)
+                    @if($publication->year)
                     <div class="col-md-3 col-6 mb-3">
                         <div class="text-white-50">
                             <i class="bi bi-calendar" style="font-size: 1.5rem;"></i>
                             <div class="mt-2">
-                                <strong class="text-white d-block">{{ $publication->published_date->format('M Y') }}</strong>
+                                <strong class="text-white d-block">{{ $publication->year }}</strong>
                                 <small>Published</small>
                             </div>
                         </div>
@@ -240,7 +240,7 @@
                             <div class="bg-light p-3 rounded">
                                 <small class="font-monospace">
                                     {{ $publication->authors ?? 'Author, A.' }}
-                                    ({{ $publication->published_date ? $publication->published_date->format('Y') : 'Year' }}).
+                                    ({{ $publication->year ?: 'Year' }}).
                                     {{ $publication->title }}.
                                     @if($publication->journal)
                                         <em>{{ $publication->journal }}</em>@if($publication->volume), {{ $publication->volume }}@endif@if($publication->issue))({{ $publication->issue }})@endif@if($publication->pages), {{ $publication->pages }}@endif.
@@ -270,14 +270,14 @@
                             <div class="mb-3">
                                 <h6>BibTeX:</h6>
                                 <div class="bg-dark text-light p-3 rounded">
-                                    <pre class="mb-0"><code>@article{{{ Str::slug($publication->title ?? 'publication') . $publication->published_date?->format('Y') ?? date('Y') }},
+                                    <pre class="mb-0"><code>@article{{{ Str::slug($publication->title ?? 'publication') . ($publication->year ?? date('Y')) }},
   title={{"{"}}{{ $publication->title ?? 'Publication Title' }}{{"}"}},
   author={{"{"}}{{ $publication->authors ?? 'Author Name' }}{{"}"}},
   @if($publication->journal)journal={{"{"}}{{ $publication->journal }}{{"}"}},@endif
   @if($publication->volume)volume={{"{"}}{{ $publication->volume }}{{"}"}},@endif
   @if($publication->issue)number={{"{"}}{{ $publication->issue }}{{"}"}},@endif
   @if($publication->pages)pages={{"{"}}{{ $publication->pages }}{{"}"}},@endif
-  year={{"{"}}{{ $publication->published_date ? $publication->published_date->format('Y') : date('Y') }}{{"}"}},
+  year={{"{"}}{{ $publication->year ?: date('Y') }}{{"}"}},
   @if($publication->publisher)publisher={{"{"}}{{ $publication->publisher }}{{"}"}},@endif
   @if($publication->doi)doi={{"{"}}{{ $publication->doi }}{{"}"}},@endif
 }</code></pre>
@@ -303,7 +303,7 @@
                                     </a>
                                 </h6>
                                 <small class="text-muted">
-                                    {{ $relatedPub->published_date ? $relatedPub->published_date->format('Y') : 'Recent' }} •
+                                    {{ $relatedPub->year ?: 'Recent' }} •
                                     {{ ucfirst($relatedPub->type) }}
                                 </small>
                             </div>
@@ -321,10 +321,10 @@
                         <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Publication Metrics</h5>
                     </div>
                     <div class="card-body">
-                        @if($publication->published_date)
+                        @if($publication->year)
                         <div class="mb-3">
-                            <strong>Publication Date:</strong><br>
-                            <span class="text-muted">{{ $publication->published_date->format('F j, Y') }}</span>
+                            <strong>Publication Year:</strong><br>
+                            <span class="text-muted">{{ $publication->year }}</span>
                         </div>
                         @endif
 

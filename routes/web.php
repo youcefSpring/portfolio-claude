@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ContactController;
@@ -66,6 +67,7 @@ Route::name('contact.')->group(function () {
     Route::post('/contact', [ContactController::class, 'store'])->name('store');
 });
 
+
 // =========================================================================
 // AUTHENTICATION ROUTES
 // =========================================================================
@@ -89,7 +91,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Courses Management
-    Route::resource('courses', AdminCourseController::class)->except(['show']);
+    Route::resource('courses', AdminCourseController::class);
 
     // Projects Management
     Route::resource('projects', AdminProjectController::class);
@@ -114,11 +116,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Tags Management
     Route::resource('tags', \App\Http\Controllers\Admin\TagController::class)->except(['show']);
+    Route::delete('/tags/bulk-delete-unused', [\App\Http\Controllers\Admin\TagController::class, 'bulkDeleteUnused'])->name('tags.bulk-delete-unused');
+
+    // Skills Management
+    Route::resource('skills', SkillController::class);
 
     // Profile Management
     Route::name('profile.')->group(function () {
         Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('edit');
         Route::put('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('update');
+        Route::put('/profile/password', [\App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('password');
+        Route::put('/profile/social', [\App\Http\Controllers\Admin\ProfileController::class, 'updateSocial'])->name('social');
+        Route::post('/profile/avatar', [\App\Http\Controllers\Admin\ProfileController::class, 'updateAvatar'])->name('avatar');
+        Route::delete('/profile/avatar', [\App\Http\Controllers\Admin\ProfileController::class, 'deleteAvatar'])->name('delete-avatar');
         Route::post('/profile/cv', [\App\Http\Controllers\Admin\ProfileController::class, 'uploadCV'])->name('upload-cv');
         Route::delete('/profile/cv', [\App\Http\Controllers\Admin\ProfileController::class, 'deleteCV'])->name('delete-cv');
     });

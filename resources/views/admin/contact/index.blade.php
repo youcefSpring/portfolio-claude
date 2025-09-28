@@ -1,78 +1,77 @@
-@extends('layouts.admin')
+@extends('layouts.admin-modern')
 
-@section('page-title', 'Contact Messages')
+@section('title', 'Contact Messages')
+@section('page-title', 'Messages')
 
 @section('content')
-<!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Contact Messages</h1>
-        <p class="text-muted mb-0">Manage incoming contact form submissions</p>
-    </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#bulkActionModal">
-            <i class="bi bi-list-check me-1"></i>Bulk Actions
-        </button>
-        <div class="btn-group" role="group">
-            <button class="btn btn-outline-primary" onclick="markAllAsRead()">
-                <i class="bi bi-eye me-1"></i>Mark All Read
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div class="mb-4 sm:mb-0">
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Contact Messages</h1>
+            <p class="text-gray-600 mt-1">Manage incoming contact form submissions</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium" onclick="toggleBulkActions()">
+                <i class="fas fa-list-check mr-2"></i>
+                Bulk Actions
+            </button>
+            <button class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="markAllAsRead()">
+                <i class="fas fa-eye mr-2"></i>
+                Mark All Read
             </button>
         </div>
     </div>
-</div>
 
-<!-- Stats Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3 class="text-primary">{{ $statusCounts['unread'] ?? 0 }}</h3>
-                <p class="text-muted mb-0">Unread</p>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 lg:p-6 text-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-envelope text-blue-600 text-xl"></i>
             </div>
+            <h3 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-1">{{ $statusCounts['unread'] ?? 0 }}</h3>
+            <p class="text-gray-600 text-sm">Unread</p>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3 class="text-success">{{ $statusCounts['read'] ?? 0 }}</h3>
-                <p class="text-muted mb-0">Read</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3 class="text-info">{{ $statusCounts['replied'] ?? 0 }}</h3>
-                <p class="text-muted mb-0">Replied</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3 class="text-danger">{{ $statusCounts['spam'] ?? 0 }}</h3>
-                <p class="text-muted mb-0">Spam</p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Filters -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" action="{{ route('admin.contact.index') }}" class="row g-3">
-            <div class="col-md-4">
-                <label for="search" class="form-label">Search</label>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 lg:p-6 text-center">
+            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-check text-green-600 text-xl"></i>
+            </div>
+            <h3 class="text-2xl lg:text-3xl font-bold text-green-600 mb-1">{{ $statusCounts['read'] ?? 0 }}</h3>
+            <p class="text-gray-600 text-sm">Read</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 lg:p-6 text-center">
+            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-reply text-purple-600 text-xl"></i>
+            </div>
+            <h3 class="text-2xl lg:text-3xl font-bold text-purple-600 mb-1">{{ $statusCounts['replied'] ?? 0 }}</h3>
+            <p class="text-gray-600 text-sm">Replied</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 lg:p-6 text-center">
+            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-2xl lg:text-3xl font-bold text-red-600 mb-1">{{ $statusCounts['spam'] ?? 0 }}</h3>
+            <p class="text-gray-600 text-sm">Spam</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6 lg:mb-8">
+        <form method="GET" action="{{ route('admin.contact.index') }}" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div class="md:col-span-2">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
                 <input type="text"
-                       class="form-control"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                        id="search"
                        name="search"
                        placeholder="Search by name, email, or subject..."
                        value="{{ request('search') }}">
             </div>
-            <div class="col-md-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select" id="status" name="status">
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" id="status" name="status">
                     <option value="">All Status</option>
                     <option value="unread" {{ request('status') === 'unread' ? 'selected' : '' }}>Unread</option>
                     <option value="read" {{ request('status') === 'read' ? 'selected' : '' }}>Read</option>
@@ -80,218 +79,249 @@
                     <option value="spam" {{ request('status') === 'spam' ? 'selected' : '' }}>Spam</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label for="date_range" class="form-label">Date Range</label>
-                <select class="form-select" id="date_range" name="date_range">
+            <div>
+                <label for="date_range" class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" id="date_range" name="date_range">
                     <option value="">All Time</option>
                     <option value="today" {{ request('date_range') === 'today' ? 'selected' : '' }}>Today</option>
                     <option value="week" {{ request('date_range') === 'week' ? 'selected' : '' }}>This Week</option>
                     <option value="month" {{ request('date_range') === 'month' ? 'selected' : '' }}>This Month</option>
                 </select>
             </div>
-            <div class="col-md-2 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-outline-primary">
-                    <i class="bi bi-search"></i>
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-search"></i>
                 </button>
-                <a href="{{ route('admin.contact.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-lg"></i>
+                <a href="{{ route('admin.contact.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-times"></i>
                 </a>
             </div>
         </form>
     </div>
-</div>
 
-<!-- Messages Table -->
-<div class="card">
-    <div class="card-header bg-white">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">
-                Messages ({{ $messages->total() }})
-            </h5>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="selectAll">
-                <label class="form-check-label" for="selectAll">
-                    Select All
-                </label>
+    <!-- Bulk Actions Bar (Hidden by default) -->
+    <div id="bulkActionsBar" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <span class="text-sm font-medium text-yellow-800" id="selectedCount">0 messages selected</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="bulkAction('read')" class="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors">
+                    Mark as Read
+                </button>
+                <button onclick="bulkAction('replied')" class="px-3 py-1 bg-purple-100 text-purple-700 rounded text-sm hover:bg-purple-200 transition-colors">
+                    Mark as Replied
+                </button>
+                <button onclick="bulkAction('spam')" class="px-3 py-1 bg-orange-100 text-orange-700 rounded text-sm hover:bg-orange-200 transition-colors">
+                    Mark as Spam
+                </button>
+                <button onclick="bulkAction('delete')" class="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors">
+                    Delete
+                </button>
+                <button onclick="clearSelection()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200 transition-colors">
+                    Clear
+                </button>
             </div>
         </div>
     </div>
 
-    @if($messages->count() > 0)
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th width="30"><input type="checkbox" id="selectAllHeader"></th>
-                        <th>Contact Details</th>
-                        <th>Subject</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th width="120">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($messages as $message)
-                        <tr class="{{ $message->status === 'unread' ? 'table-warning' : '' }}">
-                            <td>
-                                <input type="checkbox" class="message-checkbox" value="{{ $message->id }}">
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">
-                                            <a href="{{ route('admin.contact.show', $message) }}" class="text-decoration-none">
+    <!-- Messages Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-4 lg:p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg lg:text-xl font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-envelope mr-2 text-blue-600"></i>
+                    Messages ({{ $messages->total() }})
+                </h2>
+                <div class="flex items-center">
+                    <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2">
+                    <label for="selectAll" class="text-sm text-gray-600">Select All</label>
+                </div>
+            </div>
+        </div>
+
+        @if($messages->count() > 0)
+            <!-- Desktop Table -->
+            <div class="hidden lg:block overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-sm text-gray-600 border-b border-gray-100">
+                            <th class="pb-3 px-6 font-medium w-12">
+                                <input type="checkbox" id="selectAllHeader" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </th>
+                            <th class="pb-3 px-3 font-medium">Contact Details</th>
+                            <th class="pb-3 px-3 font-medium">Subject</th>
+                            <th class="pb-3 px-3 font-medium">Status</th>
+                            <th class="pb-3 px-3 font-medium">Date</th>
+                            <th class="pb-3 px-6 font-medium w-32">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        @foreach($messages as $message)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors {{ $message->status === 'unread' ? 'bg-blue-50' : '' }}">
+                                <td class="py-4 px-6">
+                                    <input type="checkbox" class="message-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" value="{{ $message->id }}">
+                                </td>
+                                <td class="py-4 px-3">
+                                    <div>
+                                        <h3 class="font-medium text-gray-900 mb-1 flex items-center">
+                                            <a href="{{ route('admin.contact.show', $message) }}" class="hover:text-blue-600 transition-colors">
                                                 {{ $message->name }}
                                             </a>
                                             @if($message->status === 'unread')
-                                                <span class="badge bg-primary ms-1">New</span>
+                                                <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">New</span>
                                             @endif
-                                        </h6>
-                                        <p class="text-muted small mb-1">
-                                            <i class="bi bi-envelope me-1"></i>{{ $message->email }}
+                                        </h3>
+                                        <p class="text-gray-500 text-xs mb-1 flex items-center">
+                                            <i class="fas fa-envelope mr-1"></i>{{ $message->email }}
                                         </p>
-                                        <p class="text-muted small mb-0">
-                                            {{ Str::limit($message->message, 80) }}
-                                        </p>
+                                        <p class="text-gray-500 text-xs">{{ Str::limit($message->message, 80) }}</p>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="fw-medium">{{ $message->subject }}</span>
-                            </td>
-                            <td>
-                                @if($message->status === 'unread')
-                                    <span class="badge bg-warning">Unread</span>
-                                @elseif($message->status === 'read')
-                                    <span class="badge bg-success">Read</span>
-                                @elseif($message->status === 'replied')
-                                    <span class="badge bg-info">Replied</span>
-                                @else
-                                    <span class="badge bg-danger">Spam</span>
-                                @endif
-                            </td>
-                            <td>
-                                <small class="text-muted">
+                                </td>
+                                <td class="py-4 px-3">
+                                    <span class="font-medium text-gray-900">{{ $message->subject }}</span>
+                                </td>
+                                <td class="py-4 px-3">
+                                    @if($message->status === 'unread')
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Unread</span>
+                                    @elseif($message->status === 'read')
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Read</span>
+                                    @elseif($message->status === 'replied')
+                                        <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Replied</span>
+                                    @else
+                                        <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Spam</span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-3 text-gray-500 text-xs">
                                     {{ $message->created_at->format('M j, Y') }}<br>
                                     {{ $message->created_at->format('g:i A') }}
-                                </small>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('admin.contact.show', $message) }}">
-                                                <i class="bi bi-eye me-2"></i>View
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('admin.contact.show', $message) }}" class="text-blue-600 hover:text-blue-700 transition-colors" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                         @if($message->status === 'unread')
-                                            <li>
-                                                <button class="dropdown-item" onclick="updateStatus({{ $message->id }}, 'read')">
-                                                    <i class="bi bi-check me-2"></i>Mark as Read
-                                                </button>
-                                            </li>
+                                            <button onclick="updateStatus({{ $message->id }}, 'read')" class="text-green-600 hover:text-green-700 transition-colors" title="Mark as Read">
+                                                <i class="fas fa-check"></i>
+                                            </button>
                                         @endif
                                         @if($message->status !== 'replied')
-                                            <li>
-                                                <button class="dropdown-item" onclick="updateStatus({{ $message->id }}, 'replied')">
-                                                    <i class="bi bi-reply me-2"></i>Mark as Replied
-                                                </button>
-                                            </li>
+                                            <button onclick="updateStatus({{ $message->id }}, 'replied')" class="text-purple-600 hover:text-purple-700 transition-colors" title="Mark as Replied">
+                                                <i class="fas fa-reply"></i>
+                                            </button>
                                         @endif
-                                        @if($message->status !== 'spam')
-                                            <li>
-                                                <button class="dropdown-item text-warning" onclick="updateStatus({{ $message->id }}, 'spam')">
-                                                    <i class="bi bi-exclamation-triangle me-2"></i>Mark as Spam
-                                                </button>
-                                            </li>
-                                        @endif
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form method="POST" action="{{ route('admin.contact.destroy', $message) }}" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger" data-confirm-delete>
-                                                    <i class="bi bi-trash me-2"></i>Delete
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                                        <form method="POST" action="{{ route('admin.contact.destroy', $message) }}" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-700 transition-colors" title="Delete" onclick="return confirm('Are you sure you want to delete this message?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-        @if($messages->hasPages())
-            <div class="card-footer bg-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        Showing {{ $messages->firstItem() }} to {{ $messages->lastItem() }} of {{ $messages->total() }} results
-                    </small>
-                    {{ $messages->appends(request()->query())->links() }}
+            <!-- Mobile Cards -->
+            <div class="lg:hidden divide-y divide-gray-100">
+                @foreach($messages as $message)
+                    <div class="p-4 lg:p-6 {{ $message->status === 'unread' ? 'bg-blue-50' : '' }}">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-start space-x-3 flex-1">
+                                <input type="checkbox" class="message-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1" value="{{ $message->id }}">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <h3 class="font-medium text-gray-900">
+                                            <a href="{{ route('admin.contact.show', $message) }}" class="hover:text-blue-600 transition-colors">
+                                                {{ $message->name }}
+                                            </a>
+                                        </h3>
+                                        @if($message->status === 'unread')
+                                            <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">New</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">{{ $message->email }}</p>
+                                    <p class="text-sm font-medium text-gray-900 mb-2">{{ $message->subject }}</p>
+                                    <p class="text-sm text-gray-500 mb-3">{{ Str::limit($message->message, 100) }}</p>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                @if($message->status === 'unread')
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Unread</span>
+                                @elseif($message->status === 'read')
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Read</span>
+                                @elseif($message->status === 'replied')
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Replied</span>
+                                @else
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Spam</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                            <span class="flex items-center">
+                                <i class="fas fa-calendar mr-1"></i>
+                                {{ $message->created_at->format('M j, Y g:i A') }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <a href="{{ route('admin.contact.show', $message) }}" class="text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium">
+                                <i class="fas fa-eye mr-1"></i>View
+                            </a>
+                            @if($message->status === 'unread')
+                                <button onclick="updateStatus({{ $message->id }}, 'read')" class="text-green-600 hover:text-green-700 transition-colors text-sm font-medium">
+                                    <i class="fas fa-check mr-1"></i>Mark Read
+                                </button>
+                            @endif
+                            @if($message->status !== 'replied')
+                                <button onclick="updateStatus({{ $message->id }}, 'replied')" class="text-purple-600 hover:text-purple-700 transition-colors text-sm font-medium">
+                                    <i class="fas fa-reply mr-1"></i>Mark Replied
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Pagination -->
+            @if($messages->hasPages())
+                <div class="p-4 lg:p-6 border-t border-gray-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <p class="text-sm text-gray-600 mb-4 sm:mb-0">
+                            Showing {{ $messages->firstItem() }} to {{ $messages->lastItem() }} of {{ $messages->total() }} results
+                        </p>
+                        <div class="flex items-center space-x-2">
+                            {{ $messages->appends(request()->query())->links() }}
+                        </div>
+                    </div>
                 </div>
+            @endif
+        @else
+            <div class="p-8 lg:p-12 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-envelope text-gray-400 text-2xl"></i>
+                </div>
+                @if(request()->hasAny(['search', 'status', 'date_range']))
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No messages found</h3>
+                    <p class="text-gray-600 mb-4">No messages match your current filters.</p>
+                    <a href="{{ route('admin.contact.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Clear Filters
+                    </a>
+                @else
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No messages yet</h3>
+                    <p class="text-gray-600">Contact form submissions will appear here.</p>
+                @endif
             </div>
         @endif
-    @else
-        <div class="card-body text-center py-5">
-            <i class="bi bi-envelope text-muted mb-3" style="font-size: 3rem;"></i>
-            @if(request()->hasAny(['search', 'status', 'date_range']))
-                <h5 class="text-muted">No messages found</h5>
-                <p class="text-muted mb-3">No messages match your current filters.</p>
-                <a href="{{ route('admin.contact.index') }}" class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left me-1"></i>Clear Filters
-                </a>
-            @else
-                <h5 class="text-muted">No messages yet</h5>
-                <p class="text-muted mb-0">Contact form submissions will appear here.</p>
-            @endif
-        </div>
-    @endif
-</div>
-
-<!-- Bulk Action Modal -->
-<div class="modal fade" id="bulkActionModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Bulk Actions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="bulkActionForm">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="bulk_action" class="form-label">Select Action</label>
-                        <select class="form-select" id="bulk_action" name="action" required>
-                            <option value="">Choose an action...</option>
-                            <option value="mark_read">Mark as Read</option>
-                            <option value="mark_replied">Mark as Replied</option>
-                            <option value="mark_spam">Mark as Spam</option>
-                            <option value="delete" class="text-danger">Delete Messages</option>
-                        </select>
-                    </div>
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        This action will be applied to <span id="selectedCount">0</span> selected message(s).
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="executeBulkAction()">Execute Action</button>
-            </div>
-        </div>
     </div>
-</div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Select All functionality
@@ -303,20 +333,30 @@
             const checkedCount = document.querySelectorAll('.message-checkbox:checked').length;
             const totalCount = messageCheckboxes.length;
 
-            selectAllCheckbox.checked = checkedCount === totalCount;
-            selectAllHeader.checked = checkedCount === totalCount;
+            if (selectAllCheckbox) selectAllCheckbox.checked = checkedCount === totalCount;
+            if (selectAllHeader) selectAllHeader.checked = checkedCount === totalCount;
 
-            // Update bulk action button
-            document.getElementById('selectedCount').textContent = checkedCount;
+            // Update bulk actions bar
+            const bulkActionsBar = document.getElementById('bulkActionsBar');
+            const selectedCountSpan = document.getElementById('selectedCount');
+
+            if (checkedCount > 0) {
+                bulkActionsBar.classList.remove('hidden');
+                selectedCountSpan.textContent = `${checkedCount} message${checkedCount === 1 ? '' : 's'} selected`;
+            } else {
+                bulkActionsBar.classList.add('hidden');
+            }
         }
 
         [selectAllCheckbox, selectAllHeader].forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                messageCheckboxes.forEach(cb => {
-                    cb.checked = this.checked;
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    messageCheckboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+                    updateSelectAll();
                 });
-                updateSelectAll();
-            });
+            }
         });
 
         messageCheckboxes.forEach(checkbox => {
@@ -335,6 +375,24 @@
             }
         });
     });
+
+    function toggleBulkActions() {
+        const checkedCount = document.querySelectorAll('.message-checkbox:checked').length;
+        if (checkedCount === 0) {
+            alert('Please select at least one message first.');
+            return;
+        }
+
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        bulkActionsBar.classList.toggle('hidden');
+    }
+
+    function clearSelection() {
+        document.querySelectorAll('.message-checkbox').forEach(cb => cb.checked = false);
+        document.getElementById('bulkActionsBar').classList.add('hidden');
+        if (document.getElementById('selectAll')) document.getElementById('selectAll').checked = false;
+        if (document.getElementById('selectAllHeader')) document.getElementById('selectAllHeader').checked = false;
+    }
 
     function updateStatus(messageId, status) {
         const form = document.createElement('form');
@@ -366,25 +424,17 @@
         form.submit();
     }
 
-    function markAllAsRead() {
-        if (confirm('Are you sure you want to mark all messages as read?')) {
-            // Implementation would depend on backend route
-            window.location.href = '{{ route("admin.contact.index") }}?mark_all_read=1';
-        }
-    }
-
-    function executeBulkAction() {
-        const action = document.getElementById('bulk_action').value;
+    function bulkAction(action) {
         const selectedIds = Array.from(document.querySelectorAll('.message-checkbox:checked')).map(cb => cb.value);
 
-        if (!action || selectedIds.length === 0) {
-            alert('Please select an action and at least one message.');
+        if (selectedIds.length === 0) {
+            alert('Please select at least one message.');
             return;
         }
 
         const confirmMessage = action === 'delete'
             ? 'Are you sure you want to delete the selected messages? This action cannot be undone.'
-            : `Are you sure you want to ${action.replace('_', ' ')} ${selectedIds.length} message(s)?`;
+            : `Are you sure you want to mark ${selectedIds.length} message(s) as ${action}?`;
 
         if (!confirm(confirmMessage)) {
             return;
@@ -420,12 +470,18 @@
             const statusInput = document.createElement('input');
             statusInput.type = 'hidden';
             statusInput.name = 'status';
-            statusInput.value = action.replace('mark_', '');
+            statusInput.value = action;
             form.appendChild(statusInput);
         }
 
         document.body.appendChild(form);
         form.submit();
     }
+
+    function markAllAsRead() {
+        if (confirm('Are you sure you want to mark all messages as read?')) {
+            window.location.href = '{{ route("admin.contact.index") }}?mark_all_read=1';
+        }
+    }
 </script>
-@endsection
+@endpush

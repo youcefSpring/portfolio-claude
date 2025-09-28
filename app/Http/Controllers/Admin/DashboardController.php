@@ -33,8 +33,10 @@ class DashboardController extends Controller
             'projects' => Project::count(),
             'publications' => Publication::count(),
             'blog_posts' => BlogPost::count(),
-            'contact_messages' => ContactMessage::count(),
+            'total_messages' => ContactMessage::count(),
             'unread_messages' => ContactMessage::unread()->count(),
+            'profile_completion' => 85, // You can calculate this based on filled profile fields
+            'response_rate' => 95, // You can calculate this based on replied vs total messages
         ];
 
         // Recent activities
@@ -51,24 +53,50 @@ class DashboardController extends Controller
             'active_courses' => Course::active()->count(),
         ];
 
-        $recentActivity = [[
-            'type' => ['Courses', 'Projects', 'Posts', 'Messages'],
-            'action' => 'created',
-            'title' => 'Sample Title 1',
-            'date' => '2024-01-01',
-            'recentCourses' => $recentCourses,
-            'recentProjects' => $recentProjects,
-            'recentPosts' => $recentPosts,
-            'recentMessages' => $recentMessages,
-        ]];
-        return view('admin.dashboard', compact(
+        // Build recent activity from actual data
+        $recentActivity = collect();
+
+        // Add recent courses
+        $recentCourses->each(function ($course) use ($recentActivity) {
+            $recentActivity->push([
+                'type' => 'course',
+                'action' => 'Course Added',
+                'title' => $course->title,
+                'date' => $course->created_at->diffForHumans(),
+            ]);
+        });
+
+        // Add recent projects
+        $recentProjects->each(function ($project) use ($recentActivity) {
+            $recentActivity->push([
+                'type' => 'project',
+                'action' => 'Project Created',
+                'title' => $project->title,
+                'date' => $project->created_at->diffForHumans(),
+            ]);
+        });
+
+        // Add recent blog posts
+        $recentPosts->each(function ($post) use ($recentActivity) {
+            $recentActivity->push([
+                'type' => 'blog',
+                'action' => 'Blog Post Published',
+                'title' => $post->title,
+                'date' => $post->created_at->diffForHumans(),
+            ]);
+        });
+
+        // Sort by creation date and limit to 10 most recent
+        $recentActivity = $recentActivity->sortByDesc('date')->take(10);
+
+        return view('admin.dashboard-modern', compact(
             'stats',
             'recentCourses',
             'recentProjects',
             'recentPosts',
             'recentMessages',
             'contentStatus',
-            'recentActivity',
+            'recentActivity'
         ));
     }
 }

@@ -1,146 +1,148 @@
-@extends('layouts.admin')
+@extends('layouts.admin-modern')
 
+@section('title', 'Create New Tag')
 @section('page-title', 'Create Tag')
 
 @section('content')
-<!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Create New Tag</h1>
-        <p class="text-muted mb-0">Add a new tag to organize your content</p>
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div class="mb-4 sm:mb-0">
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Create New Tag</h1>
+            <p class="text-gray-600 mt-1">Add a new tag to organize your content</p>
+        </div>
+        <a href="{{ route('admin.tags.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to Tags
+        </a>
     </div>
-    <a href="{{ route('admin.tags.index') }}" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-1"></i>Back to Tags
-    </a>
-</div>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-body p-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 lg:p-8">
                 <form method="POST" action="{{ route('admin.tags.store') }}">
                     @csrf
 
-                    <div class="row g-3">
+                    <div class="space-y-6">
                         <!-- Tag Name -->
-                        <div class="col-12">
-                            <label for="name" class="form-label">Tag Name <span class="text-danger">*</span></label>
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                                Tag Name <span class="text-red-500">*</span>
+                            </label>
                             <input type="text"
-                                   class="form-control @error('name') is-invalid @enderror"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('name') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                    id="name"
                                    name="name"
                                    value="{{ old('name') }}"
                                    required
                                    placeholder="e.g., Web Development, Research, Laravel">
                             @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Tag Slug -->
-                        <div class="col-12">
-                            <label for="slug" class="form-label">Slug</label>
+                        <div>
+                            <label for="slug" class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
                             <input type="text"
-                                   class="form-control @error('slug') is-invalid @enderror"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('slug') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                    id="slug"
                                    name="slug"
                                    value="{{ old('slug') }}"
                                    placeholder="Auto-generated from name">
                             @error('slug')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
-                            <div class="form-text">
+                            <p class="text-gray-500 text-sm mt-1">
                                 Leave empty to auto-generate from tag name. Must be URL-friendly (lowercase, hyphens only).
-                                <span id="slug-preview" class="text-primary fw-bold"></span>
-                            </div>
+                                <span id="slug-preview" class="text-blue-600 font-medium"></span>
+                            </p>
                         </div>
 
                         <!-- Tag Description -->
-                        <div class="col-12">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror"
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('description') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                       id="description"
                                       name="description"
                                       rows="3"
                                       placeholder="Brief description of what this tag represents">{{ old('description') }}</textarea>
                             @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
-                            <div class="form-text">Optional description to help you and others understand this tag's purpose</div>
+                            <p class="text-gray-500 text-sm mt-1">Optional description to help you and others understand this tag's purpose</p>
                         </div>
 
-                        <!-- Tag Color -->
-                        <div class="col-md-6">
-                            <label for="color" class="form-label">Tag Color</label>
-                            <div class="d-flex align-items-center gap-2">
-                                <input type="color"
-                                       class="form-control form-control-color @error('color') is-invalid @enderror"
-                                       id="color"
-                                       name="color"
-                                       value="{{ old('color', '#6c757d') }}"
-                                       style="width: 60px;">
-                                <input type="text"
-                                       class="form-control @error('color') is-invalid @enderror"
-                                       id="color-hex"
-                                       name="color_hex"
-                                       value="{{ old('color', '#6c757d') }}"
-                                       pattern="^#[0-9a-fA-F]{6}$"
-                                       placeholder="#6c757d">
-                                <button type="button" class="btn btn-outline-secondary" onclick="randomColor()">
-                                    <i class="bi bi-shuffle"></i>
-                                </button>
+                        <!-- Tag Color and Preview -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Tag Color -->
+                            <div>
+                                <label for="color" class="block text-sm font-medium text-gray-700 mb-2">Tag Color</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="color"
+                                           class="w-12 h-10 border border-gray-300 rounded-lg @error('color') border-red-300 @enderror"
+                                           id="color"
+                                           name="color"
+                                           value="{{ old('color', '#6b7280') }}">
+                                    <input type="text"
+                                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('color') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                           id="color-hex"
+                                           name="color_hex"
+                                           value="{{ old('color', '#6b7280') }}"
+                                           pattern="^#[0-9a-fA-F]{6}$"
+                                           placeholder="#6b7280">
+                                    <button type="button" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" onclick="randomColor()">
+                                        <i class="fas fa-random"></i>
+                                    </button>
+                                </div>
+                                @error('color')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                                <p class="text-gray-500 text-sm mt-1">Choose a color to visually identify this tag</p>
                             </div>
-                            @error('color')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Choose a color to visually identify this tag</div>
-                        </div>
 
-                        <!-- Tag Preview -->
-                        <div class="col-md-6">
-                            <label class="form-label">Preview</label>
-                            <div class="d-flex align-items-center gap-2">
-                                <span id="tag-preview" class="badge" style="background-color: #6c757d; color: white;">
-                                    Sample Tag
-                                </span>
-                                <small class="text-muted">This is how your tag will appear</small>
+                            <!-- Tag Preview -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Preview</label>
+                                <div class="flex items-center gap-3">
+                                    <span id="tag-preview" class="px-3 py-1 rounded-full text-sm font-medium" style="background-color: #6b7280; color: white;">
+                                        Sample Tag
+                                    </span>
+                                    <span class="text-gray-500 text-sm">This is how your tag will appear</span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Submit Buttons -->
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between pt-3">
-                                <a href="{{ route('admin.tags.index') }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-x-lg me-1"></i>Cancel
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Create Tag
-                                </button>
-                            </div>
+                        <div class="flex flex-col sm:flex-row sm:justify-between gap-4 pt-6 border-t border-gray-100">
+                            <a href="{{ route('admin.tags.index') }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                                <i class="fas fa-times mr-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                <i class="fas fa-check mr-2"></i>Create Tag
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 
-    <div class="col-lg-4">
-        <!-- Tag Usage Guide -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-question-circle text-primary me-2"></i>
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Tag Usage Guide -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
                     Tag Usage Guide
-                </h5>
-                <div class="small">
-                    <div class="mb-3">
-                        <strong>What are tags?</strong>
-                        <p class="mb-2">Tags help categorize and organize your content, making it easier for visitors to find related posts, projects, and courses.</p>
+                </h3>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">What are tags?</h4>
+                        <p class="text-gray-600">Tags help categorize and organize your content, making it easier for visitors to find related posts, projects, and courses.</p>
                     </div>
 
-                    <div class="mb-3">
-                        <strong>Best Practices:</strong>
-                        <ul class="mb-0">
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Best Practices:</h4>
+                        <ul class="text-gray-600 space-y-1 list-disc list-inside">
                             <li>Use descriptive, specific names</li>
                             <li>Keep names concise (1-3 words)</li>
                             <li>Use consistent naming conventions</li>
@@ -150,98 +152,81 @@
                     </div>
 
                     <div>
-                        <strong>Examples:</strong>
-                        <div class="d-flex flex-wrap gap-1 mt-2">
-                            <span class="badge bg-primary">Laravel</span>
-                            <span class="badge bg-success">Web Development</span>
-                            <span class="badge bg-info">Research</span>
-                            <span class="badge bg-warning">Machine Learning</span>
-                            <span class="badge bg-secondary">JavaScript</span>
+                        <h4 class="font-medium text-gray-900 mb-2">Examples:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Laravel</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Web Development</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Research</span>
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Machine Learning</span>
+                            <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">JavaScript</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Color Presets -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-palette text-primary me-2"></i>
+            <!-- Color Presets -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-palette text-blue-600 mr-2"></i>
                     Color Presets
-                </h5>
-                <div class="row g-2">
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 color-preset" data-color="#0d6efd">
-                            <div class="rounded-circle mx-auto" style="width: 20px; height: 20px; background-color: #0d6efd;"></div>
-                            Blue
-                        </button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 color-preset" data-color="#198754">
-                            <div class="rounded-circle mx-auto" style="width: 20px; height: 20px; background-color: #198754;"></div>
-                            Green
-                        </button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 color-preset" data-color="#dc3545">
-                            <div class="rounded-circle mx-auto" style="width: 20px; height: 20px; background-color: #dc3545;"></div>
-                            Red
-                        </button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 color-preset" data-color="#ffc107">
-                            <div class="rounded-circle mx-auto" style="width: 20px; height: 20px; background-color: #ffc107;"></div>
-                            Yellow
-                        </button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 color-preset" data-color="#6f42c1">
-                            <div class="rounded-circle mx-auto" style="width: 20px; height: 20px; background-color: #6f42c1;"></div>
-                            Purple
-                        </button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 color-preset" data-color="#fd7e14">
-                            <div class="rounded-circle mx-auto" style="width: 20px; height: 20px; background-color: #fd7e14;"></div>
-                            Orange
-                        </button>
-                    </div>
+                </h3>
+                <div class="grid grid-cols-3 gap-3">
+                    <button type="button" class="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors color-preset" data-color="#3B82F6">
+                        <div class="w-6 h-6 rounded-full mb-1" style="background-color: #3B82F6;"></div>
+                        <span class="text-xs text-gray-600">Blue</span>
+                    </button>
+                    <button type="button" class="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors color-preset" data-color="#10B981">
+                        <div class="w-6 h-6 rounded-full mb-1" style="background-color: #10B981;"></div>
+                        <span class="text-xs text-gray-600">Green</span>
+                    </button>
+                    <button type="button" class="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors color-preset" data-color="#EF4444">
+                        <div class="w-6 h-6 rounded-full mb-1" style="background-color: #EF4444;"></div>
+                        <span class="text-xs text-gray-600">Red</span>
+                    </button>
+                    <button type="button" class="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors color-preset" data-color="#F59E0B">
+                        <div class="w-6 h-6 rounded-full mb-1" style="background-color: #F59E0B;"></div>
+                        <span class="text-xs text-gray-600">Yellow</span>
+                    </button>
+                    <button type="button" class="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors color-preset" data-color="#8B5CF6">
+                        <div class="w-6 h-6 rounded-full mb-1" style="background-color: #8B5CF6;"></div>
+                        <span class="text-xs text-gray-600">Purple</span>
+                    </button>
+                    <button type="button" class="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors color-preset" data-color="#F97316">
+                        <div class="w-6 h-6 rounded-full mb-1" style="background-color: #F97316;"></div>
+                        <span class="text-xs text-gray-600">Orange</span>
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Existing Tags -->
-        @if(isset($existingTags) && $existingTags->count() > 0)
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-tags text-primary me-2"></i>
+            <!-- Existing Tags -->
+            @if(isset($existingTags) && $existingTags->count() > 0)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-tags text-blue-600 mr-2"></i>
                         Existing Tags
-                    </h5>
-                    <div class="mb-2">
-                        <small class="text-muted">{{ $existingTags->count() }} tags already created</small>
-                    </div>
-                    <div class="d-flex flex-wrap gap-1 max-height-200" style="max-height: 200px; overflow-y: auto;">
-                        @foreach($existingTags->take(20) as $tag)
-                            <span class="badge"
-                                  style="background-color: {{ $tag->color ?? '#6c757d' }}; color: white;"
-                                  title="{{ $tag->description ?? $tag->name }}">
-                                {{ $tag->name }}
-                            </span>
-                        @endforeach
-                        @if($existingTags->count() > 20)
-                            <small class="text-muted">and {{ $existingTags->count() - 20 }} more...</small>
-                        @endif
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-3">{{ $existingTags->count() }} tags already created</p>
+                    <div class="max-h-48 overflow-y-auto">
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($existingTags->take(20) as $tag)
+                                <span class="px-2 py-1 rounded-full text-xs font-medium"
+                                      style="background-color: {{ $tag->color ?? '#6b7280' }}; color: white;"
+                                      title="{{ $tag->description ?? $tag->name }}">
+                                    {{ $tag->name }}
+                                </span>
+                            @endforeach
+                            @if($existingTags->count() > 20)
+                                <span class="text-xs text-gray-500">and {{ $existingTags->count() - 20 }} more...</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
     </div>
-</div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const nameInput = document.getElementById('name');
@@ -259,7 +244,7 @@
                     .replace(/[^a-z0-9\s-]/g, '')
                     .replace(/\s+/g, '-')
                     .replace(/-+/g, '-')
-                    .trim('-');
+                    .replace(/^-+|-+$/g, '');
 
                 slugInput.value = slug;
                 slugPreview.textContent = slug ? `URL: /tags/${slug}` : '';
@@ -270,7 +255,7 @@
         // Update preview
         function updatePreview() {
             const name = nameInput.value || 'Sample Tag';
-            const color = colorInput.value || '#6c757d';
+            const color = colorInput.value || '#6b7280';
 
             tagPreview.textContent = name;
             tagPreview.style.backgroundColor = color;
@@ -326,7 +311,7 @@
 
         // Random color function
         window.randomColor = function() {
-            const colors = ['#0d6efd', '#198754', '#dc3545', '#ffc107', '#6f42c1', '#fd7e14', '#20c997', '#e91e63', '#795548', '#607d8b'];
+            const colors = ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#F97316', '#06B6D4', '#EC4899', '#6B7280', '#64748B'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             colorInput.value = randomColor;
             colorHexInput.value = randomColor;
@@ -337,14 +322,14 @@
         const form = document.querySelector('form');
         form.addEventListener('submit', function(e) {
             const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
+            const originalHTML = submitButton.innerHTML;
 
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Creating...';
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
             submitButton.disabled = true;
 
             // Re-enable after 10 seconds as fallback
             setTimeout(function() {
-                submitButton.innerHTML = originalText;
+                submitButton.innerHTML = originalHTML;
                 submitButton.disabled = false;
             }, 10000);
         });
@@ -354,33 +339,4 @@
         updatePreview();
     });
 </script>
-@endsection
-
-@section('styles')
-<style>
-    .form-control-color {
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-    }
-
-    .color-preset {
-        padding: 0.5rem;
-        border: 1px solid #dee2e6;
-    }
-
-    .color-preset:hover {
-        background-color: #f8f9fa;
-    }
-
-    .max-height-200 {
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
-    #tag-preview {
-        font-size: 0.875rem;
-        padding: 0.375rem 0.75rem;
-        border-radius: 0.375rem;
-    }
-</style>
-@endsection
+@endpush

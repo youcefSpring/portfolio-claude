@@ -19,10 +19,10 @@ class PublicationController extends Controller
         }
 
         if ($request->has('year') && $request->year) {
-            $query->whereYear('publication_date', $request->year);
+            $query->where('year', $request->year);
         }
 
-        $publications = $query->latest('publication_date')
+        $publications = $query->latest('year')
             ->paginate($request->per_page ?? 10);
 
         return response()->json([
@@ -64,7 +64,7 @@ class PublicationController extends Controller
                   ->orWhere('authors', 'like', "%{$query}%")
                   ->orWhere('keywords', 'like', "%{$query}%");
             })
-            ->latest('publication_date')
+            ->latest('year')
             ->limit(20)
             ->get();
 

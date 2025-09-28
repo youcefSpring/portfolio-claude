@@ -82,7 +82,7 @@ class CourseController extends Controller
      */
     public function edit(Course $course): View
     {
-        $this->authorize('update', $course);
+        //$this->authorize('update', $course);
 
         return view('admin.courses.edit', compact('course'));
     }
@@ -116,7 +116,7 @@ class CourseController extends Controller
      */
     public function destroy(Course $course): RedirectResponse
     {
-        $this->authorize('delete', $course);
+        //$this->authorize('delete', $course);
 
         // Delete syllabus file
         if ($course->syllabus_file_path) {

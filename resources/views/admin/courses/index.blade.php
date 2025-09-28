@@ -1,35 +1,36 @@
-@extends('layouts.admin')
+@extends('layouts.admin-modern')
 
-@section('page-title', 'Courses Management')
+@section('title', 'Courses Management')
+@section('page-title', 'Courses')
 
 @section('content')
-<!-- Header Actions -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Courses</h1>
-        <p class="text-muted mb-0">Manage your course offerings and content</p>
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div class="mb-4 sm:mb-0">
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Courses</h1>
+            <p class="text-gray-600 mt-1">Manage your course offerings and content</p>
+        </div>
+        <a href="{{ route('admin.courses.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+            <i class="fas fa-plus mr-2"></i>
+            Add New Course
+        </a>
     </div>
-    <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i>Add New Course
-    </a>
-</div>
 
-<!-- Filters & Search -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" action="{{ route('admin.courses.index') }}" class="row g-3">
-            <div class="col-md-4">
-                <label for="search" class="form-label">Search</label>
+    <!-- Filters & Search -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6 lg:mb-8">
+        <form method="GET" action="{{ route('admin.courses.index') }}" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div class="md:col-span-2 lg:col-span-2">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
                 <input type="text"
-                       class="form-control"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                        id="search"
                        name="search"
                        placeholder="Search by title or description..."
                        value="{{ request('search') }}">
             </div>
-            <div class="col-md-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select" id="status" name="status">
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" id="status" name="status">
                     <option value="">All Status</option>
                     <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                     <option value="upcoming" {{ request('status') == 'upcoming' ? 'selected' : '' }}>Upcoming</option>
@@ -37,9 +38,9 @@
                     <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label for="level" class="form-label">Level</label>
-                <select class="form-select" id="level" name="level">
+            <div>
+                <label for="level" class="block text-sm font-medium text-gray-700 mb-2">Level</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" id="level" name="level">
                     <option value="">All Levels</option>
                     <option value="beginner" {{ request('level') == 'beginner' ? 'selected' : '' }}>Beginner</option>
                     <option value="intermediate" {{ request('level') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
@@ -47,196 +48,229 @@
                     <option value="graduate" {{ request('level') == 'graduate' ? 'selected' : '' }}>Graduate</option>
                 </select>
             </div>
-            <div class="col-md-2 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-outline-primary">
-                    <i class="bi bi-search"></i>
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-search"></i>
                 </button>
-                <a href="{{ route('admin.courses.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-lg"></i>
+                <a href="{{ route('admin.courses.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-times"></i>
                 </a>
             </div>
         </form>
     </div>
-</div>
 
-<!-- Courses Table -->
-<div class="card">
-    <div class="card-header bg-white">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-book me-2"></i>
-                Courses ({{ $courses->total() }})
-            </h5>
-            @if(request()->hasAny(['search', 'status', 'level']))
-                <small class="text-muted">Filtered results</small>
-            @endif
+    <!-- Courses Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-4 lg:p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg lg:text-xl font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-book mr-2 text-blue-600"></i>
+                    Courses ({{ $courses->total() }})
+                </h2>
+                @if(request()->hasAny(['search', 'status', 'level']))
+                    <span class="text-sm text-gray-500">Filtered results</span>
+                @endif
+            </div>
         </div>
-    </div>
 
-    @if($courses->count() > 0)
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>Status</th>
-                        <th>Level</th>
-                        <th>Duration</th>
-                        <th>Credits</th>
-                        <th>Last Updated</th>
-                        <th width="120">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($courses as $course)
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">
-                                            <a href="{{ route('admin.courses.show', $course) }}" class="text-decoration-none">
+        @if($courses->count() > 0)
+            <!-- Desktop Table -->
+            <div class="hidden lg:block overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-sm text-gray-600 border-b border-gray-100">
+                            <th class="pb-3 px-6 font-medium">Course</th>
+                            <th class="pb-3 px-3 font-medium">Status</th>
+                            <th class="pb-3 px-3 font-medium">Level</th>
+                            <th class="pb-3 px-3 font-medium">Duration</th>
+                            <th class="pb-3 px-3 font-medium">Credits</th>
+                            <th class="pb-3 px-3 font-medium">Last Updated</th>
+                            <th class="pb-3 px-6 font-medium w-32">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        @foreach($courses as $course)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div>
+                                        <h3 class="font-medium text-gray-900 mb-1">
+                                            <a href="{{ route('admin.courses.show', $course) }}" class="hover:text-blue-600 transition-colors">
                                                 {{ $course->title }}
                                             </a>
-                                        </h6>
+                                        </h3>
                                         @if($course->description)
-                                            <p class="text-muted small mb-0">{{ Str::limit($course->description, 80) }}</p>
+                                            <p class="text-gray-500 text-xs">{{ Str::limit($course->description, 80) }}</p>
                                         @endif
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                @if($course->status === 'active')
-                                    <span class="badge bg-success">Active</span>
-                                @elseif($course->status === 'upcoming')
-                                    <span class="badge bg-warning">Upcoming</span>
-                                @elseif($course->status === 'completed')
-                                    <span class="badge bg-secondary">Completed</span>
-                                @else
-                                    <span class="badge bg-light text-dark">Draft</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($course->level)
-                                    <span class="badge bg-info">{{ ucfirst($course->level) }}</span>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($course->start_date && $course->end_date)
-                                    <small class="text-muted">
-                                        {{ $course->start_date->format('M j') }} - {{ $course->end_date->format('M j, Y') }}
-                                    </small>
-                                @elseif($course->start_date)
-                                    <small class="text-muted">Starts {{ $course->start_date->format('M j, Y') }}</small>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                            <td>
-                                {{ $course->credits ?? '-' }}
-                            </td>
-                            <td>
-                                <small class="text-muted">{{ $course->updated_at->diffForHumans() }}</small>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('admin.courses.show', $course) }}">
-                                                <i class="bi bi-eye me-2"></i>View
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('admin.courses.edit', $course) }}">
-                                                <i class="bi bi-pencil me-2"></i>Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('courses.show', $course->slug) }}" target="_blank">
-                                                <i class="bi bi-box-arrow-up-right me-2"></i>View on Site
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger" data-confirm-delete>
-                                                    <i class="bi bi-trash me-2"></i>Delete
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                                </td>
+                                <td class="py-4 px-3">
+                                    @if($course->status === 'active')
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Active</span>
+                                    @elseif($course->status === 'upcoming')
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Upcoming</span>
+                                    @elseif($course->status === 'completed')
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">Completed</span>
+                                    @else
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Draft</span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-3">
+                                    @if($course->level)
+                                        <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">{{ ucfirst($course->level) }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-3 text-gray-600">
+                                    @if($course->start_date && $course->end_date)
+                                        <span class="text-xs">{{ $course->start_date->format('M j') }} - {{ $course->end_date->format('M j, Y') }}</span>
+                                    @elseif($course->start_date)
+                                        <span class="text-xs">Starts {{ $course->start_date->format('M j, Y') }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-3 text-gray-600">
+                                    {{ $course->credits ?? '-' }}
+                                </td>
+                                <td class="py-4 px-3 text-gray-500 text-xs">
+                                    {{ $course->updated_at->diffForHumans() }}
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('admin.courses.show', $course) }}" class="text-blue-600 hover:text-blue-700 transition-colors" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.courses.edit', $course) }}" class="text-green-600 hover:text-green-700 transition-colors" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ route('courses.show', $course->slug) }}" target="_blank" class="text-purple-600 hover:text-purple-700 transition-colors" title="View on Site">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-700 transition-colors" title="Delete" onclick="return confirm('Are you sure you want to delete this course?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-        <!-- Pagination -->
-        @if($courses->hasPages())
-            <div class="card-footer bg-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        Showing {{ $courses->firstItem() }} to {{ $courses->lastItem() }} of {{ $courses->total() }} results
-                    </small>
-                    {{ $courses->appends(request()->query())->links() }}
+            <!-- Mobile Cards -->
+            <div class="lg:hidden divide-y divide-gray-100">
+                @foreach($courses as $course)
+                    <div class="p-4 lg:p-6">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900 mb-1">
+                                    <a href="{{ route('admin.courses.show', $course) }}" class="hover:text-blue-600 transition-colors">
+                                        {{ $course->title }}
+                                    </a>
+                                </h3>
+                                @if($course->description)
+                                    <p class="text-gray-500 text-sm mb-2">{{ Str::limit($course->description, 100) }}</p>
+                                @endif
+                            </div>
+                            <div class="ml-4">
+                                @if($course->status === 'active')
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Active</span>
+                                @elseif($course->status === 'upcoming')
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Upcoming</span>
+                                @elseif($course->status === 'completed')
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">Completed</span>
+                                @else
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Draft</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                            <div class="flex items-center space-x-4">
+                                @if($course->level)
+                                    <span class="flex items-center">
+                                        <i class="fas fa-layer-group mr-1"></i>
+                                        {{ ucfirst($course->level) }}
+                                    </span>
+                                @endif
+                                @if($course->credits)
+                                    <span class="flex items-center">
+                                        <i class="fas fa-star mr-1"></i>
+                                        {{ $course->credits }} Credits
+                                    </span>
+                                @endif
+                            </div>
+                            <span class="text-xs">{{ $course->updated_at->diffForHumans() }}</span>
+                        </div>
+
+                        @if($course->start_date || $course->end_date)
+                            <div class="text-sm text-gray-600 mb-3">
+                                <i class="fas fa-calendar mr-1"></i>
+                                @if($course->start_date && $course->end_date)
+                                    {{ $course->start_date->format('M j') }} - {{ $course->end_date->format('M j, Y') }}
+                                @elseif($course->start_date)
+                                    Starts {{ $course->start_date->format('M j, Y') }}
+                                @endif
+                            </div>
+                        @endif
+
+                        <div class="flex items-center space-x-4">
+                            <a href="{{ route('admin.courses.show', $course) }}" class="text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium">
+                                <i class="fas fa-eye mr-1"></i>View
+                            </a>
+                            <a href="{{ route('admin.courses.edit', $course) }}" class="text-green-600 hover:text-green-700 transition-colors text-sm font-medium">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </a>
+                            <a href="{{ route('courses.show', $course->slug) }}" target="_blank" class="text-purple-600 hover:text-purple-700 transition-colors text-sm font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>View on Site
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Pagination -->
+            @if($courses->hasPages())
+                <div class="p-4 lg:p-6 border-t border-gray-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <p class="text-sm text-gray-600 mb-4 sm:mb-0">
+                            Showing {{ $courses->firstItem() }} to {{ $courses->lastItem() }} of {{ $courses->total() }} results
+                        </p>
+                        <div class="flex items-center space-x-2">
+                            {{ $courses->appends(request()->query())->links() }}
+                        </div>
+                    </div>
                 </div>
+            @endif
+        @else
+            <div class="p-8 lg:p-12 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-book text-gray-400 text-2xl"></i>
+                </div>
+                @if(request()->hasAny(['search', 'status', 'level']))
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No courses found</h3>
+                    <p class="text-gray-600 mb-4">No courses match your current filters.</p>
+                    <a href="{{ route('admin.courses.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Clear Filters
+                    </a>
+                @else
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No courses yet</h3>
+                    <p class="text-gray-600 mb-4">Create your first course to get started.</p>
+                    <a href="{{ route('admin.courses.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add First Course
+                    </a>
+                @endif
             </div>
         @endif
-    @else
-        <div class="card-body text-center py-5">
-            <i class="bi bi-book text-muted mb-3" style="font-size: 3rem;"></i>
-            @if(request()->hasAny(['search', 'status', 'level']))
-                <h5 class="text-muted">No courses found</h5>
-                <p class="text-muted mb-3">No courses match your current filters.</p>
-                <a href="{{ route('admin.courses.index') }}" class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left me-1"></i>Clear Filters
-                </a>
-            @else
-                <h5 class="text-muted">No courses yet</h5>
-                <p class="text-muted mb-3">Create your first course to get started.</p>
-                <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-1"></i>Add First Course
-                </a>
-            @endif
-        </div>
-    @endif
-</div>
+    </div>
 @endsection
 
-@section('styles')
-<style>
-    .table th {
-        font-weight: 600;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #374151;
-    }
-
-    .table td {
-        vertical-align: middle;
-    }
-
-    .dropdown-toggle::after {
-        display: none;
-    }
-
-    .badge {
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-</style>
-@endsection
-
-@section('scripts')
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Auto-submit search form on select changes
@@ -252,4 +286,4 @@
         });
     });
 </script>
-@endsection
+@endpush

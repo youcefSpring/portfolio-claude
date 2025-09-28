@@ -1,58 +1,93 @@
-@extends('layouts.admin')
+@extends('layouts.admin-modern')
 
 @section('page-title', 'View Project')
 
 @section('content')
 <!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">{{ $project->title }}</h1>
-        <p class="text-muted mb-0">Project Details</p>
+<div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 mb-6 lg:mb-8">
+    <div class="flex-1">
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{{ $project->title }}</h1>
+        <p class="text-gray-600">Professional Portfolio Project</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('admin.projects.edit', $project) }}" class="btn btn-primary">
-            <i class="bi bi-pencil me-1"></i>Edit Project
+    <div class="flex flex-col sm:flex-row gap-3">
+        <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+            <i class="fas fa-edit mr-2"></i>Edit Project
         </a>
-        <a href="{{ route('admin.projects.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Back to Projects
+        <a href="{{ route('admin.projects.index') }}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Projects
         </a>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+    <div class="lg:col-span-2 space-y-6">
         <!-- Project Image -->
         @if($project->featured_image)
-            <div class="card mb-4">
-                <div class="card-body p-0">
-                    <img src="{{ Storage::url($project->featured_image) }}"
-                         alt="{{ $project->title }}"
-                         class="img-fluid w-100"
-                         style="max-height: 400px; object-fit: cover;">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <img src="{{ Storage::url($project->featured_image) }}"
+                     alt="{{ $project->title }}"
+                     class="w-full h-auto"
+                     style="max-height: 400px; object-fit: cover;">
+            </div>
+        @endif
+
+        <!-- Project Skills -->
+        @if($project->skills && $project->skills->count() > 0)
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-code text-blue-600 mr-3"></i>
+                        Technical Skills Used
+                    </h3>
+                    @php
+                        $skillsByCategory = $project->skills->groupBy('category');
+                    @endphp
+                    <div class="space-y-4">
+                        @foreach($skillsByCategory as $category => $categorySkills)
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-800 mb-3">{{ ucfirst($category) }}</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($categorySkills as $skill)
+                                        <div class="inline-flex items-center px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm">
+                                            @if($skill->icon)
+                                                <i class="{{ $skill->icon }} mr-2" style="color: {{ $skill->color ?? '#6B7280' }}"></i>
+                                            @endif
+                                            <span class="font-medium text-gray-900">{{ $skill->name }}</span>
+                                            @if($skill->pivot && $skill->pivot->proficiency_level)
+                                                <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+                                                    {{ ucfirst($skill->pivot->proficiency_level) }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         @endif
 
         <!-- Project Description -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-file-text text-primary me-2"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-file-text text-blue-600 mr-3"></i>
                     Description
-                </h5>
-                <p class="card-text">{{ $project->description }}</p>
+                </h3>
+                <p class="text-gray-700 leading-relaxed">{{ $project->description }}</p>
             </div>
         </div>
 
         <!-- Project Details -->
         @if($project->content)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-journal-text text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-file-alt text-blue-600 mr-3"></i>
                         Project Details
-                    </h5>
-                    <div class="content">
+                    </h3>
+                    <div class="text-gray-700 leading-relaxed">
                         {!! nl2br(e($project->content)) !!}
                     </div>
                 </div>
@@ -61,13 +96,13 @@
 
         <!-- Technologies -->
         @if($project->technologies)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-gear text-primary me-2"></i>
-                        Technologies Used
-                    </h5>
-                    <div class="content">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-code text-blue-600 mr-3"></i>
+                        Technologies & Tools
+                    </h3>
+                    <div class="text-gray-700 leading-relaxed">
                         {!! nl2br(e($project->technologies)) !!}
                     </div>
                 </div>
@@ -76,13 +111,13 @@
 
         <!-- Collaborators -->
         @if($project->collaborators)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-people text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-users text-blue-600 mr-3"></i>
                         Collaborators
-                    </h5>
-                    <div class="content">
+                    </h3>
+                    <div class="text-gray-700 leading-relaxed">
                         {!! nl2br(e($project->collaborators)) !!}
                     </div>
                 </div>
@@ -91,13 +126,13 @@
 
         <!-- Key Outcomes -->
         @if($project->key_outcomes)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-trophy text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-trophy text-blue-600 mr-3"></i>
                         Key Outcomes
-                    </h5>
-                    <div class="content">
+                    </h3>
+                    <div class="text-gray-700 leading-relaxed">
                         {!! nl2br(e($project->key_outcomes)) !!}
                     </div>
                 </div>
@@ -105,31 +140,31 @@
         @endif
 
         <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-lightning text-primary me-2"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-bolt text-blue-600 mr-3"></i>
                     Quick Actions
-                </h5>
-                <div class="d-flex flex-wrap gap-2">
+                </h3>
+                <div class="flex flex-wrap gap-3">
                     @if($project->project_url)
-                        <a href="{{ $project->project_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-link-45deg me-1"></i>View Project
+                        <a href="{{ $project->project_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-external-link-alt mr-2"></i>Live Demo
                         </a>
                     @endif
                     @if($project->repository_url)
-                        <a href="{{ $project->repository_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-github me-1"></i>View Repository
+                        <a href="{{ $project->repository_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                            <i class="fab fa-github mr-2"></i>Source Code
                         </a>
                     @endif
-                    <a href="{{ route('admin.projects.edit', $project) }}" class="btn btn-outline-warning btn-sm">
-                        <i class="bi bi-pencil me-1"></i>Edit Project
+                    <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors">
+                        <i class="fas fa-edit mr-2"></i>Edit Project
                     </a>
-                    <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="d-inline">
+                    <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="inline-block">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger btn-sm" data-confirm-delete>
-                            <i class="bi bi-trash me-1"></i>Delete Project
+                        <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" data-confirm-delete>
+                            <i class="fas fa-trash mr-2"></i>Delete Project
                         </button>
                     </form>
                 </div>
@@ -137,156 +172,156 @@
         </div>
     </div>
 
-    <div class="col-lg-4">
+    <div class="lg:col-span-1 space-y-6">
         <!-- Project Info -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-info-circle text-primary me-2"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
                     Project Information
-                </h5>
+                </h3>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Status</label>
+                <div class="space-y-4">
                     <div>
-                        @if($project->status === 'active')
-                            <span class="badge bg-success fs-6">Active</span>
-                        @elseif($project->status === 'completed')
-                            <span class="badge bg-primary fs-6">Completed</span>
-                        @elseif($project->status === 'on-hold')
-                            <span class="badge bg-warning fs-6">On Hold</span>
-                        @elseif($project->status === 'cancelled')
-                            <span class="badge bg-danger fs-6">Cancelled</span>
-                        @else
-                            <span class="badge bg-secondary fs-6">{{ ucfirst($project->status) }}</span>
-                        @endif
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Status</dt>
+                        <dd>
+                            @if($project->status === 'active')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Active</span>
+                            @elseif($project->status === 'completed')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Completed</span>
+                            @elseif($project->status === 'on-hold')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">On Hold</span>
+                            @elseif($project->status === 'cancelled')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Cancelled</span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">{{ ucfirst($project->status) }}</span>
+                            @endif
+                        </dd>
                     </div>
-                </div>
 
-                @if($project->type)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Project Type</label>
-                        <div>{{ ucfirst($project->type) }}</div>
-                    </div>
-                @endif
-
-                @if($project->start_date)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Start Date</label>
-                        <div>{{ $project->start_date->format('F d, Y') }}</div>
-                    </div>
-                @endif
-
-                @if($project->end_date)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">End Date</label>
-                        <div>{{ $project->end_date->format('F d, Y') }}</div>
-                    </div>
-                @endif
-
-                @if($project->funding_amount)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Funding Amount</label>
-                        <div>${{ number_format($project->funding_amount, 2) }}</div>
-                    </div>
-                @endif
-
-                @if($project->client_organization)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Client/Organization</label>
-                        <div>{{ $project->client_organization }}</div>
-                    </div>
-                @endif
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Published</label>
-                    <div>
-                        @if($project->is_published)
-                            <span class="badge bg-success">Published</span>
-                        @else
-                            <span class="badge bg-secondary">Draft</span>
-                        @endif
-                    </div>
-                </div>
-
-                @if($project->is_featured)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Featured</label>
+                    @if($project->type)
                         <div>
-                            <span class="badge bg-warning">Featured Project</span>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Project Type</dt>
+                            <dd class="text-sm text-gray-600">{{ ucfirst($project->type) }}</dd>
                         </div>
+                    @endif
+
+                    @if($project->start_date)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Start Date</dt>
+                            <dd class="text-sm text-gray-600">{{ $project->start_date->format('F d, Y') }}</dd>
+                        </div>
+                    @endif
+
+                    @if($project->end_date)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">End Date</dt>
+                            <dd class="text-sm text-gray-600">{{ $project->end_date->format('F d, Y') }}</dd>
+                        </div>
+                    @endif
+
+                    @if($project->funding_amount)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Project Budget</dt>
+                            <dd class="text-sm text-gray-600">${{ number_format($project->funding_amount, 2) }}</dd>
+                        </div>
+                    @endif
+
+                    @if($project->client_organization)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Client/Company</dt>
+                            <dd class="text-sm text-gray-600">{{ $project->client_organization }}</dd>
+                        </div>
+                    @endif
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Visibility</dt>
+                        <dd>
+                            @if($project->is_published)
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Published</span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">Draft</span>
+                            @endif
+                        </dd>
                     </div>
-                @endif
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Created</label>
-                    <div>{{ $project->created_at->format('F d, Y \a\t g:i A') }}</div>
-                </div>
+                    @if($project->is_featured)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Featured</dt>
+                            <dd>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Featured Project</span>
+                            </dd>
+                        </div>
+                    @endif
 
-                <div>
-                    <label class="form-label fw-bold">Last Updated</label>
-                    <div>{{ $project->updated_at->format('F d, Y \a\t g:i A') }}</div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Created</dt>
+                        <dd class="text-sm text-gray-600">{{ $project->created_at->format('F d, Y \a\t g:i A') }}</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Last Updated</dt>
+                        <dd class="text-sm text-gray-600">{{ $project->updated_at->format('F d, Y \a\t g:i A') }}</dd>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Project Links -->
         @if($project->project_url || $project->repository_url)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-link text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-link text-blue-600 mr-3"></i>
                         Project Links
-                    </h5>
+                    </h3>
 
-                    @if($project->project_url)
-                        <div class="mb-2">
-                            <a href="{{ $project->project_url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
-                                <i class="bi bi-link-45deg me-1"></i>View Live Project
+                    <div class="space-y-3">
+                        @if($project->project_url)
+                            <a href="{{ $project->project_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-external-link-alt mr-2"></i>Live Demo
                             </a>
-                        </div>
-                    @endif
+                        @endif
 
-                    @if($project->repository_url)
-                        <div class="mb-2">
-                            <a href="{{ $project->repository_url }}" target="_blank" class="btn btn-outline-secondary btn-sm w-100">
-                                <i class="bi bi-github me-1"></i>View Repository
+                        @if($project->repository_url)
+                            <a href="{{ $project->repository_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                                <i class="fab fa-github mr-2"></i>Source Code
                             </a>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         @endif
 
         <!-- Tags -->
         @if($project->tags && $project->tags->count() > 0)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-tags text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-tags text-blue-600 mr-3"></i>
                         Tags
-                    </h5>
-                    <div class="d-flex flex-wrap gap-2">
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
                         @foreach($project->tags as $tag)
-                            <span class="badge bg-light text-dark">{{ $tag->name }}</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">{{ $tag->name }}</span>
                         @endforeach
                     </div>
                 </div>
             </div>
         @endif
 
-        <!-- Statistics (if this is a public project) -->
+        <!-- Public Visibility -->
         @if($project->is_published)
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-bar-chart text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-chart-bar text-blue-600 mr-3"></i>
                         Public Visibility
-                    </h5>
+                    </h3>
                     <div class="text-center">
-                        <p class="text-muted mb-2">This project is visible to the public</p>
-                        <a href="{{ url('/projects/' . Str::slug($project->title)) }}" target="_blank" class="btn btn-outline-info btn-sm">
-                            <i class="bi bi-eye me-1"></i>View Public Page
+                        <p class="text-gray-600 mb-4">This project is visible to the public</p>
+                        <a href="{{ url('/projects/' . Str::slug($project->title)) }}" target="_blank" class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-eye mr-2"></i>View Public Page
                         </a>
                     </div>
                 </div>
@@ -296,19 +331,3 @@
 </div>
 @endsection
 
-@section('styles')
-<style>
-    .content {
-        line-height: 1.6;
-        color: #4a5568;
-    }
-
-    .content p {
-        margin-bottom: 1rem;
-    }
-
-    .badge.fs-6 {
-        font-size: 0.875rem !important;
-    }
-</style>
-@endsection

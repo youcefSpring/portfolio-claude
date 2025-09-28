@@ -26,13 +26,23 @@ class ContactController extends Controller
      */
     public function store(StoreContactMessageRequest $request): RedirectResponse
     {
-        $contactMessage = ContactMessage::create($request->validated());
+        try {
+            // Create contact message with validated data plus tracking info
+            $data = $request->validated();
+            $data['status'] = 'unread'; // Set default status
 
-        // Send notification email (optional)
-        // $this->sendContactNotification($contactMessage);
+            $contactMessage = ContactMessage::create($data);
 
-        return redirect()->route('contact.show')
-            ->with('success', 'Thank you for your message! I will get back to you soon.');
+            // Send notification email (optional)
+            // $this->sendContactNotification($contactMessage);
+
+            return back()->with('success', 'Thank you for your message! I will get back to you soon.');
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Sorry, there was an error sending your message. Please try again.')
+                ->withInput();
+        }
     }
 
     /**

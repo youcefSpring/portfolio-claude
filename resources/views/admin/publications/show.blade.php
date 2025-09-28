@@ -1,74 +1,71 @@
-@extends('layouts.admin')
+@extends('layouts.admin-modern')
 
 @section('page-title', 'View Publication')
 
 @section('content')
 <!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">{{ $publication->title }}</h1>
-        <p class="text-muted mb-0">Publication Details</p>
+<div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 mb-6 lg:mb-8">
+    <div class="flex-1">
+        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{{ $publication->title }}</h1>
+        <p class="text-gray-600">Publication Details</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('admin.publications.edit', $publication) }}" class="btn btn-primary">
-            <i class="bi bi-pencil me-1"></i>Edit Publication
+    <div class="flex flex-col sm:flex-row gap-3">
+        <a href="{{ route('admin.publications.edit', $publication) }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+            <i class="fas fa-edit mr-2"></i>Edit Publication
         </a>
-        <a href="{{ route('admin.publications.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Back to Publications
+        <a href="{{ route('admin.publications.index') }}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Publications
         </a>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+    <div class="lg:col-span-2 space-y-6">
         <!-- Publication Title and Authors -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h2 class="card-title h4">{{ $publication->title }}</h2>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ $publication->title }}</h2>
                 @if($publication->authors)
-                    <p class="text-muted mb-3">
-                        <strong>Authors:</strong> {{ $publication->authors }}
+                    <p class="text-gray-600 mb-4">
+                        <strong class="text-gray-900">Authors:</strong> {{ $publication->authors }}
                     </p>
                 @endif
 
                 <!-- Publication Details -->
-                <div class="row g-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @if($publication->journal_name || $publication->venue)
-                        <div class="col-md-6">
-                            <strong>Journal/Venue:</strong><br>
-                            {{ $publication->journal_name ?: $publication->venue }}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Journal/Venue</dt>
+                            <dd class="text-sm text-gray-600">{{ $publication->journal_name ?: $publication->venue }}</dd>
                         </div>
                     @endif
 
-                    @if($publication->year || $publication->publication_date)
-                        <div class="col-md-6">
-                            <strong>Publication Year:</strong><br>
-                            @if($publication->publication_date)
-                                {{ $publication->publication_date->format('Y') }}
-                                @if($publication->publication_date->format('M d') !== 'Jan 01')
-                                    ({{ $publication->publication_date->format('M d, Y') }})
-                                @endif
-                            @else
-                                {{ $publication->year }}
-                            @endif
+                    @if($publication->year)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Publication Year</dt>
+                            <dd class="text-sm text-gray-600">{{ $publication->year }}</dd>
                         </div>
                     @endif
 
                     @if($publication->volume || $publication->issue || $publication->pages)
-                        <div class="col-md-6">
-                            <strong>Volume/Issue/Pages:</strong><br>
-                            @if($publication->volume)Vol. {{ $publication->volume }}@endif
-                            @if($publication->issue), Issue {{ $publication->issue }}@endif
-                            @if($publication->pages), pp. {{ $publication->pages }}@endif
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Volume/Issue/Pages</dt>
+                            <dd class="text-sm text-gray-600">
+                                @if($publication->volume)Vol. {{ $publication->volume }}@endif
+                                @if($publication->issue), Issue {{ $publication->issue }}@endif
+                                @if($publication->pages), pp. {{ $publication->pages }}@endif
+                            </dd>
                         </div>
                     @endif
 
                     @if($publication->doi)
-                        <div class="col-md-6">
-                            <strong>DOI:</strong><br>
-                            <a href="https://doi.org/{{ $publication->doi }}" target="_blank" class="text-decoration-none">
-                                {{ $publication->doi }} <i class="bi bi-box-arrow-up-right"></i>
-                            </a>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">DOI</dt>
+                            <dd class="text-sm">
+                                <a href="https://doi.org/{{ $publication->doi }}" target="_blank" class="text-blue-600 hover:text-blue-800 transition-colors">
+                                    {{ $publication->doi }} <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </dd>
                         </div>
                     @endif
                 </div>
@@ -77,13 +74,13 @@
 
         <!-- Abstract -->
         @if($publication->abstract)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-file-text text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-file-text text-blue-600 mr-3"></i>
                         Abstract
-                    </h5>
-                    <div class="content">
+                    </h3>
+                    <div class="text-gray-700 leading-relaxed">
                         {!! nl2br(e($publication->abstract)) !!}
                     </div>
                 </div>
@@ -92,15 +89,15 @@
 
         <!-- Keywords -->
         @if($publication->keywords)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-tags text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-tags text-blue-600 mr-3"></i>
                         Keywords
-                    </h5>
-                    <div class="d-flex flex-wrap gap-2">
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
                         @foreach(explode(',', $publication->keywords) as $keyword)
-                            <span class="badge bg-light text-dark">{{ trim($keyword) }}</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">{{ trim($keyword) }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -109,13 +106,13 @@
 
         <!-- Notes -->
         @if($publication->notes)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-journal-text text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-sticky-note text-blue-600 mr-3"></i>
                         Notes
-                    </h5>
-                    <div class="content">
+                    </h3>
+                    <div class="text-gray-700 leading-relaxed">
                         {!! nl2br(e($publication->notes)) !!}
                     </div>
                 </div>
@@ -123,16 +120,16 @@
         @endif
 
         <!-- Citation -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-quote text-primary me-2"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-quote-left text-blue-600 mr-3"></i>
                     Citation
-                </h5>
-                <div class="bg-light p-3 rounded">
-                    <div id="citation-text" class="font-monospace small">
+                </h3>
+                <div class="bg-gray-50 p-4 rounded-lg border">
+                    <div id="citation-text" class="font-mono text-sm text-gray-800 leading-relaxed">
                         @if($publication->authors){{ $publication->authors }}@endif
-                        @if($publication->year || $publication->publication_date) ({{ $publication->publication_date ? $publication->publication_date->format('Y') : $publication->year }}).@endif
+                        @if($publication->year) ({{ $publication->year }}).@endif
                         @if($publication->title) {{ $publication->title }}.@endif
                         @if($publication->journal_name || $publication->venue) <em>{{ $publication->journal_name ?: $publication->venue }}</em>@endif
                         @if($publication->volume), {{ $publication->volume }}@endif
@@ -140,44 +137,44 @@
                         @if($publication->pages), {{ $publication->pages }}@endif
                         @if($publication->doi). https://doi.org/{{ $publication->doi }}@endif
                     </div>
-                    <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyCitation()">
-                        <i class="bi bi-clipboard me-1"></i>Copy Citation
+                    <button class="inline-flex items-center px-3 py-2 mt-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors" onclick="copyCitation()">
+                        <i class="fas fa-clipboard mr-2"></i>Copy Citation
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-lightning text-primary me-2"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-bolt text-blue-600 mr-3"></i>
                     Quick Actions
-                </h5>
-                <div class="d-flex flex-wrap gap-2">
+                </h3>
+                <div class="flex flex-wrap gap-3">
                     @if($publication->url)
-                        <a href="{{ $publication->url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-link-45deg me-1"></i>View Publication
+                        <a href="{{ $publication->url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-external-link-alt mr-2"></i>View Publication
                         </a>
                     @endif
                     @if($publication->doi)
-                        <a href="https://doi.org/{{ $publication->doi }}" target="_blank" class="btn btn-outline-info btn-sm">
-                            <i class="bi bi-search me-1"></i>View DOI
+                        <a href="https://doi.org/{{ $publication->doi }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg hover:bg-cyan-100 focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-search mr-2"></i>View DOI
                         </a>
                     @endif
                     @if($publication->pdf_file)
-                        <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="btn btn-outline-success btn-sm">
-                            <i class="bi bi-file-pdf me-1"></i>Download PDF
+                        <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-file-pdf mr-2"></i>Download PDF
                         </a>
                     @endif
-                    <a href="{{ route('admin.publications.edit', $publication) }}" class="btn btn-outline-warning btn-sm">
-                        <i class="bi bi-pencil me-1"></i>Edit Publication
+                    <a href="{{ route('admin.publications.edit', $publication) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors">
+                        <i class="fas fa-edit mr-2"></i>Edit Publication
                     </a>
-                    <form method="POST" action="{{ route('admin.publications.destroy', $publication) }}" class="d-inline">
+                    <form method="POST" action="{{ route('admin.publications.destroy', $publication) }}" class="inline-block">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger btn-sm" data-confirm-delete>
-                            <i class="bi bi-trash me-1"></i>Delete Publication
+                        <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" data-confirm-delete>
+                            <i class="fas fa-trash mr-2"></i>Delete Publication
                         </button>
                     </form>
                 </div>
@@ -185,121 +182,119 @@
         </div>
     </div>
 
-    <div class="col-lg-4">
+    <div class="lg:col-span-1 space-y-6">
         <!-- Publication Info -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-info-circle text-primary me-2"></i>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-4 lg:p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
                     Publication Information
-                </h5>
+                </h3>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Type</label>
+                <div class="space-y-4">
                     <div>
-                        <span class="badge bg-light text-dark fs-6">
-                            {{ ucwords(str_replace('_', ' ', $publication->type)) }}
-                        </span>
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Type</dt>
+                        <dd>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                {{ ucwords(str_replace('_', ' ', $publication->type)) }}
+                            </span>
+                        </dd>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Status</label>
                     <div>
-                        @if($publication->status === 'published')
-                            <span class="badge bg-success fs-6">Published</span>
-                        @elseif($publication->status === 'accepted')
-                            <span class="badge bg-info fs-6">Accepted</span>
-                        @elseif($publication->status === 'under_review')
-                            <span class="badge bg-warning fs-6">Under Review</span>
-                        @elseif($publication->status === 'in_preparation')
-                            <span class="badge bg-secondary fs-6">In Preparation</span>
-                        @else
-                            <span class="badge bg-light text-dark fs-6">{{ ucfirst($publication->status) }}</span>
-                        @endif
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Status</dt>
+                        <dd>
+                            @if($publication->status === 'published')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Published</span>
+                            @elseif($publication->status === 'accepted')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Accepted</span>
+                            @elseif($publication->status === 'under_review')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Under Review</span>
+                            @elseif($publication->status === 'in_preparation')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">In Preparation</span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">{{ ucfirst($publication->status) }}</span>
+                            @endif
+                        </dd>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Published</label>
                     <div>
-                        @if($publication->is_published)
-                            <span class="badge bg-success">Published</span>
-                        @else
-                            <span class="badge bg-secondary">Draft</span>
-                        @endif
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Visibility</dt>
+                        <dd>
+                            @if($publication->is_published)
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Published</span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">Draft</span>
+                            @endif
+                        </dd>
                     </div>
-                </div>
 
-                @if($publication->is_featured)
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Featured</label>
+                    @if($publication->is_featured)
                         <div>
-                            <span class="badge bg-warning">Featured Publication</span>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Featured</dt>
+                            <dd>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Featured Publication</span>
+                            </dd>
                         </div>
+                    @endif
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Created</dt>
+                        <dd class="text-sm text-gray-600">{{ $publication->created_at->format('F d, Y \a\t g:i A') }}</dd>
                     </div>
-                @endif
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Created</label>
-                    <div>{{ $publication->created_at->format('F d, Y \a\t g:i A') }}</div>
-                </div>
-
-                <div>
-                    <label class="form-label fw-bold">Last Updated</label>
-                    <div>{{ $publication->updated_at->format('F d, Y \a\t g:i A') }}</div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-900 mb-1">Last Updated</dt>
+                        <dd class="text-sm text-gray-600">{{ $publication->updated_at->format('F d, Y \a\t g:i A') }}</dd>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Files and Links -->
         @if($publication->pdf_file || $publication->url || $publication->doi)
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-link text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-link text-blue-600 mr-3"></i>
                         Files & Links
-                    </h5>
+                    </h3>
 
-                    @if($publication->pdf_file)
-                        <div class="mb-2">
-                            <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="btn btn-outline-success btn-sm w-100">
-                                <i class="bi bi-file-pdf me-1"></i>Download PDF
+                    <div class="space-y-3">
+                        @if($publication->pdf_file)
+                            <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-file-pdf mr-2"></i>Download PDF
                             </a>
-                        </div>
-                    @endif
+                        @endif
 
-                    @if($publication->url)
-                        <div class="mb-2">
-                            <a href="{{ $publication->url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
-                                <i class="bi bi-link-45deg me-1"></i>View Publication
+                        @if($publication->url)
+                            <a href="{{ $publication->url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-external-link-alt mr-2"></i>View Publication
                             </a>
-                        </div>
-                    @endif
+                        @endif
 
-                    @if($publication->doi)
-                        <div class="mb-2">
-                            <a href="https://doi.org/{{ $publication->doi }}" target="_blank" class="btn btn-outline-info btn-sm w-100">
-                                <i class="bi bi-search me-1"></i>View DOI
+                        @if($publication->doi)
+                            <a href="https://doi.org/{{ $publication->doi }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg hover:bg-cyan-100 focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-search mr-2"></i>View DOI
                             </a>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         @endif
 
-        <!-- Statistics (if this is a public publication) -->
+        <!-- Public Visibility -->
         @if($publication->is_published)
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-bar-chart text-primary me-2"></i>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-chart-bar text-blue-600 mr-3"></i>
                         Public Visibility
-                    </h5>
+                    </h3>
                     <div class="text-center">
-                        <p class="text-muted mb-2">This publication is visible to the public</p>
-                        <a href="{{ url('/publications/' . Str::slug($publication->title)) }}" target="_blank" class="btn btn-outline-info btn-sm">
-                            <i class="bi bi-eye me-1"></i>View Public Page
+                        <p class="text-gray-600 mb-4">This publication is visible to the public</p>
+                        <a href="{{ url('/publications/' . Str::slug($publication->title)) }}" target="_blank" class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-eye mr-2"></i>View Public Page
                         </a>
                     </div>
                 </div>
@@ -309,27 +304,6 @@
 </div>
 @endsection
 
-@section('styles')
-<style>
-    .content {
-        line-height: 1.6;
-        color: #4a5568;
-    }
-
-    .content p {
-        margin-bottom: 1rem;
-    }
-
-    .badge.fs-6 {
-        font-size: 0.875rem !important;
-    }
-
-    #citation-text {
-        line-height: 1.5;
-        word-break: break-word;
-    }
-</style>
-@endsection
 
 @section('scripts')
 <script>
@@ -376,14 +350,14 @@
         const button = document.querySelector('button[onclick="copyCitation()"]');
         const originalText = button.innerHTML;
 
-        button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
-        button.classList.remove('btn-outline-secondary');
-        button.classList.add('btn-success');
+        button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+        button.classList.remove('text-gray-700', 'bg-white', 'border-gray-300', 'hover:bg-gray-50');
+        button.classList.add('text-green-700', 'bg-green-50', 'border-green-200', 'hover:bg-green-100');
 
         setTimeout(function() {
             button.innerHTML = originalText;
-            button.classList.remove('btn-success');
-            button.classList.add('btn-outline-secondary');
+            button.classList.remove('text-green-700', 'bg-green-50', 'border-green-200', 'hover:bg-green-100');
+            button.classList.add('text-gray-700', 'bg-white', 'border-gray-300', 'hover:bg-gray-50');
         }, 2000);
     }
 </script>

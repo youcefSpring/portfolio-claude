@@ -39,7 +39,7 @@
                         <span class="badge bg-warning fs-6">Draft</span>
                     @endif
 
-                    <span class="badge bg-info fs-6">{{ $publication->publication_date->format('Y') }}</span>
+                    <span class="badge bg-info fs-6">{{ $publication->year }}</span>
                 </div>
 
                 <p class="lead mb-4"><strong>Authors:</strong> {{ $publication->authors }}</p>
@@ -148,7 +148,7 @@
                             <h6 class="text-muted mb-2">APA Style:</h6>
                             <div class="bg-light p-3 rounded">
                                 <small class="font-monospace">
-                                    {{ $publication->authors }} ({{ $publication->publication_date->format('Y') }}). {{ $publication->title }}.
+                                    {{ $publication->authors }} ({{ $publication->year }}). {{ $publication->title }}.
                                     @if($publication->journal)
                                         <em>{{ $publication->journal }}</em>@if($publication->volume), {{ $publication->volume }}@endif@if($publication->issue)>({{ $publication->issue }})@endif@if($publication->pages), {{ $publication->pages }}@endif.
                                     @endif
@@ -166,7 +166,7 @@
                                     @if($publication->journal)
                                         <em>{{ $publication->journal }}</em>@if($publication->volume), vol. {{ $publication->volume }}@endif@if($publication->issue), no. {{ $publication->issue }}@endif,
                                     @endif
-                                    {{ $publication->publication_date->format('Y') }}@if($publication->pages), pp. {{ $publication->pages }}@endif.
+                                    {{ $publication->year }}@if($publication->pages), pp. {{ $publication->pages }}@endif.
                                     @if($publication->doi) DOI: {{ $publication->doi }}.@endif
                                 </small>
                             </div>
@@ -192,7 +192,7 @@
 @if($publication->pages)
 &nbsp;&nbsp;pages = {{ '{' }}{{ $publication->pages }}{{ '}' }},<br>
 @endif
-&nbsp;&nbsp;year = {{ '{' }}{{ $publication->publication_date->format('Y') }}{{ '}' }},<br>
+&nbsp;&nbsp;year = {{ '{' }}{{ $publication->year }}{{ '}' }},<br>
 @if($publication->doi)
 &nbsp;&nbsp;doi = {{ '{' }}{{ $publication->doi }}{{ '}' }},<br>
 @endif
@@ -257,7 +257,7 @@
 
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted">Publication Date:</span>
-                            <span class="fw-medium">{{ $publication->publication_date->format('M j, Y') }}</span>
+                            <span class="fw-medium">{{ $publication->year }}</span>
                         </div>
 
                         @if($publication->citation_count && $publication->citation_count > 0)
@@ -365,7 +365,7 @@
                                             {{ Str::limit($related->title, 60) }}
                                         </a>
                                     </h6>
-                                    <small class="text-muted">{{ $related->publication_date->format('M Y') }}</small>
+                                    <small class="text-muted">{{ $related->year }}</small>
                                     @if($related->type !== $publication->type)
                                         <span class="badge bg-light text-dark border ms-1">{{ ucwords(str_replace('_', ' ', $related->type)) }}</span>
                                     @endif
@@ -426,7 +426,7 @@
         let text = '';
         const title = "{{ $publication->title }}";
         const authors = "{{ $publication->authors }}";
-        const year = "{{ $publication->publication_date->format('Y') }}";
+        const year = "{{ $publication->year }}";
         const journal = "{{ $publication->journal ?? '' }}";
         const volume = "{{ $publication->volume ?? '' }}";
         const issue = "{{ $publication->issue ?? '' }}";

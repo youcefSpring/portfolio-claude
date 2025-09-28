@@ -35,6 +35,9 @@ class Publication extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function tags(){
+        return $this->belongsToMany(Tag::class);
+    }
     /**
      * Scope a query to order publications by year descending.
      */

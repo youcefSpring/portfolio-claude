@@ -30,7 +30,7 @@ class UpdatePublicationRequest extends FormRequest
             'pages' => ['nullable', 'string', 'max:50'],
             'doi' => ['nullable', 'string', 'max:255', Rule::unique('publications', 'doi')->ignore($publicationId)],
             'isbn' => ['nullable', 'string', 'max:20'],
-            'publication_date' => ['required', 'date', 'before_or_equal:today'],
+            'year' => ['required', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
             'authors' => ['required', 'string', 'max:500'],
             'abstract' => ['nullable', 'string', 'max:2000'],
             'keywords' => ['nullable', 'string', 'max:500'],
@@ -48,7 +48,7 @@ class UpdatePublicationRequest extends FormRequest
         return [
             'title.required' => 'The publication title is required.',
             'type.in' => 'Please select a valid publication type.',
-            'publication_date.before_or_equal' => 'Publication date cannot be in the future.',
+            'year.max' => 'Publication year cannot be in the future.', 'year.min' => 'Publication year must be 1900 or later.',
             'doi.unique' => 'A publication with this DOI already exists.',
             'publication_file.mimes' => 'The publication file must be a PDF.',
             'publication_file.max' => 'The publication file must not exceed 20MB.'

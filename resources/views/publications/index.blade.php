@@ -89,9 +89,9 @@
                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                             <div class="flex-grow-1">
                                                 <h5 class="card-title mb-2">
-                                                    <a href="{{ route('publications.show', $publication) }}" class="text-decoration-none">
+                                                    <span class="text-dark">
                                                         {{ $publication->title }}
-                                                    </a>
+                                                    </span>
                                                 </h5>
 
                                                 <div class="d-flex flex-wrap gap-2 mb-2">
@@ -170,8 +170,8 @@
                                     <div class="col-md-4 text-md-end">
                                         <div class="publication-meta">
                                             <div class="mb-3">
-                                                <div class="text-muted small mb-1">Publication Date</div>
-                                                <div class="fw-bold">{{ $publication->publication_date->format('M j, Y') }}</div>
+                                                <div class="text-muted small mb-1">Publication Year</div>
+                                                <div class="fw-bold">{{ $publication->year }}</div>
                                             </div>
 
                                             @if($publication->citation_count && $publication->citation_count > 0)
@@ -193,14 +193,14 @@
                                             @endif
 
                                             <div class="d-grid gap-2">
-                                                <a href="{{ route('publications.show', $publication) }}" class="btn btn-primary btn-sm">
+                                                <button class="btn btn-primary btn-sm" onclick="alert('Publication: {{ $publication->title }}')">
                                                     <i class="bi bi-eye me-1"></i>View Details
-                                                </a>
+                                                </button>
 
                                                 @if($publication->publication_file_path)
-                                                    <a href="{{ route('publications.download', $publication) }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                                                    <button class="btn btn-outline-secondary btn-sm" onclick="alert('PDF download for: {{ $publication->title }}')">
                                                         <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
-                                                    </a>
+                                                    </button>
                                                 @endif
 
                                                 @if($publication->external_url)

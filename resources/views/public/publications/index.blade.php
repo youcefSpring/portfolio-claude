@@ -162,9 +162,9 @@
 
                                     <!-- Title -->
                                     <h5 class="card-title mb-3">
-                                        <a href="{{ route('publications.show', $publication->slug) }}" class="text-decoration-none text-dark">
+                                        <span class="text-dark">
                                             {{ $publication->title }}
-                                        </a>
+                                        </span>
                                     </h5>
 
                                     <!-- Authors -->
@@ -196,10 +196,10 @@
                                             </p>
                                         @endif
 
-                                        @if($publication->published_date)
+                                        @if($publication->year)
                                             <p class="text-muted mb-1">
                                                 <i class="bi bi-calendar me-1"></i>
-                                                {{ $publication->published_date->format('F Y') }}
+                                                {{ $publication->year }}
                                             </p>
                                         @endif
                                     </div>
@@ -225,9 +225,9 @@
 
                                     <!-- Links -->
                                     <div class="d-flex flex-wrap gap-2">
-                                        <a href="{{ route('publications.show', $publication->slug) }}" class="btn btn-outline-primary btn-sm">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="alert('Publication details: {{ $publication->title }}')">
                                             <i class="bi bi-eye me-1"></i>View Details
-                                        </a>
+                                        </button>
 
                                         @if($publication->pdf_file)
                                             <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="btn btn-outline-danger btn-sm">

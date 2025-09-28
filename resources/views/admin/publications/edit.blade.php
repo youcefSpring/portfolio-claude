@@ -1,60 +1,67 @@
-@extends('layouts.admin')
+@extends('layouts.admin-modern')
 
+@section('title', 'Edit Publication')
 @section('page-title', 'Edit Publication')
 
 @section('content')
-<!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Edit Publication</h1>
-        <p class="text-muted mb-0">Update publication information and details</p>
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div class="mb-4 sm:mb-0">
+            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Edit Publication</h1>
+            <p class="text-gray-600 mt-1">Update publication information and details</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+            <a href="{{ route('admin.publications.show', $publication) }}" class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-medium">
+                <i class="fas fa-eye mr-2"></i>View Publication
+            </a>
+            <a href="{{ route('admin.publications.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Publications
+            </a>
+        </div>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('admin.publications.show', $publication) }}" class="btn btn-outline-info">
-            <i class="bi bi-eye me-1"></i>View Publication
-        </a>
-        <a href="{{ route('admin.publications.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Back to Publications
-        </a>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-body p-4">
-                <form method="POST" action="{{ route('admin.publications.update', $publication) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6 border-b border-gray-100">
+                    <h2 class="text-lg lg:text-xl font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-file-alt mr-2 text-blue-600"></i>
+                        Publication Information
+                    </h2>
+                </div>
+                <div class="p-4 lg:p-6">
+                    <form method="POST" action="{{ route('admin.publications.update', $publication) }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
 
-                    <div class="row g-3">
-                        <!-- Publication Title -->
-                        <div class="col-12">
-                            <label for="title" class="form-label">Publication Title <span class="text-danger">*</span></label>
-                            <input type="text"
-                                   class="form-control @error('title') is-invalid @enderror"
-                                   id="title"
-                                   name="title"
-                                   value="{{ old('title', $publication->title) }}"
-                                   required>
-                            @error('title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <div class="space-y-6">
+                            <!-- Publication Title -->
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Publication Title <span class="text-red-500">*</span></label>
+                                <input type="text"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('title') border-red-500 @enderror"
+                                       id="title"
+                                       name="title"
+                                       value="{{ old('title', $publication->title) }}"
+                                       required>
+                                @error('title')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                        <!-- Authors -->
-                        <div class="col-12">
-                            <label for="authors" class="form-label">Authors <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('authors') is-invalid @enderror"
-                                      id="authors"
-                                      name="authors"
-                                      rows="2"
-                                      required>{{ old('authors', $publication->authors) }}</textarea>
-                            @error('authors')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">List all authors in proper citation format (e.g., "Smith, J., Doe, A., & Johnson, M.")</div>
-                        </div>
+                            <!-- Authors -->
+                            <div>
+                                <label for="authors" class="block text-sm font-medium text-gray-700 mb-2">Authors <span class="text-red-500">*</span></label>
+                                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('authors') border-red-500 @enderror"
+                                          id="authors"
+                                          name="authors"
+                                          rows="2"
+                                          required>{{ old('authors', $publication->authors) }}</textarea>
+                                @error('authors')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                                <p class="text-gray-500 text-sm mt-1">List all authors in proper citation format (e.g., "Smith, J., Doe, A., & Johnson, M.")</p>
+                            </div>
 
                         <!-- Type and Status -->
                         <div class="col-md-6">
@@ -150,32 +157,21 @@
                             @enderror
                         </div>
 
-                        <!-- Publication Date -->
-                        <div class="col-md-6">
-                            <label for="publication_date" class="form-label">Publication Date</label>
-                            <input type="date"
-                                   class="form-control @error('publication_date') is-invalid @enderror"
-                                   id="publication_date"
-                                   name="publication_date"
-                                   value="{{ old('publication_date', $publication->publication_date ? $publication->publication_date->format('Y-m-d') : '') }}">
-                            @error('publication_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="year" class="form-label">Publication Year</label>
-                            <input type="number"
-                                   class="form-control @error('year') is-invalid @enderror"
-                                   id="year"
-                                   name="year"
-                                   min="1900"
-                                   max="{{ date('Y') + 5 }}"
-                                   value="{{ old('year', $publication->year) }}">
-                            @error('year')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <!-- Publication Year -->
+                            <div>
+                                <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Publication Year <span class="text-red-500">*</span></label>
+                                <input type="number"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('year') border-red-500 @enderror"
+                                       id="year"
+                                       name="year"
+                                       min="1900"
+                                       max="{{ date('Y') + 5 }}"
+                                       value="{{ old('year', $publication->year) }}"
+                                       required>
+                                @error('year')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
                         <!-- DOI and URLs -->
                         <div class="col-md-6">
@@ -268,137 +264,131 @@
                             <div class="form-text">Additional notes or comments about this publication</div>
                         </div>
 
-                        <!-- Submit Buttons -->
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between pt-3">
-                                <a href="{{ route('admin.publications.show', $publication) }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-x-lg me-1"></i>Cancel
+                            <!-- Submit Buttons -->
+                            <div class="flex flex-col sm:flex-row sm:justify-between pt-6 border-t border-gray-100 gap-4">
+                                <a href="{{ route('admin.publications.show', $publication) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                                    <i class="fas fa-times mr-2"></i>Cancel
                                 </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Update Publication
+                                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    <i class="fas fa-check mr-2"></i>Update Publication
                                 </button>
                             </div>
                         </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <!-- Visibility Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                <div class="p-4 lg:p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-eye mr-2 text-blue-600"></i>
+                        Visibility
+                    </h2>
+                </div>
+                <div class="p-4 lg:p-6">
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-start">
+                            <input class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="radio" name="is_published" id="published" value="1" {{ old('is_published', $publication->is_published) == '1' ? 'checked' : '' }}>
+                            <label class="ml-3 block text-sm" for="published">
+                                <span class="font-medium text-gray-900">Published</span>
+                                <span class="text-gray-500 block text-xs">Visible to all visitors</span>
+                            </label>
+                        </div>
+                        <div class="flex items-start">
+                            <input class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="radio" name="is_published" id="draft" value="0" {{ old('is_published', $publication->is_published) == '0' ? 'checked' : '' }}>
+                            <label class="ml-3 block text-sm" for="draft">
+                                <span class="font-medium text-gray-900">Draft</span>
+                                <span class="text-gray-500 block text-xs">Only visible to you</span>
+                            </label>
+                        </div>
                     </div>
-                </form>
+
+                    <div class="flex items-start">
+                        <input class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $publication->is_featured) ? 'checked' : '' }}>
+                        <label class="ml-3 block text-sm" for="is_featured">
+                            <span class="font-medium text-gray-900">Featured Publication</span>
+                            <span class="text-gray-500 block text-xs">Highlight this publication</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citation Preview -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                <div class="p-4 lg:p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-quote-left mr-2 text-blue-600"></i>
+                        Citation Preview
+                    </h2>
+                </div>
+                <div class="p-4 lg:p-6">
+                    <div id="citation-preview" class="text-sm text-gray-600 italic">
+                        Citation will appear here as you update the form
+                    </div>
+                </div>
+            </div>
+
+            <!-- Publication Info -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                <div class="p-4 lg:p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                        Publication Info
+                    </h2>
+                </div>
+                <div class="p-4 lg:p-6 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Created:</span>
+                        <span class="font-medium text-gray-900">{{ $publication->created_at->format('M j, Y') }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Last Updated:</span>
+                        <span class="font-medium text-gray-900">{{ $publication->updated_at->format('M j, Y') }}</span>
+                    </div>
+
+                    @if($publication->is_published)
+                        <div class="pt-3">
+                            <a href="{{ url('/publications/' . Str::slug($publication->title)) }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-medium">
+                                <i class="fas fa-eye mr-2"></i>View Public Page
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="bg-white rounded-xl shadow-sm border border-red-200">
+                <div class="p-4 lg:p-6 border-b border-red-200">
+                    <h2 class="text-lg font-semibold text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Danger Zone
+                    </h2>
+                </div>
+                <div class="p-4 lg:p-6">
+                    <p class="text-sm text-gray-600 mb-4">
+                        Permanently delete this publication. This action cannot be undone.
+                    </p>
+                    <form method="POST" action="{{ route('admin.publications.destroy', $publication) }}" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium" onclick="return confirm('Are you sure you want to delete this publication?')">
+                            <i class="fas fa-trash mr-2"></i>Delete Publication
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="col-lg-4">
-        <!-- Visibility Settings -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-eye text-primary me-2"></i>
-                    Visibility
-                </h5>
-
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="is_published" id="published" value="1" {{ old('is_published', $publication->is_published) == '1' ? 'checked' : '' }}>
-                        <label class="form-check-label" for="published">
-                            <strong>Published</strong>
-                            <small class="text-muted d-block">Visible to all visitors</small>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="is_published" id="draft" value="0" {{ old('is_published', $publication->is_published) == '0' ? 'checked' : '' }}>
-                        <label class="form-check-label" for="draft">
-                            <strong>Draft</strong>
-                            <small class="text-muted d-block">Only visible to you</small>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $publication->is_featured) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="is_featured">
-                        <strong>Featured Publication</strong>
-                        <small class="text-muted d-block">Highlight this publication</small>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Citation Preview -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-quote text-primary me-2"></i>
-                    Citation Preview
-                </h5>
-                <div id="citation-preview" class="small text-muted">
-                    <em>Citation will appear here as you update the form</em>
-                </div>
-            </div>
-        </div>
-
-        <!-- Publication Info -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-info-circle text-primary me-2"></i>
-                    Publication Info
-                </h5>
-
-                <div class="mb-2">
-                    <small class="text-muted">Created:</small>
-                    <div>{{ $publication->created_at->format('F d, Y \a\t g:i A') }}</div>
-                </div>
-
-                <div class="mb-2">
-                    <small class="text-muted">Last Updated:</small>
-                    <div>{{ $publication->updated_at->format('F d, Y \a\t g:i A') }}</div>
-                </div>
-
-                @if($publication->is_published)
-                    <div class="mt-3">
-                        <a href="{{ url('/publications/' . Str::slug($publication->title)) }}" target="_blank" class="btn btn-outline-info btn-sm w-100">
-                            <i class="bi bi-eye me-1"></i>View Public Page
-                        </a>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="card border-danger">
-            <div class="card-body">
-                <h5 class="card-title text-danger">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    Danger Zone
-                </h5>
-                <p class="card-text small text-muted">
-                    Permanently delete this publication. This action cannot be undone.
-                </p>
-                <form method="POST" action="{{ route('admin.publications.destroy', $publication) }}" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-outline-danger btn-sm w-100" data-confirm-delete>
-                        <i class="bi bi-trash me-1"></i>Delete Publication
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Auto-generate year from publication date
-        const publicationDateInput = document.getElementById('publication_date');
-        const yearInput = document.getElementById('year');
-
-        publicationDateInput.addEventListener('change', function() {
-            if (this.value) {
-                const date = new Date(this.value);
-                yearInput.value = date.getFullYear();
-                updateCitationPreview();
-            }
-        });
+        // No auto-generation needed since we only use year field now
 
         // Citation preview update
         function updateCitationPreview() {
@@ -439,7 +429,7 @@
             const submitButton = form.querySelector('button[type="submit"]');
             const originalText = submitButton.innerHTML;
 
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Updating...';
+            submitButton.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Updating...';
             submitButton.disabled = true;
 
             // Re-enable after 10 seconds as fallback
@@ -456,10 +446,12 @@
                 const fileSize = this.files[0].size / 1024 / 1024; // Size in MB
                 if (fileSize > 20) {
                     this.setCustomValidity('File size must be less than 20MB');
-                    this.classList.add('is-invalid');
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
                 } else {
                     this.setCustomValidity('');
-                    this.classList.remove('is-invalid');
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
                 }
             }
         });
@@ -468,4 +460,4 @@
         updateCitationPreview();
     });
 </script>
-@endsection
+@endpush
