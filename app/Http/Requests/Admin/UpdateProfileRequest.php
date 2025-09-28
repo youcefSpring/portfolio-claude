@@ -26,6 +26,11 @@ class UpdateProfileRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($userId)
             ],
             'bio' => ['nullable', 'string', 'max:2000'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'office_location' => ['nullable', 'string', 'max:255'],
+            'specializations' => ['nullable', 'string', 'max:1000'],
             'contact_info' => ['nullable', 'array'],
             'contact_info.phone' => ['nullable', 'string', 'max:20'],
             'contact_info.address' => ['nullable', 'string', 'max:255'],

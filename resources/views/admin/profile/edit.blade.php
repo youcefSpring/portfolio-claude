@@ -233,8 +233,8 @@
                     </h2>
                 </div>
                 <div class="p-4 lg:p-6 text-center">
-                    @if($user->avatar)
-                        <img src="{{ Storage::url($user->avatar) }}"
+                    @if($user->profile_picture)
+                        <img src="{{ Storage::url($user->profile_picture) }}"
                              alt="Profile Picture"
                              class="w-32 h-32 lg:w-40 lg:h-40 rounded-full mb-4 mx-auto object-cover">
                     @else
@@ -245,7 +245,6 @@
 
                     <form method="POST" action="{{ route('admin.profile.avatar') }}" enctype="multipart/form-data">
                         @csrf
-                        @method('PUT')
 
                         <div class="mb-4">
                             <input type="file" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('avatar') border-red-500 @enderror"
@@ -256,7 +255,7 @@
                             @enderror
                         </div>
 
-                        @if($user->avatar)
+                        @if($user->profile_picture)
                             <div class="mb-4">
                                 <div class="flex items-center justify-center">
                                     <input class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="checkbox" name="remove_avatar" id="remove_avatar">

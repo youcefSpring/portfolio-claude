@@ -26,6 +26,21 @@ class User extends Authenticatable
         'profile_picture',
         'contact_info',
         'cv_file_path',
+        'title',
+        'department',
+        'phone',
+        'office_location',
+        'specializations',
+        'website',
+        'linkedin',
+        'twitter',
+        'github',
+        'orcid',
+        'google_scholar',
+        'researchgate',
+        'facebook',
+        'instagram',
+        'youtube',
     ];
 
     /**
