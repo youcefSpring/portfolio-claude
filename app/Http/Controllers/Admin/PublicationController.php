@@ -18,7 +18,7 @@ class PublicationController extends Controller
 
     public function index(Request $request): View
     {
-        $query = Publication::with(['user', 'tags']);
+        $query = Publication::with(['user']);
 
         if ($request->has('search') && $request->search) {
             $query->where('title', 'like', '%' . $request->search . '%')
@@ -59,9 +59,9 @@ class PublicationController extends Controller
 
         $publication = Publication::create($data);
 
-        if ($request->has('tag_ids') && $request->tag_ids) {
-            $publication->tags()->attach($request->tag_ids);
-        }
+        // if ($request->has('tag_ids') && $request->tag_ids) {
+        //     $publication->tags()->attach($request->tag_ids);
+        // }
 
         return redirect()->route('admin.publications.index')
             ->with('success', 'Publication created successfully.');
@@ -98,9 +98,9 @@ class PublicationController extends Controller
 
         $publication->update($data);
 
-        if ($request->has('tag_ids')) {
-            $publication->tags()->sync($request->tag_ids ?: []);
-        }
+        // if ($request->has('tag_ids')) {
+        //     $publication->tags()->sync($request->tag_ids ?: []);
+        // }
 
         return redirect()->route('admin.publications.index')
             ->with('success', 'Publication updated successfully.');
@@ -114,7 +114,7 @@ class PublicationController extends Controller
             Storage::disk('local')->delete($publication->publication_file_path);
         }
 
-        $publication->tags()->detach();
+        // $publication->tags()->detach();
         $publication->delete();
 
         return redirect()->route('admin.publications.index')

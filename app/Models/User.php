@@ -108,6 +108,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the experiences for the user.
+     */
+    public function experiences(): HasMany
+    {
+        return $this->hasMany(Experience::class);
+    }
+
+    /**
+     * Get the education for the user.
+     */
+    public function education(): HasMany
+    {
+        return $this->hasMany(Education::class);
+    }
+
+    /**
      * Check if user is admin.
      */
     public function isAdmin(): bool

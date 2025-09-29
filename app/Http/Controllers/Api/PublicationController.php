@@ -11,7 +11,7 @@ class PublicationController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Publication::with(['user:id,name', 'tags:id,name,slug'])
+        $query = Publication::with(['user:id,name'])
             ->where('status', 'published');
 
         if ($request->has('type') && $request->type) {
@@ -46,7 +46,7 @@ class PublicationController extends Controller
             ], 404);
         }
 
-        $publication->load(['user:id,name', 'tags:id,name,slug,color']);
+        $publication->load(['user:id,name']);
 
         return response()->json([
             'success' => true,
@@ -56,7 +56,7 @@ class PublicationController extends Controller
 
     public function search(string $query): JsonResponse
     {
-        $publications = Publication::with(['user:id,name', 'tags:id,name,slug'])
+        $publications = Publication::with(['user:id,name'])
             ->where('status', 'published')
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")

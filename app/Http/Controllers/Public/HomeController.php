@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\Experience;
+use App\Models\Education;
+use App\Models\Skill;
+use App\Models\Publication;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -16,50 +20,44 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        // Get the main teacher/owner user
-        $teacher = User::where('role', 'teacher')->first();
+        // Get the main admin user (our profile)
+        $teacher = User::where('role', 'admin')
+            ->with(['experiences' => function($query) {
+                $query->latest()->take(3);
+            }, 'education' => function($query) {
+                $query->latest()->take(2);
+            }])
+            ->first();
 
-        // If no teacher user exists, create default data
-        if (!$teacher) {
-            $teacher = (object) [
-                'name' => 'Dr. Sarah Johnson',
-                'bio' => 'With over 15 years of academic experience, my research focuses on developing ethical AI systems, natural language processing, and computer vision applications. I\'m passionate about bridging the gap between theoretical computer science and practical applications that benefit society.',
-                'avatar' => null
-            ];
-        }
+        // Get featured projects
+        $featuredProjects = Project::where('status', 'featured')
+            ->latest()
+            ->limit(3)
+            ->get();
 
-        // Get featured projects (handle if Project model doesn't exist)
-        $featuredProjects = collect();
-        if (class_exists(Project::class)) {
-            try {
-                $featuredProjects = Project::featured()
-                    ->with('tags')
-                    ->latest()
-                    ->limit(3)
-                    ->get();
-            } catch (\Exception $e) {
-                $featuredProjects = collect();
-            }
-        }
+        // Get latest blog posts
+        $latestPosts = BlogPost::published()
+            ->latest()
+            ->limit(3)
+            ->get();
 
-        // Get latest blog posts (handle if BlogPost model doesn't exist)
-        $latestPosts = collect();
-        if (class_exists(BlogPost::class)) {
-            try {
-                $latestPosts = BlogPost::published()
-                    ->with('user')
-                    ->latest()
-                    ->limit(3)
-                    ->get();
-            } catch (\Exception $e) {
-                $latestPosts = collect();
-            }
-        }
+        // Get featured skills
+        $featuredSkills = Skill::where('is_featured', true)
+            ->ordered()
+            ->limit(8)
+            ->get();
 
-        return view('home', compact(
+        // Get latest publications
+        $latestPublications = Publication::latest()
+            ->limit(3)
+            ->get();
+
+        return view('welcome', compact(
             'teacher',
             'featuredProjects',
-            'latestPosts'
+            'latestPosts',
+            'featuredSkills',
+            'latestPublications'
         ));
     }
 

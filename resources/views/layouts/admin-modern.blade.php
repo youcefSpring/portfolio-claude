@@ -14,8 +14,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Vite CSS -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Compiled CSS -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    <!-- Axios CDN -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <style>
         :root {
@@ -319,6 +322,9 @@
             });
         });
     </script>
+
+    <!-- App JavaScript -->
+    <script src="{{ asset('js/app.js') }}"></script>
 
     @stack('scripts')
 </body>
