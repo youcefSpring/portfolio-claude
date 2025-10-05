@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
+use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\Extension\Table\TableExtension;
 
 class BlogPost extends Model
 {
@@ -150,5 +155,82 @@ class BlogPost extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Convert Markdown content to HTML.
+     */
+    public function getContentHtmlAttribute(): string
+    {
+        if (empty($this->content)) {
+            return '';
+        }
+
+        // Create a new environment with all the CommonMark parsers/renderers
+        $environment = new Environment([
+            'html_input' => 'escape',
+            'allow_unsafe_links' => false,
+            'max_nesting_level' => 100,
+        ]);
+
+        // Add the extensions
+        $environment->addExtension(new CommonMarkCoreExtension());
+        $environment->addExtension(new GithubFlavoredMarkdownExtension());
+        $environment->addExtension(new TableExtension());
+
+        // Create the converter
+        $converter = new CommonMarkConverter([], $environment);
+
+        return $converter->convert($this->content)->getContent();
+    }
+
+    /**
+     * Check if content is in Markdown format.
+     */
+    public function isMarkdown(): bool
+    {
+        // Simple check for common Markdown syntax
+        return preg_match('/^#|\*\*|__|\[.*\]\(.*\)|```/', $this->content) === 1;
+    }
+
+    /**
+     * Get rendered content (HTML or Markdown converted to HTML).
+     */
+    public function getRenderedContentAttribute(): string
+    {
+        if ($this->isMarkdown()) {
+            return $this->content_html;
+        }
+
+        return $this->content;
+    }
+
+    /**
+     * Extract Table of Contents from Markdown content.
+     */
+    public function getTableOfContentsAttribute(): array
+    {
+        if (!$this->isMarkdown()) {
+            return [];
+        }
+
+        $toc = [];
+        $lines = explode("\n", $this->content);
+
+        foreach ($lines as $line) {
+            if (preg_match('/^(#{1,6})\s+(.+)$/', $line, $matches)) {
+                $level = strlen($matches[1]);
+                $title = trim($matches[2]);
+                $slug = Str::slug($title);
+
+                $toc[] = [
+                    'level' => $level,
+                    'title' => $title,
+                    'slug' => $slug,
+                ];
+            }
+        }
+
+        return $toc;
     }
 }

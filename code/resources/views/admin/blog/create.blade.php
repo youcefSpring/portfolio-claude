@@ -56,12 +56,78 @@
 
                         <!-- Content -->
                         <div>
-                            <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content <span class="text-red-500">*</span></label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('content') border-red-500 @enderror"
-                                      id="content" name="content" rows="15" required>{{ old('content') }}</textarea>
-                            @error('content')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="content" class="block text-sm font-medium text-gray-700">Content <span class="text-red-500">*</span></label>
+                                <div class="flex items-center space-x-2">
+                                    <button type="button" id="togglePreview" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                        <i class="fas fa-eye mr-1"></i>Preview
+                                    </button>
+                                    <span class="text-gray-400">|</span>
+                                    <span class="text-xs text-gray-500">Markdown supported</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <!-- Editor -->
+                                <div id="editorSection">
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors font-mono text-sm @error('content') border-red-500 @enderror"
+                                              id="content" name="content" rows="20" required placeholder="# Your Blog Post Title
+
+Write your content here using **Markdown** syntax.
+
+## Heading 2
+### Heading 3
+
+- List item 1
+- List item 2
+
+**Bold text** and *italic text*
+
+```javascript
+// Code blocks are supported
+console.log('Hello, world!');
+```
+
+> Blockquotes look great too!
+
+[Links](https://example.com) and images work as well.">{{ old('content') }}</textarea>
+
+                                    @error('content')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+
+                                    <!-- Markdown Help -->
+                                    <div class="mt-2 p-3 bg-blue-50 rounded-lg">
+                                        <p class="text-xs text-blue-800 font-medium mb-2">Markdown Quick Reference:</p>
+                                        <div class="grid grid-cols-2 gap-2 text-xs text-blue-700">
+                                            <div>
+                                                <code># Heading 1</code><br>
+                                                <code>## Heading 2</code><br>
+                                                <code>**Bold**</code><br>
+                                                <code>*Italic*</code>
+                                            </div>
+                                            <div>
+                                                <code>- List item</code><br>
+                                                <code>[Link](url)</code><br>
+                                                <code>`code`</code><br>
+                                                <code>```code block```</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Preview -->
+                                <div id="previewSection" class="hidden lg:block">
+                                    <div class="border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[500px]">
+                                        <div class="text-sm text-gray-500 mb-3 pb-3 border-b border-gray-200">
+                                            <i class="fas fa-eye mr-1"></i>Live Preview
+                                        </div>
+                                        <div id="markdownPreview" class="markdown-content">
+                                            <p class="text-gray-400 italic">Start typing to see preview...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -161,7 +227,105 @@
     </div>
 </form>
 
+@section('styles')
+<style>
+    /* Markdown Content Styling for Preview */
+    .markdown-content {
+        line-height: 1.7;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+
+    .markdown-content h1, .markdown-content h2, .markdown-content h3,
+    .markdown-content h4, .markdown-content h5, .markdown-content h6 {
+        font-weight: 600;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        color: #1f2937;
+    }
+
+    .markdown-content h1 { font-size: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.25rem; }
+    .markdown-content h2 { font-size: 1.25rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.125rem; }
+    .markdown-content h3 { font-size: 1.125rem; }
+    .markdown-content h4 { font-size: 1rem; }
+
+    .markdown-content p { margin-bottom: 1rem; }
+    .markdown-content a { color: #2563eb; text-decoration: underline; }
+    .markdown-content ul, .markdown-content ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+    .markdown-content li { margin-bottom: 0.25rem; }
+
+    .markdown-content blockquote {
+        border-left: 3px solid #2563eb;
+        background: #eff6ff;
+        margin: 1rem 0;
+        padding: 0.75rem 1rem;
+        border-radius: 0 4px 4px 0;
+        font-style: italic;
+    }
+
+    .markdown-content pre {
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin: 1rem 0;
+        font-size: 0.875rem;
+    }
+
+    .markdown-content code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.875rem;
+    }
+
+    .markdown-content p code, .markdown-content li code {
+        background: #f1f5f9;
+        color: #db2777;
+        padding: 0.125rem 0.25rem;
+        border-radius: 2px;
+    }
+
+    .markdown-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.875rem;
+    }
+
+    .markdown-content th, .markdown-content td {
+        padding: 0.5rem;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .markdown-content th {
+        background: #f8fafc;
+        font-weight: 600;
+    }
+
+    .markdown-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 1rem 0;
+    }
+
+    .markdown-content hr {
+        border: none;
+        height: 1px;
+        background: #e5e7eb;
+        margin: 2rem 0;
+    }
+
+    .markdown-content strong { font-weight: 700; }
+    .markdown-content em { font-style: italic; }
+</style>
+@endsection
+
 @section('scripts')
+<!-- Include marked.js for client-side Markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Auto-generate slug from title
@@ -180,6 +344,119 @@ document.addEventListener('DOMContentLoaded', function() {
 
     slugInput.addEventListener('input', function() {
         this.dataset.manual = 'true';
+    });
+
+    // Markdown preview functionality
+    const contentTextarea = document.getElementById('content');
+    const previewDiv = document.getElementById('markdownPreview');
+    const togglePreviewBtn = document.getElementById('togglePreview');
+    const previewSection = document.getElementById('previewSection');
+    let previewVisible = window.innerWidth >= 1024; // Show by default on large screens
+
+    // Configure marked options
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        headerIds: true,
+        sanitize: false,
+        smartLists: true,
+        smartypants: true,
+        tables: true
+    });
+
+    function updatePreview() {
+        const markdownText = contentTextarea.value;
+        if (markdownText.trim()) {
+            try {
+                const html = marked.parse(markdownText);
+                previewDiv.innerHTML = html;
+            } catch (error) {
+                previewDiv.innerHTML = '<p class="text-red-500">Error parsing Markdown: ' + error.message + '</p>';
+            }
+        } else {
+            previewDiv.innerHTML = '<p class="text-gray-400 italic">Start typing to see preview...</p>';
+        }
+    }
+
+    function togglePreview() {
+        previewVisible = !previewVisible;
+
+        if (previewVisible) {
+            previewSection.classList.remove('hidden');
+            togglePreviewBtn.innerHTML = '<i class="fas fa-eye-slash mr-1"></i>Hide Preview';
+            updatePreview();
+        } else {
+            previewSection.classList.add('hidden');
+            togglePreviewBtn.innerHTML = '<i class="fas fa-eye mr-1"></i>Show Preview';
+        }
+    }
+
+    // Event listeners
+    contentTextarea.addEventListener('input', function() {
+        if (previewVisible) {
+            updatePreview();
+        }
+    });
+
+    togglePreviewBtn.addEventListener('click', togglePreview);
+
+    // Initialize preview on large screens
+    if (previewVisible) {
+        updatePreview();
+    }
+
+    // Handle responsive behavior
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024 && !previewVisible) {
+            // Show preview on large screens
+            previewVisible = true;
+            previewSection.classList.remove('hidden');
+            togglePreviewBtn.innerHTML = '<i class="fas fa-eye-slash mr-1"></i>Hide Preview';
+            updatePreview();
+        } else if (window.innerWidth < 1024 && previewVisible) {
+            // Hide preview on small screens
+            previewVisible = false;
+            previewSection.classList.add('hidden');
+            togglePreviewBtn.innerHTML = '<i class="fas fa-eye mr-1"></i>Show Preview';
+        }
+    });
+
+    // Add helpful keyboard shortcuts
+    contentTextarea.addEventListener('keydown', function(e) {
+        // Tab key for indentation
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 2;
+        }
+
+        // Ctrl/Cmd + B for bold
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const selectedText = this.value.substring(start, end);
+            const replacement = '**' + selectedText + '**';
+            this.value = this.value.substring(0, start) + replacement + this.value.substring(end);
+            this.selectionStart = start + 2;
+            this.selectionEnd = start + 2 + selectedText.length;
+            updatePreview();
+        }
+
+        // Ctrl/Cmd + I for italic
+        if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const selectedText = this.value.substring(start, end);
+            const replacement = '*' + selectedText + '*';
+            this.value = this.value.substring(0, start) + replacement + this.value.substring(end);
+            this.selectionStart = start + 1;
+            this.selectionEnd = start + 1 + selectedText.length;
+            updatePreview();
+        }
     });
 });
 </script>

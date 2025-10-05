@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\BlogPost;
+use App\Models\Project;
+use App\Models\Publication;
+use App\Models\Skill;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +21,45 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        $teacher = User::where('role', 'admin')
+            ->with(['experiences' => function($query) {
+                $query->latest()->take(3);
+            }, 'education' => function($query) {
+                $query->latest()->take(2);
+            }])
+            ->first();
+
+        // Get featured projects
+        $featuredProjects = Project::where('status', 'featured')
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        // Get latest blog posts
+        $latestPosts = BlogPost::published()
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        // Get featured skills
+        $featuredSkills = Skill::where('is_featured', true)
+            ->ordered()
+            ->limit(8)
+            ->get();
+
+        // Get latest publications
+        $latestPublications = Publication::latest()
+            ->limit(3)
+            ->get();
+
+        return view('auth.login', compact(
+            'teacher',
+            'featuredProjects',
+            'latestPosts',
+            'featuredSkills',
+            'latestPublications'
+        ));
+
     }
 
     /**

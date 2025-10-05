@@ -25,7 +25,7 @@ class ProfileDataSeeder extends Seeder
             ['email' => 'y.brnabderrezak@univ-boumerdes.dz'],
             [
             'name' => 'Benabderrezak Youcef',
-            'email' => 'y.brnabderrezak@univ-boumerdes.dzm',
+            'email' => 'y.brnabderrezak@univ-boumerdes.dz',
             'password' => Hash::make('Youcef1997@@@'),
             'role' => 'admin',
             'status' => 'active',

@@ -87,9 +87,9 @@
 
                     <div class="card-body p-5">
                         <!-- Post Content -->
-                        <div class="post-content">
+                        <div class="post-content markdown-content">
                             @if($post->content ?? false)
-                                {!! $post->content !!}
+                                {!! $post->rendered_content !!}
                             @else
                                 <p>This is where the blog post content would appear. The content is stored in the database and would be displayed here when available.</p>
 
@@ -237,12 +237,19 @@
                     </div>
                     <div class="card-body">
                         <div id="table-of-contents">
-                            <!-- This would be dynamically generated from the post content -->
-                            <ul class="list-unstyled">
-                                <li><a href="#introduction" class="text-decoration-none">Introduction</a></li>
-                                <li><a href="#main-content" class="text-decoration-none">Main Content</a></li>
-                                <li><a href="#conclusion" class="text-decoration-none">Conclusion</a></li>
-                            </ul>
+                            @if($post->table_of_contents && count($post->table_of_contents) > 0)
+                                <ul class="list-unstyled">
+                                    @foreach($post->table_of_contents as $item)
+                                        <li class="mb-2" style="margin-left: {{ ($item['level'] - 1) * 1 }}rem;">
+                                            <a href="#{{ $item['slug'] }}" class="text-decoration-none">
+                                                {{ $item['title'] }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-muted small">No headings found in this post.</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -348,4 +355,367 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('styles')
+<style>
+    /* Markdown Content Styling */
+    .markdown-content {
+        line-height: 1.8;
+        color: #374151;
+        font-size: 1.1rem;
+    }
+
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3,
+    .markdown-content h4,
+    .markdown-content h5,
+    .markdown-content h6 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
+        position: relative;
+        scroll-margin-top: 5rem;
+    }
+
+    .markdown-content h1 {
+        font-size: 2.25rem;
+        border-bottom: 3px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+    }
+
+    .markdown-content h2 {
+        font-size: 1.875rem;
+        border-bottom: 2px solid #f3f4f6;
+        padding-bottom: 0.25rem;
+    }
+
+    .markdown-content h3 {
+        font-size: 1.5rem;
+        color: #374151;
+    }
+
+    .markdown-content h4 {
+        font-size: 1.25rem;
+        color: #4b5563;
+    }
+
+    .markdown-content h5 {
+        font-size: 1.125rem;
+        color: #6b7280;
+    }
+
+    .markdown-content h6 {
+        font-size: 1rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Paragraphs */
+    .markdown-content p {
+        margin-bottom: 1.5rem;
+        text-align: justify;
+    }
+
+    /* Links */
+    .markdown-content a {
+        color: #2563eb;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .markdown-content a:hover {
+        color: #1d4ed8;
+        border-bottom-color: #1d4ed8;
+    }
+
+    /* Lists */
+    .markdown-content ul,
+    .markdown-content ol {
+        margin-bottom: 1.5rem;
+        padding-left: 2rem;
+    }
+
+    .markdown-content li {
+        margin-bottom: 0.5rem;
+    }
+
+    .markdown-content ul li {
+        list-style-type: disc;
+    }
+
+    .markdown-content ol li {
+        list-style-type: decimal;
+    }
+
+    /* Blockquotes */
+    .markdown-content blockquote {
+        border-left: 4px solid #2563eb;
+        background: linear-gradient(90deg, #eff6ff 0%, #f8fafc 100%);
+        margin: 2rem 0;
+        padding: 1.5rem 2rem;
+        border-radius: 0 8px 8px 0;
+        font-style: italic;
+        position: relative;
+    }
+
+    .markdown-content blockquote::before {
+        content: '"';
+        font-size: 4rem;
+        color: #93c5fd;
+        position: absolute;
+        top: -0.5rem;
+        left: 1rem;
+        font-family: Georgia, serif;
+    }
+
+    .markdown-content blockquote p {
+        margin-bottom: 0;
+        font-size: 1.125rem;
+        color: #374151;
+    }
+
+    /* Code Blocks */
+    .markdown-content pre {
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 2rem 0;
+        border: 1px solid #374151;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .markdown-content code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9rem;
+    }
+
+    .markdown-content pre code {
+        background: none;
+        padding: 0;
+        border: none;
+        color: inherit;
+    }
+
+    .markdown-content p code,
+    .markdown-content li code {
+        background: #f1f5f9;
+        color: #db2777;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Tables */
+    .markdown-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .markdown-content th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #d1d5db;
+    }
+
+    .markdown-content tr:hover {
+        background: #f9fafb;
+    }
+
+    .markdown-content tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Images */
+    .markdown-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 2rem 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Horizontal Rules */
+    .markdown-content hr {
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, #e5e7eb, #d1d5db, #e5e7eb);
+        margin: 3rem 0;
+        border-radius: 1px;
+    }
+
+    /* Strong and Emphasis */
+    .markdown-content strong {
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .markdown-content em {
+        font-style: italic;
+        color: #4b5563;
+    }
+
+    /* Task Lists */
+    .markdown-content input[type="checkbox"] {
+        margin-right: 0.5rem;
+        transform: scale(1.2);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .markdown-content {
+            font-size: 1rem;
+        }
+
+        .markdown-content h1 {
+            font-size: 1.875rem;
+        }
+
+        .markdown-content h2 {
+            font-size: 1.5rem;
+        }
+
+        .markdown-content h3 {
+            font-size: 1.25rem;
+        }
+
+        .markdown-content blockquote {
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .markdown-content pre {
+            padding: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .markdown-content table {
+            font-size: 0.875rem;
+        }
+
+        .markdown-content th,
+        .markdown-content td {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+
+    /* Table of Contents Enhancement */
+    #table-of-contents a {
+        color: #6b7280;
+        transition: all 0.2s ease;
+        padding: 0.25rem 0;
+        display: block;
+        border-radius: 4px;
+        padding-left: 0.5rem;
+    }
+
+    #table-of-contents a:hover {
+        color: #2563eb;
+        background: #eff6ff;
+        padding-left: 1rem;
+    }
+
+    /* Code Syntax Highlighting Enhancement */
+    .markdown-content pre {
+        position: relative;
+    }
+
+    .markdown-content pre::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24);
+        border-radius: 8px 8px 0 0;
+    }
+
+    /* Improved Spacing */
+    .markdown-content > *:first-child {
+        margin-top: 0;
+    }
+
+    .markdown-content > *:last-child {
+        margin-bottom: 0;
+    }
+</style>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add IDs to headings for Table of Contents linking
+        const headings = document.querySelectorAll('.markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4, .markdown-content h5, .markdown-content h6');
+
+        headings.forEach(function(heading) {
+            if (!heading.id) {
+                // Create slug from heading text
+                const slug = heading.textContent
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .trim();
+                heading.id = slug;
+            }
+        });
+
+        // Smooth scrolling for table of contents links
+        const tocLinks = document.querySelectorAll('#table-of-contents a[href^="#"]');
+        tocLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active section in table of contents
+        window.addEventListener('scroll', function() {
+            let current = '';
+            headings.forEach(function(heading) {
+                const rect = heading.getBoundingClientRect();
+                if (rect.top <= 100) {
+                    current = heading.id;
+                }
+            });
+
+            tocLinks.forEach(function(link) {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
 @endsection
