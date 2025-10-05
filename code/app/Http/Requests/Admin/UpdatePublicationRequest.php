@@ -21,10 +21,11 @@ class UpdatePublicationRequest extends FormRequest
         $publicationId = $this->route('publication')->id;
 
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'type' => ['required', 'in:article,book,conference_paper,thesis,report,other'],
-            'journal' => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:500'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'type' => ['required', 'in:journal,conference,book,book_chapter,thesis,report,preprint'],
+            'journal_name' => ['nullable', 'string', 'max:255'],
+            'venue' => ['nullable', 'string', 'max:255'],
             'volume' => ['nullable', 'string', 'max:50'],
             'issue' => ['nullable', 'string', 'max:50'],
             'pages' => ['nullable', 'string', 'max:50'],
@@ -34,12 +35,11 @@ class UpdatePublicationRequest extends FormRequest
             'authors' => ['required', 'string', 'max:500'],
             'abstract' => ['nullable', 'string', 'max:2000'],
             'keywords' => ['nullable', 'string', 'max:500'],
-            'external_url' => ['nullable', 'url', 'max:500'],
-            'citation_count' => ['nullable', 'integer', 'min:0'],
-            'status' => ['required', 'in:draft,published,archived'],
+            'url' => ['nullable', 'url', 'max:500'],
+            'status' => ['required', 'in:published,accepted,under_review,in_preparation'],
             'publication_file' => ['nullable', 'file', 'mimes:pdf', 'max:20480'],
-            'tag_ids' => ['nullable', 'array'],
-            'tag_ids.*' => ['exists:tags,id']
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['exists:tags,id']
         ];
     }
 

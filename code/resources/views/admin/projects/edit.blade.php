@@ -61,9 +61,8 @@
                                 <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                                 <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('status') border-red-500 @enderror" id="status" name="status">
                                     <option value="active" {{ old('status', $project->status) === 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="completed" {{ old('status', $project->status) === 'completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="on-hold" {{ old('status', $project->status) === 'on-hold' ? 'selected' : '' }}>On Hold</option>
-                                    <option value="cancelled" {{ old('status', $project->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    <option value="featured" {{ old('status', $project->status) === 'featured' ? 'selected' : '' }}>Featured</option>
+                                    <option value="archived" {{ old('status', $project->status) === 'archived' ? 'selected' : '' }}>Archived</option>
                                 </select>
                                 @error('status')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

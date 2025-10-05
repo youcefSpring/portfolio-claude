@@ -306,6 +306,36 @@
                 </div>
             </div>
 
+            <!-- Tags -->
+            @if(isset($tags) && $tags->count() > 0)
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                <div class="p-4 lg:p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-tags mr-2 text-blue-600"></i>
+                        Tags
+                    </h2>
+                </div>
+                <div class="p-4 lg:p-6">
+                    <div class="space-y-2 max-h-48 overflow-y-auto">
+                        @foreach($tags as $tag)
+                            <div class="flex items-center">
+                                <input type="checkbox"
+                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                       id="tag_{{ $tag->id }}"
+                                       name="tags[]"
+                                       value="{{ $tag->id }}"
+                                       {{ in_array($tag->id, old('tags', [])) ? 'checked' : '' }}>
+                                <label class="ml-2 text-sm text-gray-700" for="tag_{{ $tag->id }}">
+                                    {{ $tag->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <p class="text-gray-500 text-xs mt-3">Select tags to categorize this publication</p>
+                </div>
+            </div>
+            @endif
+
             <!-- Citation Preview -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
                 <div class="p-4 lg:p-6 border-b border-gray-100">

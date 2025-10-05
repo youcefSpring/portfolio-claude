@@ -52,6 +52,12 @@ class PublicationController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id();
 
+        // Map form field names to database field names
+        if (isset($data['journal_name'])) {
+            $data['journal'] = $data['journal_name'];
+            unset($data['journal_name']);
+        }
+
         if ($request->hasFile('publication_file')) {
             $data['publication_file_path'] = $request->file('publication_file')
                 ->store('publications', 'local');
@@ -86,6 +92,12 @@ class PublicationController extends Controller
     public function update(UpdatePublicationRequest $request, Publication $publication): RedirectResponse
     {
         $data = $request->validated();
+
+        // Map form field names to database field names
+        if (isset($data['journal_name'])) {
+            $data['journal'] = $data['journal_name'];
+            unset($data['journal_name']);
+        }
 
         if ($request->hasFile('publication_file')) {
             if ($publication->publication_file_path) {
