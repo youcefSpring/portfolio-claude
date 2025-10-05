@@ -14,7 +14,7 @@ class PublicationController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Publication::with('user');
+        $query = Publication::with(['user', 'tags']);
 
         // Filter by year
         if ($request->has('year') && $request->year) {
@@ -58,7 +58,7 @@ class PublicationController extends Controller
      */
     public function show(Publication $publication): View
     {
-        $publication->load('user');
+        $publication->load(['user', 'tags']);
 
         return view('public.publications.show', compact('publication'));
     }

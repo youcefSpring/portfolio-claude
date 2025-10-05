@@ -2336,6 +2336,8 @@ namespace App\Models {
      * @property int $id
      * @property-read mixed $citation
      * @property-read \App\Models\User $user
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
+     * @property-read int|null $tags_count
      * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereTitle($value)

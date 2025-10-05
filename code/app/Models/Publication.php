@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Publication extends Model
 {
@@ -35,9 +36,13 @@ class Publication extends Model
         return $this->belongsTo(User::class);
     }
 
-    // public function tags(){
-    //     return $this->belongsToMany(Tag::class);
-    // }
+    /**
+     * Get all of the tags for the publication.
+     */
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
     /**
      * Scope a query to order publications by year descending.
      */
