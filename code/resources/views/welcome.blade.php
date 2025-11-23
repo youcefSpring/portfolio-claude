@@ -149,7 +149,24 @@
                         <h3 class="text-2xl font-semibold text-slate-900 mb-6">Quick Stats</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-slate-50 rounded-lg p-6 text-center">
-                                <div class="text-3xl font-bold text-purple-600">4+</div>
+                                <div class="text-3xl font-bold text-purple-600">
+                                    @if($teacher && $teacher->experiences->count() > 0)
+                                        @php
+                                            $totalYears = 0;
+                                            foreach($teacher->experiences as $exp) {
+                                                if($exp->is_current) {
+                                                    $endDate = now();
+                                                } else {
+                                                    $endDate = $exp->end_date;
+                                                }
+                                                $totalYears += $exp->start_date->diffInYears($endDate);
+                                            }
+                                            echo $totalYears;
+                                        @endphp+
+                                    @else
+                                        0+
+                                    @endif
+                                </div>
                                 <div class="text-slate-600">Years Experience</div>
                             </div>
                             <div class="bg-slate-50 rounded-lg p-6 text-center">
@@ -219,6 +236,31 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 @foreach($featuredSkills as $skill)
                     <div class="bg-slate-50 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                        @if($skill->simple_icon)
+                            {{-- Priority 1: Simple Icons from CDN --}}
+                            <div class="flex justify-center mb-4">
+                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ $skill->simple_icon }}.svg"
+                                     alt="{{ $skill->name }} Logo"
+                                     class="w-16 h-16 object-contain"
+                                     onerror="this.style.display='none'; this.parentElement.nextElementSibling?.classList.remove('hidden');">
+                            </div>
+                        @elseif($skill->logo)
+                            {{-- Priority 2: Uploaded custom logo --}}
+                            <div class="flex justify-center mb-4">
+                                <img src="{{ asset('storage/' . $skill->logo) }}"
+                                     alt="{{ $skill->name }} Logo"
+                                     class="w-16 h-16 object-contain"
+                                     onerror="this.style.display='none'; this.parentElement.nextElementSibling?.classList.remove('hidden');">
+                            </div>
+                        @endif
+
+                        @if($skill->icon)
+                            {{-- Priority 3: Font Awesome icon (fallback or standalone) --}}
+                            <div class="flex justify-center mb-4 {{ ($skill->simple_icon || $skill->logo) ? 'hidden' : '' }}">
+                                <i class="fas {{ $skill->icon }} text-4xl" style="color: {{ $skill->color ?? '#3B82F6' }}"></i>
+                            </div>
+                        @endif
+
                         <h3 class="font-semibold text-slate-900 mb-2">{{ $skill->name }}</h3>
                         <div class="text-sm text-slate-600 mb-3">{{ $skill->proficiency_label }}</div>
                         <div class="w-full bg-slate-200 rounded-full h-2">
@@ -246,6 +288,18 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($featuredProjects as $project)
                     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        @if($project->images && count($project->images) > 0)
+                            <div class="relative h-48 overflow-hidden bg-slate-100">
+                                <img src="{{ asset('storage/' . $project->images[0]) }}"
+                                     alt="{{ $project->title }}"
+                                     class="w-full h-full object-cover"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23e2e8f0%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%2364748b%22 font-family=%22sans-serif%22 font-size=%2218%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+                            </div>
+                        @else
+                            <div class="h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                                <i class="fas fa-project-diagram text-6xl text-purple-300"></i>
+                            </div>
+                        @endif
                         <div class="p-6">
                             <h3 class="text-xl font-semibold text-slate-900 mb-3">{{ $project->title }}</h3>
                             <p class="text-slate-700 mb-4">{{ Str::limit($project->description, 120) }}</p>
@@ -260,13 +314,13 @@
 
                             <div class="flex space-x-4">
                                 @if($project->live_demo_url)
-                                    <a href="{{ $project->live_demo_url }}" target="_blank"
+                                    <a href="{{ $project->live_demo_url }}" target="_blank" rel="noopener noreferrer"
                                        class="text-purple-600 hover:text-purple-800 text-sm font-medium">
                                         <i class="fas fa-external-link-alt mr-1"></i>Live Demo
                                     </a>
                                 @endif
                                 @if($project->source_code_url)
-                                    <a href="{{ $project->source_code_url }}" target="_blank"
+                                    <a href="{{ $project->source_code_url }}" target="_blank" rel="noopener noreferrer"
                                        class="text-slate-600 hover:text-slate-800 text-sm font-medium">
                                         <i class="fab fa-github mr-1"></i>Source Code
                                     </a>

@@ -1,0 +1,198 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    PORTFOLIO IMAGE FLOW - CURRENT (BROKEN)
+═══════════════════════════════════════════════════════════════════════════════
+
+UPLOAD FLOW (Admin Uploads Project Images):
+─────────────────────────────────────────────────────────────────────────────
+
+  Admin Form
+     ↓
+  POST /admin/projects/store
+     ↓
+  StoreProjectRequest Validation ✓ (accepts JPG, PNG, WebP, max 5MB)
+     ↓
+  ProjectController::store()
+     ↓
+  Image Storage ✗ PROBLEM
+  ├─ Code: $image->store('images/projects', 'local')
+  ├─ Disk: 'local' → storage_path('app/private')  ← WRONG DISK!
+  └─ Result: Files saved to /storage/app/private/images/projects/
+
+
+RETRIEVAL FLOW (Website Visitors View Images):
+─────────────────────────────────────────────────────────────────────────────
+
+  Database
+  ├─ Project images: ["images/projects/ABC123.jpg", ...]
+  └─ Status: active
+     ↓
+  Public ProjectController::index()
+     ↓
+  View: resources/views/projects/index.blade.php
+     ├─ Code: {{ asset('storage/' . $project->images[0]) }}
+     └─ Generated URL: /storage/images/projects/ABC123.jpg
+        ↓
+     Browser GET /storage/images/projects/ABC123.jpg
+        ↓
+     Symlink Resolution
+     ├─ Current (BROKEN): /public/storage → /home/charikatec/Desktop/Laravel Apps/teacher/storage/app/public
+     ├─ File Location: /code/storage/app/private/images/projects/ABC123.jpg
+     ├─ Symlink Target: Does not exist! ✗
+     └─ Result: 404 NOT FOUND ✗
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                    PORTFOLIO IMAGE FLOW - CORRECTED
+═══════════════════════════════════════════════════════════════════════════════
+
+UPLOAD FLOW (Admin Uploads Project Images):
+─────────────────────────────────────────────────────────────────────────────
+
+  Admin Form
+     ↓
+  POST /admin/projects/store
+     ↓
+  StoreProjectRequest Validation ✓
+     ↓
+  ProjectController::store()
+     ↓
+  Image Storage ✓ FIXED
+  ├─ Code: $image->store('images/projects', 'public')  ← CORRECT DISK
+  ├─ Disk: 'public' → storage_path('app/public')
+  └─ Result: Files saved to /storage/app/public/images/projects/
+     ↓
+  Database
+  └─ images: ["images/projects/ABC123.jpg", ...]
+
+
+RETRIEVAL FLOW (Website Visitors View Images):
+─────────────────────────────────────────────────────────────────────────────
+
+  Database
+  ├─ Project images: ["images/projects/ABC123.jpg", ...]
+  └─ Status: active
+     ↓
+  Public ProjectController::index()
+     ↓
+  View: resources/views/projects/index.blade.php
+     ├─ Code: {{ asset('storage/' . $project->images[0]) }}
+     └─ Generated URL: /storage/images/projects/ABC123.jpg
+        ↓
+     Browser GET /storage/images/projects/ABC123.jpg
+        ↓
+     Symlink Resolution ✓
+     ├─ Fixed: /public/storage → /storage/app/public
+     ├─ File Location: /code/storage/app/public/images/projects/ABC123.jpg
+     ├─ Symlink Found: Yes ✓
+     └─ Result: 200 OK - Image Displayed ✓
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          DIRECTORY STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+CURRENT (BROKEN):
+─────────────────
+
+/code/
+├── app/
+│   └── Http/Controllers/Admin/ProjectController.php
+│       ├── Line 78: store(..., 'local')     ✗ WRONG
+│       ├── Line 134: delete(..., 'local')   ✗ WRONG
+│       ├── Line 140: store(..., 'local')    ✗ WRONG
+│       └── Line 171: delete(..., 'local')   ✗ WRONG
+├── config/
+│   └── filesystems.php (config is OK, controller is wrong)
+├── resources/views/
+│   └── projects/
+│       ├── index.blade.php (views are OK)
+│       └── show.blade.php (views are OK)
+├── storage/
+│   └── app/
+│       ├── private/images/projects/
+│       │   ├── ABC123.jpg      ✗ Images here but NOT PUBLIC
+│       │   ├── XYZ789.jpg
+│       │   └── ...
+│       └── public/             ✗ EMPTY (should be used)
+└── public/
+    └── storage → /home/charikatec/Desktop/Laravel Apps/teacher/storage/app/public
+                                  ✗ BROKEN (wrong path, doesn't exist)
+
+
+CORRECTED:
+──────────
+
+/code/
+├── app/
+│   └── Http/Controllers/Admin/ProjectController.php
+│       ├── Line 78: store(..., 'public')    ✓ FIXED
+│       ├── Line 134: delete(..., 'public')  ✓ FIXED
+│       ├── Line 140: store(..., 'public')   ✓ FIXED
+│       └── Line 171: delete(..., 'public')  ✓ FIXED
+├── storage/
+│   └── app/
+│       ├── private/images/       (only for private data)
+│       └── public/images/projects/
+│           ├── ABC123.jpg        ✓ Images here (PUBLIC)
+│           ├── XYZ789.jpg
+│           └── ...
+└── public/
+    └── storage → ../storage/app/public  ✓ FIXED (relative symlink)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                             REQUEST-RESPONSE CYCLE
+═══════════════════════════════════════════════════════════════════════════════
+
+BROWSER REQUEST FOR IMAGE:
+──────────────────────────
+
+  GET /storage/images/projects/ABC123.jpg HTTP/1.1
+
+  Laravel Routes:
+  ├─ Not a defined route (static file)
+  ├─ Apache/Nginx serves from /public directory
+  ├─ Requests /public/storage/images/projects/ABC123.jpg
+  │  
+  └─ Symlink Resolution:
+     ├─ BROKEN: /public/storage → (invalid path) → 404
+     ├─ FIXED: /public/storage → /storage/app/public/
+     │        = /code/storage/app/public/images/projects/ABC123.jpg
+     └─ Result: File Found → 200 OK
+
+SERVER RESPONSE:
+─────────────
+
+  HTTP/1.1 200 OK            ✓ AFTER FIX
+  Content-Type: image/jpeg
+  Content-Length: 45234
+  
+  [Image Data...]
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         FILE PERMISSION CHECKS
+═══════════════════════════════════════════════════════════════════════════════
+
+Current Status:
+──────────────
+
+/code/storage/app/private/images/
+  ├─ Permissions: drwx------ (700) ✗ NO PUBLIC ACCESS
+  └─ Files not accessible via HTTP
+
+/code/storage/app/public/
+  ├─ Permissions: drwxrwxr-x (755) ✓ PUBLIC READABLE
+  └─ Should be used for images
+
+
+After Fix:
+──────────
+
+/code/storage/app/public/images/projects/
+  ├─ Permissions: drwxrwxr-x (755) ✓
+  ├─ Files readable by web server
+  └─ Accessible via HTTP ✓
+
+
+═══════════════════════════════════════════════════════════════════════════════

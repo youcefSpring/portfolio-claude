@@ -410,6 +410,82 @@
                 </div>
             </div>
 
+            <!-- Public Content Overview -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6 border-b border-gray-100">
+                    <h2 class="text-lg lg:text-xl font-semibold text-gray-900">Public Content</h2>
+                </div>
+                <div class="p-4 lg:p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <a href="{{ route('admin.skills.index') }}" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-star text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $publicContent['featured_skills'] ?? 0 }} Featured Skills</p>
+                                <p class="text-xs text-gray-600">Displayed on homepage</p>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.projects.index') }}" class="flex items-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-project-diagram text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $publicContent['featured_projects'] ?? 0 }} Featured Projects</p>
+                                <p class="text-xs text-gray-600">Showcased publicly</p>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.blog.index') }}" class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-blog text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $publicContent['published_blog_posts'] ?? 0 }} Published Posts</p>
+                                <p class="text-xs text-gray-600">Live on blog</p>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('admin.courses.index') }}" class="flex items-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-book text-orange-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $publicContent['active_courses'] ?? 0 }} Active Courses</p>
+                                <p class="text-xs text-gray-600">Available to students</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h3 class="font-medium text-gray-900 mb-3">Manage Public Content</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <a href="{{ route('admin.skills.index') }}" class="flex items-center p-3 bg-white border border-gray-200 hover:border-blue-300 rounded-lg transition-colors">
+                                <i class="fas fa-tools text-gray-400 mr-3"></i>
+                                <span class="text-sm font-medium text-gray-700">Manage Skills</span>
+                                <i class="fas fa-arrow-right ml-auto text-gray-400 text-xs"></i>
+                            </a>
+                            <a href="{{ route('admin.projects.index') }}" class="flex items-center p-3 bg-white border border-gray-200 hover:border-blue-300 rounded-lg transition-colors">
+                                <i class="fas fa-cog text-gray-400 mr-3"></i>
+                                <span class="text-sm font-medium text-gray-700">Manage Projects</span>
+                                <i class="fas fa-arrow-right ml-auto text-gray-400 text-xs"></i>
+                            </a>
+                            <a href="{{ route('admin.blog.index') }}" class="flex items-center p-3 bg-white border border-gray-200 hover:border-blue-300 rounded-lg transition-colors">
+                                <i class="fas fa-pen text-gray-400 mr-3"></i>
+                                <span class="text-sm font-medium text-gray-700">Manage Blog</span>
+                                <i class="fas fa-arrow-right ml-auto text-gray-400 text-xs"></i>
+                            </a>
+                            <a href="{{ route('admin.profile.edit') }}" class="flex items-center p-3 bg-white border border-gray-200 hover:border-blue-300 rounded-lg transition-colors">
+                                <i class="fas fa-user text-gray-400 mr-3"></i>
+                                <span class="text-sm font-medium text-gray-700">Edit Profile</span>
+                                <i class="fas fa-arrow-right ml-auto text-gray-400 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Quick Actions -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div class="p-4 lg:p-6 border-b border-gray-100">

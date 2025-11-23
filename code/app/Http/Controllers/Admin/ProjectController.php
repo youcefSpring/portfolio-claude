@@ -75,7 +75,7 @@ class ProjectController extends Controller
         if ($request->hasFile('images')) {
             $imagePaths = [];
             foreach ($request->file('images') as $image) {
-                $imagePaths[] = $image->store('images/projects', 'local');
+                $imagePaths[] = $image->store('images/projects', 'public');
             }
             $data['images'] = $imagePaths;
         }
@@ -131,13 +131,13 @@ class ProjectController extends Controller
             // Delete old images
             if ($project->images) {
                 foreach ($project->images as $image) {
-                    Storage::disk('local')->delete($image);
+                    Storage::disk('public')->delete($image);
                 }
             }
 
             $imagePaths = [];
             foreach ($request->file('images') as $image) {
-                $imagePaths[] = $image->store('images/projects', 'local');
+                $imagePaths[] = $image->store('images/projects', 'public');
             }
             $data['images'] = $imagePaths;
         }
@@ -168,7 +168,7 @@ class ProjectController extends Controller
         // Delete images
         if ($project->images) {
             foreach ($project->images as $image) {
-                Storage::disk('local')->delete($image);
+                Storage::disk('public')->delete($image);
             }
         }
 

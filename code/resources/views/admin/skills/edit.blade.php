@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.skills.update', $skill) }}">
+<form method="POST" action="{{ route('admin.skills.update', $skill) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -78,6 +78,55 @@
                                 @error('color')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
+                            </div>
+                        </div>
+
+                        <!-- Simple Icons (Recommended) -->
+                        <div>
+                            <label for="simple_icon" class="block text-sm font-medium text-gray-700 mb-2">Simple Icon <span class="text-green-600">(Recommended)</span></label>
+                            @if($skill->simple_icon)
+                                <div class="mb-3">
+                                    <p class="text-sm text-gray-700 mb-2">Current Simple Icon:</p>
+                                    <div class="w-32 h-32 border border-gray-300 rounded-lg p-4 flex items-center justify-center bg-white">
+                                        <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ $skill->simple_icon }}.svg" alt="{{ $skill->name }} Icon" class="w-16 h-16 object-contain">
+                                    </div>
+                                </div>
+                            @endif
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('simple_icon') border-red-500 @enderror"
+                                   id="simple_icon" name="simple_icon" value="{{ old('simple_icon', $skill->simple_icon) }}" placeholder="laravel">
+                            <p class="mt-1 text-sm text-gray-500">
+                                Enter the Simple Icons slug (e.g., laravel, php, javascript, react, vuedotjs).
+                                <a href="https://simpleicons.org/" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Browse icons</a>
+                            </p>
+                            @error('simple_icon')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <div id="simple-icon-preview" class="mt-3 hidden">
+                                <p class="text-sm text-gray-700 mb-2">New Preview:</p>
+                                <div class="w-32 h-32 border border-gray-300 rounded-lg p-4 flex items-center justify-center bg-white">
+                                    <img id="simple-icon-preview-img" src="" alt="Simple Icon Preview" class="w-16 h-16 object-contain">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OR Technology Logo Upload -->
+                        <div>
+                            <label for="logo" class="block text-sm font-medium text-gray-700 mb-2">OR Upload Custom Logo</label>
+                            @if($skill->logo)
+                                <div class="mb-3">
+                                    <p class="text-sm text-gray-700 mb-2">Current Custom Logo:</p>
+                                    <img src="{{ asset('storage/' . $skill->logo) }}" alt="{{ $skill->name }} Logo" class="w-32 h-32 object-contain border border-gray-300 rounded-lg p-2">
+                                </div>
+                            @endif
+                            <input type="file" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('logo') border-red-500 @enderror"
+                                   id="logo" name="logo" accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp">
+                            <p class="mt-1 text-sm text-gray-500">Upload a custom logo if not available in Simple Icons (JPEG, PNG, GIF, SVG, WEBP - Max 2MB)</p>
+                            @error('logo')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <div id="logo-preview" class="mt-3 hidden">
+                                <p class="text-sm text-gray-700 mb-2">New Custom Logo Preview:</p>
+                                <img id="logo-preview-img" src="" alt="Logo Preview" class="w-32 h-32 object-contain border border-gray-300 rounded-lg p-2">
                             </div>
                         </div>
                     </div>
@@ -228,6 +277,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
     slugInput.addEventListener('input', function() {
         this.dataset.manual = 'true';
+    });
+
+    // Simple Icon preview
+    const simpleIconInput = document.getElementById('simple_icon');
+    const simpleIconPreview = document.getElementById('simple-icon-preview');
+    const simpleIconPreviewImg = document.getElementById('simple-icon-preview-img');
+
+    simpleIconInput.addEventListener('input', function(e) {
+        const iconSlug = e.target.value.trim();
+        if (iconSlug) {
+            const iconUrl = `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${iconSlug}.svg`;
+            simpleIconPreviewImg.src = iconUrl;
+            simpleIconPreviewImg.onerror = function() {
+                simpleIconPreview.classList.add('hidden');
+            };
+            simpleIconPreviewImg.onload = function() {
+                simpleIconPreview.classList.remove('hidden');
+            };
+        } else {
+            simpleIconPreview.classList.add('hidden');
+        }
+    });
+
+    // Logo preview
+    const logoInput = document.getElementById('logo');
+    const logoPreview = document.getElementById('logo-preview');
+    const logoPreviewImg = document.getElementById('logo-preview-img');
+
+    logoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoPreviewImg.src = e.target.result;
+                logoPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            logoPreview.classList.add('hidden');
+        }
     });
 
     // Form submission handling

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class SkillController extends Controller
 {
@@ -68,6 +69,8 @@ class SkillController extends Controller
             'category' => 'required|in:programming,framework,database,tool,design,soft_skill,other',
             'proficiency_level' => 'required|integer|min:1|max:5',
             'icon' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg,webp|max:2048',
+            'simple_icon' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:7|regex:/^#[a-fA-F0-9]{6}$/',
             'is_featured' => 'boolean',
             'years_experience' => 'nullable|integer|min:0|max:50',
@@ -80,6 +83,11 @@ class SkillController extends Controller
 
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $validated['logo'] = $request->file('logo')->store('images/skills', 'public');
+        }
 
         Skill::create($validated);
 
@@ -125,6 +133,8 @@ class SkillController extends Controller
             'category' => 'required|in:programming,framework,database,tool,design,soft_skill,other',
             'proficiency_level' => 'required|integer|min:1|max:5',
             'icon' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg,webp|max:2048',
+            'simple_icon' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:7|regex:/^#[a-fA-F0-9]{6}$/',
             'is_featured' => 'boolean',
             'years_experience' => 'nullable|integer|min:0|max:50',
@@ -138,6 +148,15 @@ class SkillController extends Controller
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['sort_order'] = $validated['sort_order'] ?? $skill->sort_order;
 
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($skill->logo) {
+                Storage::disk('public')->delete($skill->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('images/skills', 'public');
+        }
+
         $skill->update($validated);
 
         return redirect()->route('admin.skills.index')
@@ -149,6 +168,11 @@ class SkillController extends Controller
      */
     public function destroy(Skill $skill)
     {
+        // Delete logo if exists
+        if ($skill->logo) {
+            Storage::disk('public')->delete($skill->logo);
+        }
+
         $skill->delete();
 
         return redirect()->route('admin.skills.index')

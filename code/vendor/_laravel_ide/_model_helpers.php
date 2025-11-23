@@ -5,16 +5,6 @@ namespace App\Models {
     /**
      * App\Models\BlogPost
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property mixed $status
-     * @property \Illuminate\Support\Carbon|null $published_at
-     * @property string|null $featured_image
-     * @property string $content
-     * @property string $slug
-     * @property string $title
-     * @property int $user_id
-     * @property int $id
      * @property-read mixed $excerpt
      * @property-read mixed $reading_time
      * @property-read mixed $content_html
@@ -23,16 +13,6 @@ namespace App\Models {
      * @property-read \App\Models\User $user
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
      * @property-read int|null $tags_count
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereSlug($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereContent($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereFeaturedImage($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost wherePublishedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost published()
      * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost draft()
      * @method static \Illuminate\Database\Eloquent\Builder<BlogPost>|BlogPost archived()
@@ -340,27 +320,7 @@ namespace App\Models {
     /**
      * App\Models\ContactMessage
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $user_agent
-     * @property string|null $ip_address
-     * @property mixed $status
-     * @property string $message
-     * @property string $subject
-     * @property string $email
-     * @property string $name
-     * @property int $id
      * @property-read mixed $abbreviated_message
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereEmail($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereSubject($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereMessage($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereIpAddress($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereUserAgent($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage unread()
      * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage read()
      * @method static \Illuminate\Database\Eloquent\Builder<ContactMessage>|ContactMessage replied()
@@ -669,29 +629,7 @@ namespace App\Models {
     /**
      * App\Models\Course
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property mixed $status
-     * @property \Illuminate\Support\Carbon|null $end_date
-     * @property \Illuminate\Support\Carbon|null $start_date
-     * @property string|null $syllabus_file_path
-     * @property string|null $description
-     * @property string $slug
-     * @property string $title
-     * @property int $user_id
-     * @property int $id
      * @property-read \App\Models\User $user
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereSlug($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereDescription($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereSyllabusFilePath($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereStartDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereEndDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course active()
      * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course archived()
      * @method static \Illuminate\Database\Eloquent\Builder<Course>|Course newModelQuery()
@@ -997,28 +935,8 @@ namespace App\Models {
     /**
      * App\Models\Credential
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $credential_url
-     * @property string|null $certificate_file_path
-     * @property \Illuminate\Support\Carbon|null $expiry_date
-     * @property \Illuminate\Support\Carbon|null $issue_date
-     * @property string $issuing_organization
-     * @property string $title
-     * @property int $user_id
-     * @property int $id
      * @property-read mixed $status
      * @property-read \App\Models\User $user
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereIssuingOrganization($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereIssueDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereExpiryDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereCertificateFilePath($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereCredentialUrl($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential latest()
      * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential valid()
      * @method static \Illuminate\Database\Eloquent\Builder<Credential>|Credential expired()
@@ -1325,33 +1243,7 @@ namespace App\Models {
     /**
      * App\Models\Education
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $grade
-     * @property string|null $location
-     * @property boolean $is_current
-     * @property \Illuminate\Support\Carbon|null $end_date
-     * @property \Illuminate\Support\Carbon $start_date
-     * @property string|null $description
-     * @property string $institution
-     * @property string $field_of_study
-     * @property string $degree
-     * @property int $user_id
-     * @property int $id
      * @property-read \App\Models\User $user
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereDegree($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereFieldOfStudy($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereInstitution($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereDescription($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereStartDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereEndDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereIsCurrent($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereLocation($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereGrade($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education latest()
      * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Education>|Education newQuery()
@@ -1656,31 +1548,7 @@ namespace App\Models {
     /**
      * App\Models\Experience
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $employment_type
-     * @property string|null $location
-     * @property boolean $is_current
-     * @property \Illuminate\Support\Carbon|null $end_date
-     * @property \Illuminate\Support\Carbon $start_date
-     * @property string $description
-     * @property string $company
-     * @property string $position
-     * @property int $user_id
-     * @property int $id
      * @property-read \App\Models\User $user
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience wherePosition($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereCompany($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereDescription($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereStartDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereEndDate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereIsCurrent($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereLocation($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereEmploymentType($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience latest()
      * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Experience>|Experience newQuery()
@@ -1985,18 +1853,17 @@ namespace App\Models {
     /**
      * App\Models\Project
      *
+     * @property mixed $status
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property mixed $status
-     * @property \Illuminate\Support\Carbon|null $date_completed
-     * @property string|null $technologies_used
-     * @property string|null $source_code_url
-     * @property string|null $live_demo_url
-     * @property array|null $images
-     * @property string $description
-     * @property string $slug
-     * @property string $title
-     * @property int $user_id
+     * @property string|null $submitted_at
+     * @property string|null $started_at
+     * @property mixed $type
+     * @property int|null $co_supervisor_id
+     * @property int $supervisor_id
+     * @property int|null $external_project_id
+     * @property int|null $subject_id
+     * @property int $team_id
      * @property int $id
      * @property-read \App\Models\User $user
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
@@ -2004,18 +1871,17 @@ namespace App\Models {
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Skill> $skills
      * @property-read int|null $skills_count
      * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereSlug($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereDescription($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereImages($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereLiveDemoUrl($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereSourceCodeUrl($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereTechnologiesUsed($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereDateCompleted($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereTeamId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereSubjectId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereExternalProjectId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereSupervisorId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereCoSupervisorId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereStartedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereSubmittedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project active()
      * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project featured()
      * @method static \Illuminate\Database\Eloquent\Builder<Project>|Project archived()
@@ -2322,34 +2188,10 @@ namespace App\Models {
     /**
      * App\Models\Publication
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $external_link
-     * @property string|null $publication_file_path
-     * @property string|null $abstract
-     * @property int $year
-     * @property string|null $conference
-     * @property string|null $journal
-     * @property string $authors
-     * @property string $title
-     * @property int $user_id
-     * @property int $id
      * @property-read mixed $citation
      * @property-read \App\Models\User $user
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
      * @property-read int|null $tags_count
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereAuthors($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereJournal($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereConference($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereYear($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereAbstract($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication wherePublicationFilePath($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereExternalLink($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication latest()
      * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication byYear()
      * @method static \Illuminate\Database\Eloquent\Builder<Publication>|Publication byJournal()
@@ -2656,36 +2498,10 @@ namespace App\Models {
     /**
      * App\Models\Skill
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property integer $sort_order
-     * @property integer|null $years_experience
-     * @property boolean $is_featured
-     * @property string|null $color
-     * @property string|null $icon
-     * @property integer $proficiency_level
-     * @property mixed $category
-     * @property string|null $description
-     * @property string $slug
-     * @property string $name
-     * @property int $id
      * @property-read mixed $proficiency_label
      * @property-read mixed $category_label
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Project> $projects
      * @property-read int|null $projects_count
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereSlug($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereDescription($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereCategory($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereProficiencyLevel($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereIcon($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereColor($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereIsFeatured($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereYearsExperience($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereSortOrder($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill featured()
      * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill byCategory()
      * @method static \Illuminate\Database\Eloquent\Builder<Skill>|Skill ordered()
@@ -2992,22 +2808,12 @@ namespace App\Models {
     /**
      * App\Models\Tag
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $slug
-     * @property string $name
-     * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Project> $projects
      * @property-read int|null $projects_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BlogPost> $blogPosts
      * @property-read int|null $blogPosts_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Publication> $publications
      * @property-read int|null $publications_count
-     * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag whereSlug($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag byName()
      * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Tag>|Tag newQuery()
@@ -3312,33 +3118,31 @@ namespace App\Models {
     /**
      * App\Models\User
      *
-     * @property string|null $specializations
-     * @property string|null $office_location
-     * @property string|null $phone
-     * @property string|null $department
-     * @property string|null $title
-     * @property string|null $youtube
-     * @property string|null $instagram
-     * @property string|null $facebook
-     * @property string|null $researchgate
-     * @property string|null $google_scholar
-     * @property string|null $orcid
-     * @property string|null $github
-     * @property string|null $twitter
-     * @property string|null $linkedin
-     * @property string|null $website
+     * @property string|null $groupe
+     * @property string|null $section
+     * @property string|null $date_naissance
+     * @property string|null $annee_bac
+     * @property string|null $numero_inscription
+     * @property int|null $speciality_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string|null $remember_token
-     * @property string|null $cv_file_path
-     * @property array|null $contact_info
-     * @property string|null $profile_picture
-     * @property string|null $bio
-     * @property mixed $status
+     * @property string $locale
+     * @property bool $profile_completed
+     * @property string|null $academic_year
+     * @property string $status
      * @property mixed $role
+     * @property mixed $grade
+     * @property string|null $speciality
+     * @property string|null $department
+     * @property string|null $phone
+     * @property string|null $matricule
      * @property string $password
+     * @property string|null $last_login_at
      * @property \Illuminate\Support\Carbon|null $email_verified_at
      * @property string $email
+     * @property string|null $last_name
+     * @property string|null $first_name
      * @property string $name
      * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Course> $courses
@@ -3359,33 +3163,31 @@ namespace App\Models {
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereFirstName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLastName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerifiedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLastLoginAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereMatricule($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePhone($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereDepartment($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSpeciality($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereGrade($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRole($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereBio($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereProfilePicture($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereContactInfo($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCvFilePath($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAcademicYear($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereProfileCompleted($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLocale($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRememberToken($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereWebsite($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLinkedin($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTwitter($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereGithub($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereOrcid($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereGoogleScholar($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereResearchgate($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereFacebook($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereInstagram($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereYoutube($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereDepartment($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePhone($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereOfficeLocation($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSpecializations($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSpecialityId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereNumeroInscription($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAnneeBac($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereDateNaissance($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSection($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereGroupe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User query()

@@ -148,51 +148,59 @@
                         <!-- URL Links -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="project_url" class="block text-sm font-medium text-gray-700 mb-2">Live Demo URL</label>
+                                <label for="live_demo_url" class="block text-sm font-medium text-gray-700 mb-2">Live Demo URL</label>
                                 <input type="url"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('project_url') border-red-500 @enderror"
-                                       id="project_url"
-                                       name="project_url"
-                                       value="{{ old('project_url', $project->project_url) }}">
-                                @error('project_url')
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('live_demo_url') border-red-500 @enderror"
+                                       id="live_demo_url"
+                                       name="live_demo_url"
+                                       value="{{ old('live_demo_url', $project->live_demo_url) }}">
+                                @error('live_demo_url')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div>
-                                <label for="repository_url" class="block text-sm font-medium text-gray-700 mb-2">Repository URL</label>
+                                <label for="source_code_url" class="block text-sm font-medium text-gray-700 mb-2">Repository URL</label>
                                 <input type="url"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('repository_url') border-red-500 @enderror"
-                                       id="repository_url"
-                                       name="repository_url"
-                                       value="{{ old('repository_url', $project->repository_url) }}">
-                                @error('repository_url')
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('source_code_url') border-red-500 @enderror"
+                                       id="source_code_url"
+                                       name="source_code_url"
+                                       value="{{ old('source_code_url', $project->source_code_url) }}">
+                                @error('source_code_url')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
-                        <!-- Featured Image -->
+                        <!-- Project Images -->
                         <div>
-                            <label for="featured_image" class="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
-                            @if($project->featured_image)
+                            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">Project Images</label>
+                            @if($project->images && count($project->images) > 0)
                                 <div class="mb-4">
-                                    <img src="{{ Storage::url($project->featured_image) }}"
-                                         alt="Current featured image"
-                                         class="rounded-lg border border-gray-200"
-                                         style="max-width: 200px; max-height: 150px;">
-                                    <p class="mt-2 text-sm text-gray-500">Current image (will be replaced if new image is uploaded)</p>
+                                    <p class="text-sm font-medium text-gray-700 mb-2">Current Images:</p>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        @foreach($project->images as $image)
+                                            <img src="{{ asset('storage/' . $image) }}"
+                                                 alt="Project image"
+                                                 class="rounded-lg border border-gray-200 w-full h-32 object-cover">
+                                        @endforeach
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-500">Current images (will be replaced if new images are uploaded)</p>
                                 </div>
                             @endif
                             <input type="file"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('featured_image') border-red-500 @enderror"
-                                   id="featured_image"
-                                   name="featured_image"
-                                   accept="image/*">
-                            @error('featured_image')
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('images') border-red-500 @enderror @error('images.*') border-red-500 @enderror"
+                                   id="images"
+                                   name="images[]"
+                                   accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp"
+                                   multiple>
+                            @error('images')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                            <p class="mt-1 text-sm text-gray-500">Upload a new screenshot or mockup to replace the current one (max 5MB)</p>
+                            @error('images.*')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-sm text-gray-500">Upload new screenshots or mockups to replace current images (JPG, PNG, GIF, SVG, WebP - max 5MB each, up to 10 images). The first image will be used as the preview on the welcome page.</p>
                         </div>
 
                         <!-- Detailed Content -->

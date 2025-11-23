@@ -53,6 +53,14 @@ class DashboardController extends Controller
             'active_courses' => Course::active()->count(),
         ];
 
+        // Public content overview
+        $publicContent = [
+            'featured_skills' => \App\Models\Skill::where('is_featured', true)->count(),
+            'featured_projects' => Project::featured()->count(),
+            'published_blog_posts' => BlogPost::published()->count(),
+            'active_courses' => Course::where('status', 'active')->count(),
+        ];
+
         // Build recent activity from actual data
         $recentActivity = collect();
 
@@ -96,7 +104,8 @@ class DashboardController extends Controller
             'recentPosts',
             'recentMessages',
             'contentStatus',
-            'recentActivity'
+            'recentActivity',
+            'publicContent'
         ));
     }
 }

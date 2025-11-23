@@ -147,13 +147,13 @@
                     Quick Actions
                 </h3>
                 <div class="flex flex-wrap gap-3">
-                    @if($project->project_url)
-                        <a href="{{ $project->project_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    @if($project->live_demo_url)
+                        <a href="{{ $project->live_demo_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                             <i class="fas fa-external-link-alt mr-2"></i>Live Demo
                         </a>
                     @endif
-                    @if($project->repository_url)
-                        <a href="{{ $project->repository_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                    @if($project->source_code_url)
+                        <a href="{{ $project->source_code_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
                             <i class="fab fa-github mr-2"></i>Source Code
                         </a>
                     @endif
@@ -268,7 +268,7 @@
         </div>
 
         <!-- Project Links -->
-        @if($project->project_url || $project->repository_url)
+        @if($project->live_demo_url || $project->source_code_url)
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div class="p-4 lg:p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -277,14 +277,14 @@
                     </h3>
 
                     <div class="space-y-3">
-                        @if($project->project_url)
-                            <a href="{{ $project->project_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        @if($project->live_demo_url)
+                            <a href="{{ $project->live_demo_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                                 <i class="fas fa-external-link-alt mr-2"></i>Live Demo
                             </a>
                         @endif
 
-                        @if($project->repository_url)
-                            <a href="{{ $project->repository_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                        @if($project->source_code_url)
+                            <a href="{{ $project->source_code_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
                                 <i class="fab fa-github mr-2"></i>Source Code
                             </a>
                         @endif

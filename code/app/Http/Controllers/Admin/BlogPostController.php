@@ -78,48 +78,48 @@ class BlogPostController extends Controller
     /**
      * Display the specified blog post.
      */
-    public function show(BlogPost $blogPost): View
+    public function show(BlogPost $blog): View
     {
-        $blogPost->load(['user', 'tags']);
-        return view('admin.blog.show', compact('blogPost'));
+        $blog->load(['user', 'tags']);
+        return view('admin.blog.show', compact('blog'));
     }
 
     /**
      * Show the form for editing the specified blog post.
      */
-    public function edit(BlogPost $blogPost): View
+    public function edit(BlogPost $blog): View
     {
-        //$this->authorize('update', $blogPost);
+        //$this->authorize('update', $blog);
 
         $tags = Tag::orderBy('name')->get();
-        $blogPost->load('tags');
+        $blog->load('tags');
 
-        return view('admin.blog.edit', compact('blogPost', 'tags'));
+        return view('admin.blog.edit', compact('blog', 'tags'));
     }
 
     /**
      * Update the specified blog post.
      */
-    public function update(StoreBlogPostRequest $request, BlogPost $blogPost): RedirectResponse
+    public function update(StoreBlogPostRequest $request, BlogPost $blog): RedirectResponse
     {
         $data = $request->validated();
 
         // Handle featured image upload
         if ($request->hasFile('featured_image')) {
             // Delete old image
-            if ($blogPost->featured_image) {
-                Storage::disk('local')->delete($blogPost->featured_image);
+            if ($blog->featured_image) {
+                Storage::disk('local')->delete($blog->featured_image);
             }
 
             $data['featured_image'] = $request->file('featured_image')
                 ->store('images/blog', 'local');
         }
 
-        $blogPost->update($data);
+        $blog->update($data);
 
         // Sync tags
         if ($request->has('tag_ids')) {
-            $blogPost->tags()->sync($request->tag_ids ?: []);
+            $blog->tags()->sync($request->tag_ids ?: []);
         }
 
         return redirect()->route('admin.blog.index')
@@ -129,19 +129,19 @@ class BlogPostController extends Controller
     /**
      * Remove the specified blog post.
      */
-    public function destroy(BlogPost $blogPost): RedirectResponse
+    public function destroy(BlogPost $blog): RedirectResponse
     {
-        //$this->authorize('delete', $blogPost);
+        //$this->authorize('delete', $blog);
 
         // Delete featured image
-        if ($blogPost->featured_image) {
-            Storage::disk('local')->delete($blogPost->featured_image);
+        if ($blog->featured_image) {
+            Storage::disk('local')->delete($blog->featured_image);
         }
 
         // Detach tags
-        $blogPost->tags()->detach();
+        $blog->tags()->detach();
 
-        $blogPost->delete();
+        $blog->delete();
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog post deleted successfully.');

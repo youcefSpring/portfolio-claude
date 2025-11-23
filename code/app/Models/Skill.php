@@ -15,6 +15,8 @@ class Skill extends Model
         'category',
         'proficiency_level',
         'icon',
+        'logo',
+        'simple_icon',
         'color',
         'is_featured',
         'years_experience',
