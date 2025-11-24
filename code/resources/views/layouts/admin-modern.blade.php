@@ -9,13 +9,25 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Compiled CSS -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
     <!-- Axios CDN -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -187,6 +199,12 @@
                                 {{ $stats['unread_messages'] }}
                             </span>
                         @endif
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.job-offers.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.job-offers.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
+                        <i class="fas fa-briefcase w-6 text-center mr-3"></i>
+                        <span class="menu-text">Job Offers</span>
                     </a>
                 </li>
                 <li>

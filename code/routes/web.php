@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\BlogPostController as AdminBlogPostController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\JobApplicationController;
+use App\Http\Controllers\Admin\JobOfferController as AdminJobOfferController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\SkillController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ContactController;
 use App\Http\Controllers\Public\CourseController;
 use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\JobOfferController;
 use App\Http\Controllers\Public\ProjectController;
 use App\Http\Controllers\Public\PublicationController;
 use Illuminate\Support\Facades\Route;
@@ -67,6 +70,13 @@ Route::name('contact.')->group(function () {
     Route::post('/contact', [ContactController::class, 'store'])->name('store');
 });
 
+// Job Offers / Work With Me
+Route::name('jobs.')->group(function () {
+    Route::get('/jobs', [JobOfferController::class, 'index'])->name('index');
+    Route::get('/jobs/{jobOffer:slug}', [JobOfferController::class, 'show'])->name('show');
+    Route::post('/jobs/{jobOffer:slug}/apply', [JobOfferController::class, 'apply'])->name('apply');
+});
+
 
 // =========================================================================
 // AUTHENTICATION ROUTES
@@ -120,6 +130,24 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Skills Management
     Route::resource('skills', SkillController::class);
+
+    // Job Offers Management
+    Route::resource('job-offers', AdminJobOfferController::class);
+    Route::post('/job-offers/{jobOffer}/toggle-featured', [AdminJobOfferController::class, 'toggleFeatured'])->name('job-offers.toggle-featured');
+    Route::put('/job-offers/{jobOffer}/status', [AdminJobOfferController::class, 'updateStatus'])->name('job-offers.update-status');
+
+    // Job Applications Management
+    Route::name('job-applications.')->group(function () {
+        Route::get('/job-applications', [JobApplicationController::class, 'index'])->name('index');
+        Route::get('/job-applications/{jobApplication}', [JobApplicationController::class, 'show'])->name('show');
+        Route::put('/job-applications/{jobApplication}/status', [JobApplicationController::class, 'updateStatus'])->name('update-status');
+        Route::get('/job-applications/{jobApplication}/download-cv', [JobApplicationController::class, 'downloadCv'])->name('download-cv');
+        Route::delete('/job-applications/{jobApplication}', [JobApplicationController::class, 'destroy'])->name('destroy');
+
+        // Bulk Operations
+        Route::post('/job-applications/bulk-status', [JobApplicationController::class, 'bulkUpdateStatus'])->name('bulk-status');
+        Route::delete('/job-applications/bulk-delete', [JobApplicationController::class, 'bulkDelete'])->name('bulk-delete');
+    });
 
     // Profile Management
     Route::name('profile.')->group(function () {

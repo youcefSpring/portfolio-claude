@@ -124,6 +124,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the job offers for the user.
+     */
+    public function jobOffers(): HasMany
+    {
+        return $this->hasMany(JobOffer::class);
+    }
+
+    /**
      * Check if user is admin.
      */
     public function isAdmin(): bool

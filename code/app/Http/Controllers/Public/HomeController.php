@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Models\JobOffer;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Experience;
@@ -29,10 +30,13 @@ class HomeController extends Controller
             }])
             ->first();
 
-        // Get featured projects
-        $featuredProjects = Project::where('status', 'featured')
-            ->latest()
-            ->limit(3)
+        // Get ALL active projects with tags and skills
+        $projects = Project::with(['tags', 'skills'])
+            ->where(function($query) {
+                $query->where('status', 'active')
+                      ->orWhere('status', 'featured');
+            })
+            ->orderBy('date_completed', 'desc')
             ->get();
 
         // Get latest blog posts
@@ -52,12 +56,22 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
+        // Get recent active job offers
+        $recentJobs = JobOffer::active()
+            ->published()
+            ->with('skills')
+            ->orderBy('featured', 'desc')
+            ->orderBy('published_at', 'desc')
+            ->limit(6)
+            ->get();
+
         return view('welcome', compact(
             'teacher',
-            'featuredProjects',
+            'projects',
             'latestPosts',
             'featuredSkills',
-            'latestPublications'
+            'latestPublications',
+            'recentJobs'
         ));
     }
 
