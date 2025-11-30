@@ -12,16 +12,7 @@
                     <h2 class="h3 mb-4">{{ $teacher->title ?? 'Reasearcher in cyber security & Web Developer' }}</h2>
                     <p class="lead mb-4">{{ $teacher->bio ?? 'Dedicated to advancing AI research and educating the next generation of computer scientists.' }}</p>
                     <a href="#contact" class="btn btn-primary me-3">Get In Touch</a>
-                    <a href="#research" class="btn btn-outline-light me-3">View Research</a>
-                    @auth
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-success">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-warning">
-                            <i class="fas fa-sign-in-alt me-2"></i>Admin Login
-                        </a>
-                    @endauth
+                    <a href="#research" class="btn btn-outline-light">View Research</a>
                 </div>
                 <div class="col-lg-4 text-center">
                     @if(isset($teacher) && $teacher->avatar)
@@ -97,7 +88,7 @@
                         <div class="card-icon">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <h4>Cyber Security & Machine Learning</h4>
+                        <h4>Machine Learning</h4>
                         <p>Developing novel algorithms for supervised and unsupervised learning with applications in Cyber Security</p>
                     </div>
                 </div>
