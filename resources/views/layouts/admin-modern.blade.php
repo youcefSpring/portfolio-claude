@@ -309,6 +309,17 @@
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Global delete confirmation
+            document.body.addEventListener('click', function(e) {
+                const deleteButton = e.target.closest('[data-confirm-delete]');
+                if (deleteButton) {
+                    const message = deleteButton.getAttribute('data-confirm-message') || 'Are you sure you want to delete this item?';
+                    if (!confirm(message)) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const overlay = document.querySelector('.overlay');

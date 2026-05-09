@@ -19,12 +19,22 @@ class Course extends Model
     protected $fillable = [
         'user_id',
         'title',
+        'course_code',
+        'credits',
         'slug',
         'description',
+        'objectives',
+        'prerequisites',
+        'syllabus_content',
+        'level',
+        'department',
         'syllabus_file_path',
+        'image',
         'start_date',
         'end_date',
         'status',
+        'is_active',
+        'is_featured',
     ];
 
     /**

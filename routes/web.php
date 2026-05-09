@@ -45,10 +45,10 @@ Route::name('courses.')->group(function () {
     Route::get('/courses/{course:slug}/syllabus', [CourseController::class, 'downloadSyllabus'])->name('syllabus');
 });
 
-// Projects Portfolio
+// Projects Portfolio (Disabled)
 Route::name('projects.')->group(function () {
-    Route::get('/projects', [ProjectController::class, 'index'])->name('index');
-    Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])->name('show');
+    // Route::get('/projects', [ProjectController::class, 'index'])->name('index');
+    // Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])->name('show');
 });
 
 // Publications
@@ -76,7 +76,6 @@ Route::name('jobs.')->group(function () {
     Route::get('/jobs/{jobOffer:slug}', [JobOfferController::class, 'show'])->name('show');
     Route::post('/jobs/{jobOffer:slug}/apply', [JobOfferController::class, 'apply'])->name('apply');
 });
-
 
 // =========================================================================
 // AUTHENTICATION ROUTES

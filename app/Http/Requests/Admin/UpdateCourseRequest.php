@@ -30,12 +30,22 @@ class UpdateCourseRequest extends FormRequest
 
         return [
             'title' => ['required', 'string', 'max:255'],
+            'course_code' => ['nullable', 'string', 'max:50'],
+            'credits' => ['nullable', 'integer', 'min:0', 'max:20'],
             'slug' => ['nullable', 'string', Rule::unique('courses')->ignore($courseId)],
-            'description' => ['nullable', 'string', 'max:5000'],
+            'description' => ['required', 'string', 'max:5000'],
+            'objectives' => ['nullable', 'string', 'max:5000'],
+            'prerequisites' => ['nullable', 'string', 'max:5000'],
+            'syllabus_content' => ['nullable', 'string', 'max:10000'],
+            'level' => ['nullable', 'string', 'in:undergraduate,graduate,phd,continuing_education'],
+            'department' => ['nullable', 'string', 'max:255'],
             'syllabus_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:5120'],
             'start_date' => ['nullable', 'date'],
-            'end_date' => ['nullable', 'date', 'after:start_date'],
-            'status' => ['required', 'in:active,archived'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'status' => ['nullable', 'in:active,archived'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_featured' => ['nullable', 'boolean'],
         ];
     }
 

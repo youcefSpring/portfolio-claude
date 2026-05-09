@@ -166,11 +166,7 @@
                                         <a href="{{ route('admin.projects.edit', $project) }}" class="text-green-600 hover:text-green-700 transition-colors" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        @if($project->slug)
-                                            <a href="{{ route('projects.show', $project->slug) }}" target="_blank" class="text-purple-600 hover:text-purple-700 transition-colors" title="View on Site">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        @endif
+                                        
                                         <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="inline">
                                             @csrf
                                             @method('DELETE')
@@ -260,11 +256,7 @@
                             <a href="{{ route('admin.projects.edit', $project) }}" class="text-green-600 hover:text-green-700 transition-colors text-sm font-medium">
                                 <i class="fas fa-edit mr-1"></i>Edit
                             </a>
-                            @if($project->slug)
-                                <a href="{{ route('projects.show', $project->slug) }}" target="_blank" class="text-purple-600 hover:text-purple-700 transition-colors text-sm font-medium">
-                                    <i class="fas fa-external-link-alt mr-1"></i>View on Site
-                                </a>
-                            @endif
+                            
                         </div>
                     </div>
                 @endforeach
