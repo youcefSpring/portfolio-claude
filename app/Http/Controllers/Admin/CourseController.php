@@ -60,7 +60,18 @@ class CourseController extends Controller
         // Handle syllabus file upload
         if ($request->hasFile('syllabus_file')) {
             $data['syllabus_file_path'] = $request->file('syllabus_file')
-                ->store('documents/syllabi', 'local');
+                ->store('documents/syllabi', 'public');
+        }
+
+        // Handle course image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')
+                ->store('images/courses', 'public');
+        }
+
+        // Map is_active to status if necessary
+        if ($request->has('is_active')) {
+            $data['status'] = $request->is_active ? 'active' : 'archived';
         }
 
         $course = Course::create($data);
@@ -98,16 +109,49 @@ class CourseController extends Controller
         if ($request->hasFile('syllabus_file')) {
             // Delete old file
             if ($course->syllabus_file_path) {
-                Storage::disk('local')->delete($course->syllabus_file_path);
+                Storage::disk('public')->delete($course->syllabus_file_path);
             }
 
             $data['syllabus_file_path'] = $request->file('syllabus_file')
-                ->store('documents/syllabi', 'local');
+                ->store('documents/syllabi', 'public');
+        }
+
+        // Handle syllabus removal
+        if ($request->has('remove_syllabus') && $course->syllabus_file_path) {
+            Storage::disk('public')->delete($course->syllabus_file_path);
+            $data['syllabus_file_path'] = null;
+        }
+
+        // Handle course image upload
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($course->image) {
+                Storage::disk('public')->delete($course->image);
+            }
+
+            $data['image'] = $request->file('image')
+                ->store('images/courses', 'public');
+        }
+
+        // Handle image removal
+        if ($request->has('remove_image') && $course->image) {
+            Storage::disk('public')->delete($course->image);
+            $data['image'] = null;
+        }
+
+        // Map checkboxes and radio buttons that might not be in validated() if they are null
+        $data['is_active'] = $request->has('is_active') ? (bool)$request->is_active : $course->is_active;
+        $data['is_featured'] = $request->has('is_featured');
+        $data['is_published'] = $request->has('is_published');
+
+        // Map is_active to status
+        if ($request->has('is_active')) {
+            $data['status'] = $request->is_active ? 'active' : 'archived';
         }
 
         $course->update($data);
 
-        return redirect()->route('admin.courses.index')
+        return redirect()->route('admin.courses.show', $course)
             ->with('success', 'Course updated successfully.');
     }
 
@@ -120,7 +164,12 @@ class CourseController extends Controller
 
         // Delete syllabus file
         if ($course->syllabus_file_path) {
-            Storage::disk('local')->delete($course->syllabus_file_path);
+            Storage::disk('public')->delete($course->syllabus_file_path);
+        }
+
+        // Delete image
+        if ($course->image) {
+            Storage::disk('public')->delete($course->image);
         }
 
         $course->delete();

@@ -150,7 +150,7 @@
                                         <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-700 transition-colors" title="Delete" onclick="return confirm('Are you sure you want to delete this course?')">
+                                            <button type="submit" class="text-red-600 hover:text-red-700 transition-colors" title="Delete" data-confirm-delete data-confirm-message="Are you sure you want to delete this course?">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

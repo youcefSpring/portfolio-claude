@@ -23,11 +23,20 @@ class Course extends Model
         'credits',
         'slug',
         'description',
+        'content',
         'objectives',
+        'learning_objectives',
         'prerequisites',
         'syllabus_content',
+        'assessment_methods',
+        'resources',
+        'meta_title',
+        'meta_description',
         'level',
         'department',
+        'semester',
+        'year',
+        'instructor',
         'syllabus_file_path',
         'image',
         'start_date',
@@ -35,6 +44,7 @@ class Course extends Model
         'status',
         'is_active',
         'is_featured',
+        'is_published',
     ];
 
     /**

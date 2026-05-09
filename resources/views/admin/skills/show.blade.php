@@ -109,7 +109,7 @@
                     <form method="POST" action="{{ route('admin.skills.destroy', $skill) }}" class="inline-block">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" data-confirm-delete>
+                        <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" data-confirm-delete data-confirm-message="Are you sure you want to delete this skill?">
                             <i class="fas fa-trash mr-2"></i>Delete Skill
                         </button>
                     </form>
