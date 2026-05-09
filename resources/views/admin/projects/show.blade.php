@@ -21,13 +21,26 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
     <div class="lg:col-span-2 space-y-6">
-        <!-- Project Image -->
-        @if($project->featured_image)
+        <!-- Project Images Gallery -->
+        @if($project->images && count($project->images) > 0)
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <img src="{{ Storage::url($project->featured_image) }}"
-                     alt="{{ $project->title }}"
-                     class="w-full h-auto"
-                     style="max-height: 400px; object-fit: cover;">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-images text-blue-600 mr-3"></i>
+                        Project Images ({{ count($project->images) }})
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        @foreach($project->images as $index => $image)
+                            <div class="relative group">
+                                <img src="{{ asset('storage/' . $image) }}"
+                                     alt="{{ $project->title }} - Image {{ $index + 1 }}"
+                                     class="w-full h-40 object-cover rounded-lg border border-gray-200"
+                                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2218%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+                                <span class="absolute top-2 left-2 px-2 py-1 bg-black/60 text-white text-xs rounded">{{ $index + 1 }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         @endif
 

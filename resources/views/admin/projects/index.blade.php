@@ -95,10 +95,14 @@
                             <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                 <td class="py-4 px-6">
                                     <div class="flex items-center">
-                                        @if($project->featured_image)
-                                            <img src="{{ Storage::url($project->featured_image) }}"
+                                        @if($project->images && count($project->images) > 0)
+                                            <img src="{{ asset('storage/' . $project->images[0]) }}"
                                                  alt="{{ $project->title }}"
-                                                 class="w-12 h-12 rounded-lg object-cover mr-3">
+                                                 class="w-12 h-12 rounded-lg object-cover mr-3"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <div class="w-12 h-12 bg-gray-100 rounded-lg items-center justify-center mr-3 hidden">
+                                                <i class="fas fa-project-diagram text-gray-400"></i>
+                                            </div>
                                         @else
                                             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
                                                 <i class="fas fa-project-diagram text-gray-400"></i>

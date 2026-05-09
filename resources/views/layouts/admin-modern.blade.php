@@ -346,10 +346,27 @@
             });
         });
     </script>
+    <script>
+        function previewImages(event) {
+            const container = document.getElementById('image-preview-container');
+            container.innerHTML = '';
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative';
+                    div.innerHTML = '<img src="' + e.target.result + '" class="rounded-lg border border-gray-200 w-full h-24 object-cover">';
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        }
+    </script>
 
     <!-- App JavaScript -->
     <script src="{{ asset('js/app.js') }}"></script>
 
-    @stack('scripts')
+    @yield('scripts')
 </body>
 </html>

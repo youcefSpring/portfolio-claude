@@ -20,9 +20,10 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.job-offers.update', $jobOffer) }}">
+<form method="POST" action="{{ route('admin.job-offers.update', $jobOffer) }}" enctype="multipart/form-data" id="update-form">
     @csrf
     @method('PUT')
+    <input type="hidden" name="form_type" value="update">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <div class="lg:col-span-2">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -132,6 +133,34 @@
 
                             <!-- Hidden inputs container for selected skills -->
                             <div id="skillsHiddenInputs"></div>
+                        </div>
+
+                        <!-- Images -->
+                        <div>
+                            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                            @if($jobOffer->images && count($jobOffer->images) > 0)
+                                <div class="mb-4">
+                                    <p class="text-sm font-medium text-gray-700 mb-2">Current Images:</p>
+                                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                                        @foreach($jobOffer->images as $image)
+                                            <div class="relative group">
+                                                <img src="{{ asset('storage/' . $image) }}"
+                                                     alt="Job offer image"
+                                                     class="rounded-lg border border-gray-200 w-full h-24 object-cover">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-500">Current images will be kept unless replaced.</p>
+                                </div>
+                            @endif
+                            <div id="image-preview-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-3"></div>
+                            <input type="file"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                   id="images"
+                                   name="images[]"
+                                   accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp"
+                                   multiple onchange="previewImages(event)">
+                            <p class="mt-1 text-sm text-gray-500">Upload screenshots or mockups (JPG, PNG, GIF, SVG, WebP - max 5MB each, up to 10 images).</p>
                         </div>
                     </div>
                 </div>
@@ -257,17 +286,20 @@
                     <p class="text-sm text-gray-600 mb-4">
                         Permanently delete this job offer and all related applications. This action cannot be undone.
                     </p>
-                    <form method="POST" action="{{ route('admin.job-offers.destroy', $jobOffer) }}" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" onclick="return confirm('Are you sure you want to delete this job offer? All applications will also be deleted.')">
-                            <i class="fas fa-trash mr-2"></i>Delete Job Offer
-                        </button>
-                    </form>
+                    <button type="button" 
+                            class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" 
+                            onclick="if(confirm('Are you sure you want to delete this job offer? All applications will also be deleted.')) document.getElementById('delete-job-offer-form').submit();">
+                        <i class="fas fa-trash mr-2"></i>Delete Job Offer
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+</form>
+
+<form id="delete-job-offer-form" method="POST" action="{{ route('admin.job-offers.destroy', $jobOffer) }}" class="hidden">
+    @csrf
+    @method('DELETE')
 </form>
 
 @section('scripts')
@@ -284,10 +316,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const tagsContainer = document.getElementById('selectedSkillsTags');
     const hiddenInputsContainer = document.getElementById('skillsHiddenInputs');
 
-    // Initialize with existing skills or old values if validation failed
-    const existingSkillIds = @json(old('skill_ids', $jobOffer->skills->pluck('id')->toArray()));
-    if (existingSkillIds.length > 0) {
-        existingSkillIds.forEach(skillId => {
+    // Initialize with existing values
+    const existingSkills = @json($jobOffer->skills->map(function($skill) {
+        return ['id' => $skill->id, 'name' => $skill->name];
+    }));
+    
+    if (existingSkills.length > 0) {
+        existingSkills.forEach(skill => {
+            addSkill(skill.id, skill.name);
+        });
+    }
+
+    // Initialize with old values if validation failed
+    const oldSkillIds = @json(old('skill_ids', []));
+    if (oldSkillIds.length > 0) {
+        // Clear existing if there are old values (to avoid duplicates from old input)
+        tagsContainer.innerHTML = '';
+        hiddenInputsContainer.innerHTML = '';
+        selectedSkills.clear();
+        
+        oldSkillIds.forEach(skillId => {
             const skill = allSkills.find(s => s.id == skillId);
             if (skill) {
                 addSkill(skill.id, skill.name);
@@ -305,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const filtered = allSkills.filter(skill =>
-            !selectedSkills.has(skill.id) &&
+            !selectedSkills.has(skill.id.toString()) &&
             skill.name.toLowerCase().includes(searchTerm)
         );
 
@@ -354,6 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add skill tag
     function addSkill(id, name) {
+        id = id.toString();
         if (selectedSkills.has(id)) return;
 
         selectedSkills.set(id, name);
@@ -381,6 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Remove skill tag (make it global so onclick can access it)
     window.removeSkill = function(id) {
+        id = id.toString();
         selectedSkills.delete(id);
 
         // Remove tag
@@ -393,22 +443,20 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Form submission handling
-    const form = document.querySelector('form:not([action*="destroy"])');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
+    const updateForm = document.getElementById('update-form');
+    updateForm.addEventListener('submit', function(e) {
+        const submitButton = updateForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
 
-            submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>Updating...';
-            submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>Updating...';
+        submitButton.disabled = true;
 
-            // Re-enable after 10 seconds as fallback
-            setTimeout(function() {
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            }, 10000);
-        });
-    }
+        // Re-enable after 10 seconds as fallback
+        setTimeout(function() {
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        }, 10000);
+    });
 });
 </script>
 @endsection

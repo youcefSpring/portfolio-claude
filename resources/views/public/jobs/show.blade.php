@@ -203,6 +203,26 @@
                         </div>
                     @endif
 
+                    <!-- Job Images Gallery -->
+                    @if($jobOffer->images && count($jobOffer->images) > 0)
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                            <h2 class="text-lg font-heading font-bold text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-images text-purple-600 mr-2"></i>Screenshots & Mockups
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach($jobOffer->images as $image)
+                                    <div class="relative group cursor-pointer overflow-hidden rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                                        <img src="{{ asset('storage/' . $image) }}" 
+                                             alt="Job offer detail image" 
+                                             class="w-full h-48 md:h-64 object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                             onclick="openModal('{{ asset('storage/' . $image) }}')">
+                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none"></div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Description -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                         <h2 class="text-lg font-heading font-bold text-gray-900 mb-4 flex items-center">
@@ -427,6 +447,14 @@
         </div>
     </section>
 
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/90 p-4" onclick="closeModal()">
+        <button class="absolute top-6 right-6 text-white text-3xl hover:text-gray-300 transition-colors" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="modalImage" src="" alt="Full size image" class="max-w-full max-h-full rounded shadow-2xl object-contain">
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-6 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -464,6 +492,26 @@
                 mobileMenu.classList.toggle('hidden');
             });
         }
+
+        // Image Modal logic
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = src;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
     </script>
 </body>
 </html>

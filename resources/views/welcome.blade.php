@@ -456,26 +456,43 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($recentJobs->take(3) as $job)
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:border-purple-300 hover:shadow-lg transition-all">
-                        @if($job->featured)
-                            <span class="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">
-                                Featured
-                            </span>
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-purple-300 hover:shadow-lg transition-all group">
+                        @if($job->images && count($job->images) > 0)
+                            <div class="relative h-48 overflow-hidden bg-slate-100">
+                                <img src="{{ asset('storage/' . $job->images[0]) }}"
+                                     alt="{{ $job->title }}"
+                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                @if($job->featured)
+                                    <div class="absolute top-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-md">
+                                        Featured
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="p-6 pb-0">
+                                @if($job->featured)
+                                    <span class="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">
+                                        Featured
+                                    </span>
+                                @endif
+                            </div>
                         @endif
 
-                        <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading">{{ $job->title }}</h3>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading group-hover:text-purple-600 transition-colors">{{ $job->title }}</h3>
 
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">{{ ucfirst($job->project_type) }}</span>
-                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{{ ucfirst(str_replace('-', ' ', $job->location_type)) }}</span>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">{{ ucfirst($job->project_type) }}</span>
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{{ ucfirst(str_replace('-', ' ', $job->location_type)) }}</span>
+                            </div>
+
+                            <p class="text-slate-600 mb-4 text-sm leading-relaxed">{{ Str::limit($job->description, 120) }}</p>
+
+                            <a href="{{ route('jobs.show', $job) }}" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold text-sm transition-colors">
+                                View Details
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
                         </div>
-
-                        <p class="text-slate-600 mb-4 text-sm leading-relaxed">{{ Str::limit($job->description, 120) }}</p>
-
-                        <a href="{{ route('jobs.show', $job) }}" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold text-sm transition-colors">
-                            View Details
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
                     </div>
                 @endforeach
             </div>

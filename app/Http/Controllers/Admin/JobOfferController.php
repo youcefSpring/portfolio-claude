@@ -22,8 +22,8 @@ class JobOfferController extends Controller
 
         // Search functionality
         if ($request->has('search') && $request->search) {
-            $query->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%')
+                ->orWhere('description', 'like', '%'.$request->search.'%');
         }
 
         // Filter by status
@@ -47,6 +47,7 @@ class JobOfferController extends Controller
     public function create(): View
     {
         $skills = Skill::ordered()->get();
+
         return view('admin.job-offers.create', compact('skills'));
     }
 
@@ -58,8 +59,17 @@ class JobOfferController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id();
 
+        // Handle image uploads
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('images/job-offers', 'public');
+            }
+            $data['images'] = $imagePaths;
+        }
+
         // Set published_at if not provided
-        if (!isset($data['published_at'])) {
+        if (! isset($data['published_at'])) {
             $data['published_at'] = now();
         }
 
@@ -103,6 +113,7 @@ class JobOfferController extends Controller
     {
         $skills = Skill::ordered()->get();
         $jobOffer->load('skills');
+
         return view('admin.job-offers.edit', compact('jobOffer', 'skills'));
     }
 
@@ -113,6 +124,18 @@ class JobOfferController extends Controller
     {
         $data = $request->validated();
 
+        // Handle image uploads
+        if ($request->hasFile('images')) {
+            $imagePaths = $jobOffer->images ?? [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('images/job-offers', 'public');
+            }
+            $data['images'] = $imagePaths;
+        }
+
+        // Handle featured checkbox
+        $data['featured'] = $request->has('featured');
+
         $jobOffer->update($data);
 
         // Sync skills
@@ -122,14 +145,14 @@ class JobOfferController extends Controller
             $jobOffer->skills()->detach();
         }
 
-        return redirect()->route('admin.job-offers.index')
+        return redirect()->route('admin.job-offers.show', $jobOffer)
             ->with('success', 'Job offer updated successfully.');
     }
 
     /**
      * Remove the specified job offer.
      */
-    public function destroy(JobOffer $jobOffer): RedirectResponse
+    public function destroy(Request $request, JobOffer $jobOffer): RedirectResponse
     {
         $jobOffer->delete();
 
@@ -143,7 +166,7 @@ class JobOfferController extends Controller
     public function toggleFeatured(JobOffer $jobOffer): RedirectResponse
     {
         $jobOffer->update([
-            'featured' => !$jobOffer->featured
+            'featured' => ! $jobOffer->featured,
         ]);
 
         $status = $jobOffer->featured ? 'featured' : 'unfeatured';
@@ -157,11 +180,11 @@ class JobOfferController extends Controller
     public function updateStatus(Request $request, JobOffer $jobOffer): RedirectResponse
     {
         $request->validate([
-            'status' => 'required|in:active,filled,cancelled'
+            'status' => 'required|in:active,filled,cancelled',
         ]);
 
         $jobOffer->update([
-            'status' => $request->status
+            'status' => $request->status,
         ]);
 
         return back()->with('success', 'Job offer status updated successfully.');

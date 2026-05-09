@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.job-offers.store') }}">
+<form method="POST" action="{{ route('admin.job-offers.store') }}" enctype="multipart/form-data">
     @csrf
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <div class="lg:col-span-2">
@@ -128,6 +128,19 @@
 
                             <!-- Hidden inputs container for selected skills -->
                             <div id="skillsHiddenInputs"></div>
+                        </div>
+
+                        <!-- Images -->
+                        <div>
+                            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                            <div id="image-preview-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-3"></div>
+                            <input type="file"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                   id="images"
+                                   name="images[]"
+                                   accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp"
+                                   multiple onchange="previewImages(event)">
+                            <p class="mt-1 text-sm text-gray-500">Upload screenshots or mockups (JPG, PNG, GIF, SVG, WebP - max 5MB each, up to 10 images).</p>
                         </div>
                     </div>
                 </div>

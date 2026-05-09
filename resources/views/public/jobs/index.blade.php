@@ -213,13 +213,31 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     @foreach($jobOffers as $job)
                         <div class="bg-white rounded-xl shadow-sm hover:shadow-lg card-hover border border-gray-200 overflow-hidden group">
-                            <!-- Card Header with Featured Badge -->
-                            @if($job->featured)
-                                <div class="bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1.5">
-                                    <span class="text-white text-xs font-semibold flex items-center">
-                                        <i class="fas fa-star mr-1.5 text-xs"></i>Featured
-                                    </span>
+                            <!-- Job Image Thumbnail -->
+                            @if($job->images && count($job->images) > 0)
+                                <div class="relative h-48 overflow-hidden">
+                                    <img src="{{ asset('storage/' . $job->images[0]) }}" 
+                                         alt="{{ $job->title }}" 
+                                         class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                    
+                                    <!-- Featured Badge Overlaid on Image -->
+                                    @if($job->featured)
+                                        <div class="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1.5 rounded-bl-xl shadow-md">
+                                            <span class="text-white text-xs font-semibold flex items-center">
+                                                <i class="fas fa-star mr-1.5 text-xs"></i>Featured
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
+                            @else
+                                <!-- Featured Badge (Default) -->
+                                @if($job->featured)
+                                    <div class="bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1.5">
+                                        <span class="text-white text-xs font-semibold flex items-center">
+                                            <i class="fas fa-star mr-1.5 text-xs"></i>Featured
+                                        </span>
+                                    </div>
+                                @endif
                             @endif
 
                             <div class="p-4">

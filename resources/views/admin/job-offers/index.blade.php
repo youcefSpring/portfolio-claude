@@ -99,16 +99,31 @@
                         @foreach($jobOffers as $job)
                             <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                 <td class="py-4 px-6">
-                                    <div>
-                                        <div class="font-medium text-gray-900 flex items-center">
-                                            {{ $job->title }}
-                                            @if($job->featured)
-                                                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                    <i class="fas fa-star mr-1"></i>Featured
-                                                </span>
-                                            @endif
+                                    <div class="flex items-center">
+                                        @if($job->images && count($job->images) > 0)
+                                            <img src="{{ asset('storage/' . $job->images[0]) }}"
+                                                 alt="{{ $job->title }}"
+                                                 class="w-12 h-12 rounded-lg object-cover mr-3 flex-shrink-0"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <div class="w-12 h-12 bg-gray-100 rounded-lg items-center justify-center mr-3 hidden flex-shrink-0">
+                                                <i class="fas fa-briefcase text-gray-400"></i>
+                                            </div>
+                                        @else
+                                            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fas fa-briefcase text-gray-400"></i>
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <div class="font-medium text-gray-900 flex items-center">
+                                                {{ $job->title }}
+                                                @if($job->featured)
+                                                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                        <i class="fas fa-star mr-1"></i>Featured
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="text-gray-500 text-xs mt-1">{{ Str::limit($job->description, 60) }}</div>
                                         </div>
-                                        <div class="text-gray-500 text-xs mt-1">{{ Str::limit($job->description, 60) }}</div>
                                     </div>
                                 </td>
                                 <td class="py-4 px-3">

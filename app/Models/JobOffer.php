@@ -34,6 +34,7 @@ class JobOffer extends Model
         'status',
         'featured',
         'published_at',
+        'images',
     ];
 
     /**
@@ -49,6 +50,7 @@ class JobOffer extends Model
             'budget_max' => 'decimal:2',
             'featured' => 'boolean',
             'published_at' => 'datetime',
+            'images' => 'array',
         ];
     }
 
@@ -121,7 +123,7 @@ class JobOffer extends Model
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
+            ->where('published_at', '<=', now());
     }
 
     /**
@@ -162,15 +164,15 @@ class JobOffer extends Model
     public function getBudgetRangeAttribute(): string
     {
         if ($this->budget_min && $this->budget_max) {
-            return "$" . number_format($this->budget_min, 0) . " - $" . number_format($this->budget_max, 0);
+            return '$'.number_format($this->budget_min, 0).' - $'.number_format($this->budget_max, 0);
         }
 
         if ($this->budget_min) {
-            return "From $" . number_format($this->budget_min, 0);
+            return 'From $'.number_format($this->budget_min, 0);
         }
 
         if ($this->budget_max) {
-            return "Up to $" . number_format($this->budget_max, 0);
+            return 'Up to $'.number_format($this->budget_max, 0);
         }
 
         return 'Negotiable';

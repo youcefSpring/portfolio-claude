@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.skills.update', $skill) }}" enctype="multipart/form-data">
+<form method="POST" action="{{ route('admin.skills.update', $skill) }}" enctype="multipart/form-data" id="update-form">
     @csrf
     @method('PUT')
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -245,18 +245,22 @@
                     <p class="text-sm text-gray-600 mb-4">
                         Permanently delete this skill. This action cannot be undone.
                     </p>
-                    <form method="POST" action="{{ route('admin.skills.destroy', $skill) }}" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" data-confirm-delete>
-                            <i class="fas fa-trash mr-2"></i>Delete Skill
-                        </button>
-                    </form>
+                    <button type="button" 
+                            class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" 
+                            onclick="if(confirm('Are you sure you want to delete this skill?')) document.getElementById('delete-skill-form').submit();">
+                        <i class="fas fa-trash mr-2"></i>Delete Skill
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </form>
+
+<form id="delete-skill-form" method="POST" action="{{ route('admin.skills.destroy', $skill) }}" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
+@endsection
 
 @section('scripts')
 <script>
@@ -265,76 +269,83 @@ document.addEventListener('DOMContentLoaded', function() {
     const nameInput = document.getElementById('name');
     const slugInput = document.getElementById('slug');
 
-    nameInput.addEventListener('input', function() {
-        if (!slugInput.dataset.manual) {
-            const slug = this.value
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
-            slugInput.value = slug;
-        }
-    });
+    if (nameInput && slugInput) {
+        nameInput.addEventListener('input', function() {
+            if (!slugInput.dataset.manual) {
+                const slug = this.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                slugInput.value = slug;
+            }
+        });
 
-    slugInput.addEventListener('input', function() {
-        this.dataset.manual = 'true';
-    });
+        slugInput.addEventListener('input', function() {
+            this.dataset.manual = 'true';
+        });
+    }
 
     // Simple Icon preview
     const simpleIconInput = document.getElementById('simple_icon');
     const simpleIconPreview = document.getElementById('simple-icon-preview');
     const simpleIconPreviewImg = document.getElementById('simple-icon-preview-img');
 
-    simpleIconInput.addEventListener('input', function(e) {
-        const iconSlug = e.target.value.trim();
-        if (iconSlug) {
-            const iconUrl = `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${iconSlug}.svg`;
-            simpleIconPreviewImg.src = iconUrl;
-            simpleIconPreviewImg.onerror = function() {
+    if (simpleIconInput) {
+        simpleIconInput.addEventListener('input', function(e) {
+            const iconSlug = e.target.value.trim();
+            if (iconSlug) {
+                const iconUrl = `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${iconSlug}.svg`;
+                simpleIconPreviewImg.src = iconUrl;
+                simpleIconPreviewImg.onerror = function() {
+                    simpleIconPreview.classList.add('hidden');
+                };
+                simpleIconPreviewImg.onload = function() {
+                    simpleIconPreview.classList.remove('hidden');
+                };
+            } else {
                 simpleIconPreview.classList.add('hidden');
-            };
-            simpleIconPreviewImg.onload = function() {
-                simpleIconPreview.classList.remove('hidden');
-            };
-        } else {
-            simpleIconPreview.classList.add('hidden');
-        }
-    });
+            }
+        });
+    }
 
     // Logo preview
     const logoInput = document.getElementById('logo');
     const logoPreview = document.getElementById('logo-preview');
     const logoPreviewImg = document.getElementById('logo-preview-img');
 
-    logoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                logoPreviewImg.src = e.target.result;
-                logoPreview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            logoPreview.classList.add('hidden');
-        }
-    });
+    if (logoInput) {
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoPreviewImg.src = e.target.result;
+                    logoPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                logoPreview.classList.add('hidden');
+            }
+        });
+    }
 
     // Form submission handling
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
+    const updateForm = document.getElementById('update-form');
+    if (updateForm) {
+        updateForm.addEventListener('submit', function(e) {
+            const submitButton = updateForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
 
-        submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>Updating...';
-        submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>Updating...';
+            submitButton.disabled = true;
 
-        // Re-enable after 10 seconds as fallback
-        setTimeout(function() {
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
-        }, 10000);
-    });
+            // Re-enable after 10 seconds as fallback
+            setTimeout(function() {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            }, 10000);
+        });
+    }
 });
 </script>
-@endsection
 @endsection

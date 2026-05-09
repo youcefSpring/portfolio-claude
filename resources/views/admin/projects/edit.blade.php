@@ -19,14 +19,14 @@
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-    <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 lg:p-6">
-                <form method="POST" action="{{ route('admin.projects.update', $project) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+<form method="POST" action="{{ route('admin.projects.update', $project) }}" enctype="multipart/form-data" id="update-form">
+    @csrf
+    @method('PUT')
 
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
                     <div class="space-y-6">
                         <!-- Project Title -->
                         <div>
@@ -178,29 +178,32 @@
                             @if($project->images && count($project->images) > 0)
                                 <div class="mb-4">
                                     <p class="text-sm font-medium text-gray-700 mb-2">Current Images:</p>
-                                    <div class="grid grid-cols-3 gap-2">
+                                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                                         @foreach($project->images as $image)
-                                            <img src="{{ asset('storage/' . $image) }}"
-                                                 alt="Project image"
-                                                 class="rounded-lg border border-gray-200 w-full h-32 object-cover">
+                                            <div class="relative group">
+                                                <img src="{{ asset('storage/' . $image) }}"
+                                                     alt="Project image"
+                                                     class="rounded-lg border border-gray-200 w-full h-24 object-cover">
+                                            </div>
                                         @endforeach
                                     </div>
-                                    <p class="mt-2 text-sm text-gray-500">Current images (will be replaced if new images are uploaded)</p>
+                                    <p class="mt-2 text-sm text-gray-500">Current images will be kept unless replaced.</p>
                                 </div>
                             @endif
+                            <div id="image-preview-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-3"></div>
                             <input type="file"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 @error('images') border-red-500 @enderror @error('images.*') border-red-500 @enderror"
                                    id="images"
                                    name="images[]"
                                    accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml,image/webp"
-                                   multiple>
+                                   multiple onchange="previewImages(event)">
                             @error('images')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                             @error('images.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                            <p class="mt-1 text-sm text-gray-500">Upload new screenshots or mockups to replace current images (JPG, PNG, GIF, SVG, WebP - max 5MB each, up to 10 images). The first image will be used as the preview on the welcome page.</p>
+                            <p class="mt-1 text-sm text-gray-500">Upload new screenshots or mockups (JPG, PNG, GIF, SVG, WebP - max 5MB each, up to 10 images). The first image will be used as the preview on the welcome page.</p>
                         </div>
 
                         <!-- Detailed Content -->
@@ -265,170 +268,173 @@
                             </button>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="lg:col-span-1 space-y-6">
-        <!-- Skills -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 lg:p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <i class="fas fa-code text-blue-600 mr-3"></i>
-                    Skills Used
-                </h3>
-                <div class="space-y-3">
-                    @if(isset($skills) && $skills->count() > 0)
-                        @php
-                            $skillsByCategory = $skills->groupBy('category');
-                            $currentSkills = $project->skills->pluck('id')->toArray();
-                        @endphp
-                        @foreach($skillsByCategory as $category => $categorySkills)
-                            <div class="border-b border-gray-100 pb-3 last:border-b-0">
-                                <h4 class="text-sm font-medium text-gray-800 mb-2">{{ ucfirst($category) }}</h4>
-                                <div class="space-y-2">
-                                    @foreach($categorySkills as $skill)
-                                        <div class="flex items-center">
-                                            <input type="checkbox"
-                                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                   name="skill_ids[]" value="{{ $skill->id }}"
-                                                   id="skill_{{ $skill->id }}"
-                                                   {{ in_array($skill->id, old('skill_ids', $currentSkills)) ? 'checked' : '' }}>
-                                            <label class="ml-2 text-sm text-gray-700 flex items-center" for="skill_{{ $skill->id }}">
-                                                @if($skill->icon)
-                                                    <i class="{{ $skill->icon }} mr-1" style="color: {{ $skill->color ?? '#6B7280' }}"></i>
-                                                @endif
-                                                {{ $skill->name }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <p class="text-gray-500 text-sm">No skills available. <a href="{{ route('admin.skills.create') }}" class="text-blue-600 hover:text-blue-800">Create skills</a> to showcase your technical expertise.</p>
-                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Tags -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 lg:p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <i class="fas fa-tags text-blue-600 mr-3"></i>
-                    Tags
-                </h3>
-                <div class="space-y-2">
-                    @if(isset($tags) && $tags->count() > 0)
-                        @foreach($tags as $tag)
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Skills -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-code text-blue-600 mr-3"></i>
+                        Skills Used
+                    </h3>
+                    <div class="space-y-3">
+                        @if(isset($skills) && $skills->count() > 0)
+                            @php
+                                $skillsByCategory = $skills->groupBy('category');
+                                $currentSkills = $project->skills->pluck('id')->toArray();
+                            @endphp
+                            @foreach($skillsByCategory as $category => $categorySkills)
+                                <div class="border-b border-gray-100 pb-3 last:border-b-0">
+                                    <h4 class="text-sm font-medium text-gray-800 mb-2">{{ ucfirst($category) }}</h4>
+                                    <div class="space-y-2">
+                                        @foreach($categorySkills as $skill)
+                                            <div class="flex items-center">
+                                                <input type="checkbox"
+                                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                       name="skill_ids[]" value="{{ $skill->id }}"
+                                                       id="skill_{{ $skill->id }}"
+                                                       {{ in_array($skill->id, old('skill_ids', $currentSkills)) ? 'checked' : '' }}>
+                                                <label class="ml-2 text-sm text-gray-700 flex items-center" for="skill_{{ $skill->id }}">
+                                                    @if($skill->icon)
+                                                        <i class="{{ $skill->icon }} mr-1" style="color: {{ $skill->color ?? '#6B7280' }}"></i>
+                                                    @endif
+                                                    {{ $skill->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <p class="text-gray-500 text-sm">No skills available. <a href="{{ route('admin.skills.create') }}" class="text-blue-600 hover:text-blue-800">Create skills</a> to showcase your technical expertise.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-tags text-blue-600 mr-3"></i>
+                        Tags
+                    </h3>
+                    <div class="space-y-2">
+                        @if(isset($tags) && $tags->count() > 0)
+                            @foreach($tags as $tag)
+                                <div class="flex items-center">
+                                    <input type="checkbox"
+                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                           name="tags[]" value="{{ $tag->id }}"
+                                           id="tag_{{ $tag->id }}"
+                                           {{ in_array($tag->id, old('tags', $project->tags->pluck('id')->toArray())) ? 'checked' : '' }}>
+                                    <label class="ml-2 text-sm text-gray-700" for="tag_{{ $tag->id }}">
+                                        {{ $tag->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        @else
+                            <p class="text-gray-500 text-sm">No tags available. <a href="{{ route('admin.tags.create') }}" class="text-blue-600 hover:text-blue-800">Create tags</a> to organize your projects.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visibility Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-eye text-blue-600 mr-3"></i>
+                        Visibility
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="space-y-3">
                             <div class="flex items-center">
-                                <input type="checkbox"
-                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                       name="tags[]" value="{{ $tag->id }}"
-                                       id="tag_{{ $tag->id }}"
-                                       {{ in_array($tag->id, old('tags', $project->tags->pluck('id')->toArray())) ? 'checked' : '' }}>
-                                <label class="ml-2 text-sm text-gray-700" for="tag_{{ $tag->id }}">
-                                    {{ $tag->name }}
+                                <input type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" name="is_published" id="published" value="1" {{ old('is_published', $project->is_published) == '1' ? 'checked' : '' }}>
+                                <label class="ml-2 block" for="published">
+                                    <span class="text-sm font-medium text-gray-900">Published</span>
+                                    <span class="text-sm text-gray-500 block">Visible to all visitors</span>
                                 </label>
                             </div>
-                        @endforeach
-                    @else
-                        <p class="text-gray-500 text-sm">No tags available. <a href="{{ route('admin.tags.create') }}" class="text-blue-600 hover:text-blue-800">Create tags</a> to organize your projects.</p>
-                    @endif
+                            <div class="flex items-center">
+                                <input type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" name="is_published" id="draft" value="0" {{ old('is_published', $project->is_published) == '0' ? 'checked' : '' }}>
+                                <label class="ml-2 block" for="draft">
+                                    <span class="text-sm font-medium text-gray-900">Draft</span>
+                                    <span class="text-sm text-gray-500 block">Only visible to you</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $project->is_featured) ? 'checked' : '' }}>
+                            <label class="ml-2 block" for="is_featured">
+                                <span class="text-sm font-medium text-gray-900">Featured Project</span>
+                                <span class="text-gray-500 block text-xs">Highlight this project on homepage</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Visibility Settings -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 lg:p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <i class="fas fa-eye text-blue-600 mr-3"></i>
-                    Visibility
-                </h3>
+            <!-- Project Info -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                        Project Info
+                    </h3>
 
-                <div class="space-y-4">
                     <div class="space-y-3">
-                        <div class="flex items-center">
-                            <input type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" name="is_published" id="published" value="1" {{ old('is_published', $project->is_published) == '1' ? 'checked' : '' }}>
-                            <label class="ml-2 block" for="published">
-                                <span class="text-sm font-medium text-gray-900">Published</span>
-                                <span class="text-sm text-gray-500 block">Visible to all visitors</span>
-                            </label>
+                        <div>
+                            <span class="text-sm text-gray-500">Created:</span>
+                            <div class="text-sm text-gray-900">{{ $project->created_at->format('F d, Y \a\t g:i A') }}</div>
                         </div>
-                        <div class="flex items-center">
-                            <input type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" name="is_published" id="draft" value="0" {{ old('is_published', $project->is_published) == '0' ? 'checked' : '' }}>
-                            <label class="ml-2 block" for="draft">
-                                <span class="text-sm font-medium text-gray-900">Draft</span>
-                                <span class="text-sm text-gray-500 block">Only visible to you</span>
-                            </label>
-                        </div>
-                    </div>
 
-                    <div class="flex items-center">
-                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $project->is_featured) ? 'checked' : '' }}>
-                        <label class="ml-2 block" for="is_featured">
-                            <span class="text-sm font-medium text-gray-900">Featured Project</span>
-                            <span class="text-sm text-gray-500 block">Highlight this project on homepage</span>
-                        </label>
+                        <div>
+                            <span class="text-sm text-gray-500">Last Updated:</span>
+                            <div class="text-sm text-gray-900">{{ $project->updated_at->format('F d, Y \a\t g:i A') }}</div>
+                        </div>
+
+                        @if($project->is_published)
+                            <div class="pt-2">
+                                <a href="{{ url('/projects/' . Str::slug($project->title)) }}" target="_blank" class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                    <i class="fas fa-eye mr-2"></i>View Public Page
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Project Info -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 lg:p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
-                    Project Info
-                </h3>
-
-                <div class="space-y-3">
-                    <div>
-                        <span class="text-sm text-gray-500">Created:</span>
-                        <div class="text-sm text-gray-900">{{ $project->created_at->format('F d, Y \a\t g:i A') }}</div>
-                    </div>
-
-                    <div>
-                        <span class="text-sm text-gray-500">Last Updated:</span>
-                        <div class="text-sm text-gray-900">{{ $project->updated_at->format('F d, Y \a\t g:i A') }}</div>
-                    </div>
-
-                    @if($project->is_published)
-                        <div class="pt-2">
-                            <a href="{{ url('/projects/' . Str::slug($project->title)) }}" target="_blank" class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                                <i class="fas fa-eye mr-2"></i>View Public Page
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="bg-white rounded-xl shadow-sm border border-red-200">
-            <div class="p-4 lg:p-6">
-                <h3 class="text-lg font-semibold text-red-600 mb-4 flex items-center">
-                    <i class="fas fa-exclamation-triangle mr-3"></i>
-                    Danger Zone
-                </h3>
-                <p class="text-sm text-gray-600 mb-4">
-                    Permanently delete this project. This action cannot be undone.
-                </p>
-                <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" data-confirm-delete>
+            <!-- Danger Zone -->
+            <div class="bg-white rounded-xl shadow-sm border border-red-200">
+                <div class="p-4 lg:p-6">
+                    <h3 class="text-lg font-semibold text-red-600 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-3"></i>
+                        Danger Zone
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Permanently delete this project. This action cannot be undone.
+                    </p>
+                    <button type="button" 
+                            class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors" 
+                            onclick="if(confirm('Are you sure you want to delete this project?')) document.getElementById('delete-project-form').submit();">
                         <i class="fas fa-trash mr-2"></i>Delete Project
                     </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
+
+<form id="delete-project-form" method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
 @endsection
 
 @section('scripts')
@@ -451,39 +457,28 @@
             }
         }
 
-        startDateInput.addEventListener('change', validateDates);
-        endDateInput.addEventListener('change', validateDates);
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', validateDates);
+            endDateInput.addEventListener('change', validateDates);
+        }
 
         // Form submission handling
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function(e) {
-            const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
+        const updateForm = document.getElementById('update-form');
+        if (updateForm) {
+            updateForm.addEventListener('submit', function(e) {
+                const submitButton = updateForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
 
-            submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>Updating...';
-            submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>Updating...';
+                submitButton.disabled = true;
 
-            // Re-enable after 10 seconds as fallback
-            setTimeout(function() {
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            }, 10000);
-        });
-
-        // File size validation
-        const featuredImageInput = document.getElementById('featured_image');
-        featuredImageInput.addEventListener('change', function() {
-            if (this.files[0]) {
-                const fileSize = this.files[0].size / 1024 / 1024; // Size in MB
-                if (fileSize > 5) {
-                    this.setCustomValidity('File size must be less than 5MB');
-                    this.classList.add('border-red-500');
-                } else {
-                    this.setCustomValidity('');
-                    this.classList.remove('border-red-500');
-                }
-            }
-        });
+                // Re-enable after 10 seconds as fallback
+                setTimeout(function() {
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }, 10000);
+            });
+        }
     });
 </script>
 @endsection

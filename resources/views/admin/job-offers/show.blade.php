@@ -53,6 +53,28 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
     <!-- Main Content -->
     <div class="lg:col-span-2 space-y-6">
+        <!-- Images Gallery -->
+        @if($jobOffer->images && count($jobOffer->images) > 0)
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 lg:p-6">
+                    <h2 class="text-lg lg:text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-images mr-2 text-blue-600"></i>
+                        Images ({{ count($jobOffer->images) }})
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        @foreach($jobOffer->images as $index => $image)
+                            <div class="relative group">
+                                <img src="{{ asset('storage/' . $image) }}"
+                                     alt="{{ $jobOffer->title }} - Image {{ $index + 1 }}"
+                                     class="w-full h-40 object-cover rounded-lg border border-gray-200">
+                                <span class="absolute top-2 left-2 px-2 py-1 bg-black/60 text-white text-xs rounded">{{ $index + 1 }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Description -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
             <div class="p-4 lg:p-6 border-b border-gray-100">

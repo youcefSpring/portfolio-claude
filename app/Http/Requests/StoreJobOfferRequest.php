@@ -38,6 +38,7 @@ class StoreJobOfferRequest extends FormRequest
             'published_at' => ['nullable', 'date'],
             'skill_ids' => ['nullable', 'array'],
             'skill_ids.*' => ['exists:skills,id'],
+            'images' => ['nullable'],
         ];
     }
 
