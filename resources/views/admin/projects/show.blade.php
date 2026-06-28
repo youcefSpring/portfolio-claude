@@ -32,10 +32,6 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         @foreach($project->images as $index => $image)
                             <div class="relative group">
-                                <div style="color:red;font-size:11px;word-break:break-all;border:1px solid red;padding:4px;">
-                                    RAW: {{ $image }}<br>
-                                    URL: {{ asset($image) }}
-                                </div>
                                 <img src="{{ asset($image) }}"
                                      alt="{{ $project->title }} - Image {{ $index + 1 }}"
                                      class="w-full h-40 object-cover rounded-lg border border-gray-200"
