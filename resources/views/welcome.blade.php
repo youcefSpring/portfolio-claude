@@ -338,19 +338,6 @@
                 <p class="text-xl text-slate-600">Some of my recent work</p>
             </div>
 
-            @php
-                dd([
-                    'app_url' => config('app.url'),
-                    'storage_link_exists' => file_exists(public_path('storage')),
-                    'storage_link_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : 'NOT A SYMLINK',
-                    'projects' => $projects->map(fn($p) => [
-                        'title' => $p->title,
-                        'images_raw' => $p->images,
-                        'first_asset_url' => $p->images && count($p->images) ? asset('storage/' . $p->images[0]) : null,
-                        'first_file_exists' => $p->images && count($p->images) ? file_exists(storage_path('app/public/' . $p->images[0])) : null,
-                    ]),
-                ]);
-            @endphp
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($projects->take(6) as $project)
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-slate-200 hover:border-purple-300 hover:shadow-2xl transition-all transform hover:-translate-y-2">
