@@ -29,6 +29,19 @@
                         <i class="fas fa-images text-blue-600 mr-3"></i>
                         Project Images ({{ count($project->images) }})
                     </h3>
+                    @php
+                        dd([
+                            'images_raw' => $project->images,
+                            'app_url' => config('app.url'),
+                            'first_asset_url' => asset('storage/' . $project->images[0]),
+                            'storage_link_exists' => file_exists(public_path('storage')),
+                            'storage_link_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : 'NOT A SYMLINK',
+                            'file_on_disk' => array_map(fn($img) => [
+                                'path' => storage_path('app/public/' . $img),
+                                'exists' => file_exists(storage_path('app/public/' . $img)),
+                            ], $project->images),
+                        ]);
+                    @endphp
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         @foreach($project->images as $index => $image)
                             <div class="relative group">
