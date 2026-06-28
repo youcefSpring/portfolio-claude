@@ -343,7 +343,7 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-slate-200 hover:border-purple-300 hover:shadow-2xl transition-all transform hover:-translate-y-2">
                         @if($project->images && count($project->images) > 0)
                             <div class="relative h-48 overflow-hidden bg-slate-100">
-                                <img src="{{ asset('storage/' . $project->images[0]) }}"
+                                <img src="{{ asset($project->images[0]) }}"
                                      alt="{{ $project->title }}"
                                      class="w-full h-full object-cover"
                                      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2218%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ENo Image%3C/text%3E%3C/svg%3E';">
