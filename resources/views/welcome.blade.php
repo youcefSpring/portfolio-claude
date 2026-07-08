@@ -339,7 +339,7 @@
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($projects->take(6) as $project)
+                @foreach($projects as $project)
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-slate-200 hover:border-purple-300 hover:shadow-2xl transition-all transform hover:-translate-y-2">
                         @if($project->images && count($project->images) > 0)
                             <div class="relative h-48 overflow-hidden bg-slate-100">
