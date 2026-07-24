@@ -120,7 +120,7 @@
                                     <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ $skill->simple_icon }}.svg"
                                          alt="{{ $skill->name }}" class="w-4 h-4 mr-2">
                                 @elseif($skill->logo)
-                                    <img src="{{ asset('storage/' . $skill->logo) }}"
+                                    <img src="{{ $skill->logo_url }}"
                                          alt="{{ $skill->name }}" class="w-4 h-4 mr-2">
                                 @elseif($skill->icon)
                                     <i class="{{ $skill->icon }} mr-2"></i>

@@ -25,7 +25,7 @@
                        class="card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 block">
                         @if($course->image)
                             <div class="h-40 overflow-hidden bg-alt">
-                                <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}" loading="lazy"
+                                <img src="{{ $course->image_url }}" alt="{{ $course->title }}" loading="lazy"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             </div>
                         @endif

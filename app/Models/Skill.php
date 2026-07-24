@@ -30,6 +30,20 @@ class Skill extends Model
         'sort_order' => 'integer',
     ];
 
+    /**
+     * Public URL for an uploaded skill logo, wherever it was uploaded to.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo) {
+            return null;
+        }
+
+        return file_exists(public_path($this->logo))
+            ? asset($this->logo)
+            : asset('storage/' . $this->logo);
+    }
+
     public function getProficiencyLabelAttribute()
     {
         return match($this->proficiency_level) {

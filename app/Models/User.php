@@ -27,6 +27,7 @@ class User extends Authenticatable
         'contact_info',
         'cv_file_path',
         'title',
+        'years_experience',
         'department',
         'phone',
         'office_location',

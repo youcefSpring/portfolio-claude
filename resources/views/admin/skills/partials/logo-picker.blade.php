@@ -21,7 +21,7 @@
     <div class="flex items-center gap-4 mb-4">
         <div id="logo-selected" class="w-20 h-20 flex items-center justify-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
             @if(isset($skill) && $skill->logo)
-                <img src="{{ asset('storage/' . $skill->logo) }}" alt="" class="w-12 h-12 object-contain">
+                <img src="{{ $skill->logo_url }}" alt="" class="w-12 h-12 object-contain">
             @elseif($current)
                 <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ $current }}.svg" alt="" class="w-12 h-12 object-contain">
             @else

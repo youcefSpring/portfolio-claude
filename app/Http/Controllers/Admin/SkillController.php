@@ -88,7 +88,7 @@ class SkillController extends Controller
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $validated['logo'] = $request->file('logo')->store('images/skills', 'public');
+            $validated['logo'] = $this->storeLogo($request->file('logo'));
         }
 
         Skill::create($validated);
@@ -154,17 +154,14 @@ class SkillController extends Controller
 
         // Handle logo removal
         if ($request->boolean('remove_logo') && $skill->logo) {
-            Storage::disk('public')->delete($skill->logo);
+            $this->deleteLogo($skill->logo);
             $validated['logo'] = null;
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            // Delete old logo if exists
-            if ($skill->logo) {
-                Storage::disk('public')->delete($skill->logo);
-            }
-            $validated['logo'] = $request->file('logo')->store('images/skills', 'public');
+            $this->deleteLogo($skill->logo);
+            $validated['logo'] = $this->storeLogo($request->file('logo'));
         }
 
         $skill->update($validated);
@@ -179,13 +176,38 @@ class SkillController extends Controller
     public function destroy(Skill $skill)
     {
         // Delete logo if exists
-        if ($skill->logo) {
-            Storage::disk('public')->delete($skill->logo);
-        }
+        $this->deleteLogo($skill->logo);
 
         $skill->delete();
 
         return redirect()->route('admin.skills.index')
             ->with('success', 'Skill deleted successfully.');
+    }
+
+    /**
+     * Store a skill logo under public/images/skills and return its relative path.
+     */
+    private function storeLogo(\Illuminate\Http\UploadedFile $logo): string
+    {
+        $filename = uniqid() . '.' . $logo->getClientOriginalExtension();
+        $logo->move(public_path('images/skills'), $filename);
+
+        return 'images/skills/' . $filename;
+    }
+
+    /**
+     * Delete a skill logo, whichever location it was uploaded to.
+     */
+    private function deleteLogo(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        if (file_exists(public_path($path))) {
+            @unlink(public_path($path));
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

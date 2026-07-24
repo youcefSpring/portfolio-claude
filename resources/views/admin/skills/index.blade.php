@@ -67,7 +67,7 @@
             <div class="flex items-start justify-between mb-4">
                 <div class="w-12 h-12 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
                     @if($skill->logo)
-                        <img src="{{ asset('storage/' . $skill->logo) }}" alt="{{ $skill->name }}" class="w-8 h-8 object-contain">
+                        <img src="{{ $skill->logo_url }}" alt="{{ $skill->name }}" class="w-8 h-8 object-contain">
                     @elseif($skill->simple_icon)
                         <img src="{{ $iconCdn . $skill->simple_icon }}.svg" alt="{{ $skill->name }}" class="w-7 h-7 object-contain">
                     @elseif($skill->icon)
@@ -92,7 +92,7 @@
                         data-id="{{ $skill->id }}"
                         data-name="{{ $skill->name }}"
                         data-simple-icon="{{ $skill->simple_icon }}"
-                        data-logo="{{ $skill->logo ? asset('storage/' . $skill->logo) : '' }}"
+                        data-logo="{{ $skill->logo ? $skill->logo_url : '' }}"
                         data-featured="{{ $skill->is_featured ? 1 : 0 }}"
                         data-action="{{ route('admin.skills.update', $skill) }}"
                         class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">

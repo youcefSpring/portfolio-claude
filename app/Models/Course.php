@@ -62,6 +62,20 @@ class Course extends Model
     }
 
     /**
+     * Public URL for the course image, wherever it was uploaded to.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (! $this->image) {
+            return null;
+        }
+
+        return file_exists(public_path($this->image))
+            ? asset($this->image)
+            : asset('storage/' . $this->image);
+    }
+
+    /**
      * Get the user that owns the course.
      */
     public function user(): BelongsTo

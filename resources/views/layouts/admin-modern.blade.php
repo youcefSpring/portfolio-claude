@@ -208,6 +208,18 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.education.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.education.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
+                        <i class="fas fa-graduation-cap w-6 text-center mr-3"></i>
+                        <span class="menu-text">Education</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.experiences.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.experiences.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
+                        <i class="fas fa-timeline w-6 text-center mr-3"></i>
+                        <span class="menu-text">Experience</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.skills.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.skills.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
                         <i class="fas fa-star w-6 text-center mr-3"></i>
                         <span class="menu-text">Skills</span>

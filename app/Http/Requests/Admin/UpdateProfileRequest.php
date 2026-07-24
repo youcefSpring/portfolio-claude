@@ -27,6 +27,7 @@ class UpdateProfileRequest extends FormRequest
             ],
             'bio' => ['nullable', 'string', 'max:2000'],
             'title' => ['nullable', 'string', 'max:255'],
+            'years_experience' => ['nullable', 'integer', 'min:0', 'max:80'],
             'department' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'office_location' => ['nullable', 'string', 'max:255'],

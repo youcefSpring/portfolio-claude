@@ -193,7 +193,7 @@
         $navLinks = array_filter([
             'projects' => $projects->count() ? 'Projects' : null,
             'courses' => $courses->count() ? 'Courses' : null,
-            'about' => ($teacher && ($teacher->education->count() || $teacher->experiences->count())) ? 'About' : null,
+            'about' => ($teacher && ($teacher->education->count() || $teacher->experiences->count() || $teacher->years_experience)) ? 'About' : null,
             'skills' => $featuredSkills->count() ? 'Skills' : null,
             'publications' => $latestPublications->count() ? 'Publications' : null,
             'blog' => $latestPosts->count() ? 'Writing' : null,
@@ -387,7 +387,7 @@
                        class="card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 reveal block">
                         @if($course->image)
                             <div class="relative h-40 overflow-hidden bg-alt">
-                                <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}" loading="lazy"
+                                <img src="{{ $course->image_url }}" alt="{{ $course->title }}" loading="lazy"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                      onerror="this.style.display='none'">
                             </div>
@@ -411,7 +411,31 @@
     @endif
 
     <!-- About: education + counts of what the admin has published -->
-    @if($teacher && ($teacher->education->count() || $teacher->experiences->count()))
+    @php
+        // Every stat below is derived from records the admin created — nothing hard-coded.
+        $stats = [];
+
+        if ($teacher) {
+            // Set by hand on the admin profile page — no guessing from date ranges.
+            if ($teacher->years_experience) {
+                $stats[] = ['value' => $teacher->years_experience . '+', 'label' => 'Years Experience'];
+            }
+            if ($projects->count()) {
+                $stats[] = ['value' => $projects->count(), 'label' => 'Projects'];
+            }
+            if ($courses->count()) {
+                $stats[] = ['value' => $courses->count(), 'label' => 'Courses'];
+            }
+            if ($latestPublications->count()) {
+                $stats[] = ['value' => $latestPublications->count(), 'label' => 'Publications'];
+            }
+            if ($featuredSkills->count()) {
+                $stats[] = ['value' => $featuredSkills->count(), 'label' => 'Skills'];
+            }
+        }
+    @endphp
+
+    @if($teacher && ($teacher->education->count() || $teacher->experiences->count() || count($stats)))
     <section id="about" class="relative py-20 lg:py-28 section-line">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12 reveal">
@@ -453,40 +477,6 @@
                         </div>
                     </div>
                 @endif
-
-                @php
-                    // Every stat below is derived from records the admin created — nothing hard-coded.
-                    $stats = [];
-
-                    if ($teacher->experiences->count()) {
-                        $totalYears = 0;
-                        foreach ($teacher->experiences as $exp) {
-                            if (! $exp->start_date) {
-                                continue;
-                            }
-                            $endDate = $exp->is_current ? now() : $exp->end_date;
-                            if ($endDate) {
-                                $totalYears += $exp->start_date->diffInYears($endDate);
-                            }
-                        }
-                        if ($totalYears > 0) {
-                            $stats[] = ['value' => $totalYears, 'label' => 'Years Experience'];
-                        }
-                    }
-
-                    if ($projects->count()) {
-                        $stats[] = ['value' => $projects->count(), 'label' => 'Projects'];
-                    }
-                    if ($courses->count()) {
-                        $stats[] = ['value' => $courses->count(), 'label' => 'Courses'];
-                    }
-                    if ($latestPublications->count()) {
-                        $stats[] = ['value' => $latestPublications->count(), 'label' => 'Publications'];
-                    }
-                    if ($featuredSkills->count()) {
-                        $stats[] = ['value' => $featuredSkills->count(), 'label' => 'Skills'];
-                    }
-                @endphp
 
                 @if(count($stats))
                     <div class="reveal">
@@ -567,7 +557,7 @@
                     <div class="card rounded-2xl p-6 flex flex-col items-center text-center gap-3 transition-all reveal">
                         <div class="w-12 h-12 flex items-center justify-center">
                             @if($skill->logo)
-                                <img src="{{ asset('storage/' . $skill->logo) }}" alt="{{ $skill->name }}" loading="lazy" class="w-10 h-10 object-contain">
+                                <img src="{{ $skill->logo_url }}" alt="{{ $skill->name }}" loading="lazy" class="w-10 h-10 object-contain">
                             @elseif($skill->simple_icon)
                                 <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ $skill->simple_icon }}.svg"
                                      alt="{{ $skill->name }}" loading="lazy" class="w-9 h-9 object-contain logo-mono">

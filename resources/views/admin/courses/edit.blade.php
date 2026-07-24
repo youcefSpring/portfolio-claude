@@ -69,7 +69,7 @@
 
                     @if($course->image)
                         <div class="mb-3">
-                            <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}"
+                            <img src="{{ $course->image_url }}" alt="{{ $course->title }}"
                                  class="h-40 w-full object-cover rounded-lg border border-gray-200">
                             <label class="inline-flex items-center mt-2 text-sm text-gray-700">
                                 <input type="checkbox" name="remove_image" value="1" class="rounded border-gray-300 text-blue-600 focus:ring-blue-200">

@@ -6,7 +6,7 @@ use App\Models\Skill;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class SkillLogoTest extends TestCase
@@ -16,6 +16,17 @@ class SkillLogoTest extends TestCase
     private function admin(): User
     {
         return User::factory()->create(['role' => 'admin']);
+    }
+
+    /**
+     * Skill logos live under public/images/skills so they do not depend on the
+     * public/storage symlink — clean up whatever a test uploaded.
+     */
+    protected function tearDown(): void
+    {
+        File::deleteDirectory(public_path('images/skills'));
+
+        parent::tearDown();
     }
 
     public function test_skill_is_created_with_a_picked_logo(): void
@@ -41,8 +52,6 @@ class SkillLogoTest extends TestCase
 
     public function test_skill_is_created_with_an_uploaded_logo(): void
     {
-        Storage::fake('public');
-
         $this->actingAs($this->admin())
             ->post(route('admin.skills.store'), [
                 'name' => 'In House Tool',
@@ -53,7 +62,8 @@ class SkillLogoTest extends TestCase
         $skill = Skill::firstWhere('name', 'In House Tool');
 
         $this->assertNotNull($skill->logo);
-        Storage::disk('public')->assertExists($skill->logo);
+        $this->assertStringStartsWith('images/skills/', $skill->logo);
+        $this->assertFileExists(public_path($skill->logo));
     }
 
     public function test_picked_logo_is_updated(): void
@@ -79,14 +89,15 @@ class SkillLogoTest extends TestCase
 
     public function test_uploaded_logo_replaces_the_old_file_and_can_be_removed(): void
     {
-        Storage::fake('public');
-
         $skill = Skill::create([
             'name' => 'Docker',
             'slug' => 'docker',
             'category' => 'other',
             'proficiency_level' => 3,
-            'logo' => UploadedFile::fake()->image('old.png')->store('images/skills', 'public'),
+            'logo' => 'images/skills/' . UploadedFile::fake()
+                ->image('old.png')
+                ->move(public_path('images/skills'), 'old.png')
+                ->getFilename(),
         ]);
         $oldLogo = $skill->logo;
 
@@ -99,8 +110,8 @@ class SkillLogoTest extends TestCase
 
         $newLogo = $skill->fresh()->logo;
         $this->assertNotSame($oldLogo, $newLogo);
-        Storage::disk('public')->assertMissing($oldLogo);
-        Storage::disk('public')->assertExists($newLogo);
+        $this->assertFileDoesNotExist(public_path($oldLogo));
+        $this->assertFileExists(public_path($newLogo));
 
         $this->actingAs($this->admin())
             ->put(route('admin.skills.update', $skill), [
@@ -109,7 +120,7 @@ class SkillLogoTest extends TestCase
             ]);
 
         $this->assertNull($skill->fresh()->logo);
-        Storage::disk('public')->assertMissing($newLogo);
+        $this->assertFileDoesNotExist(public_path($newLogo));
     }
 
     public function test_featured_skill_logo_renders_on_the_homepage(): void

@@ -45,7 +45,7 @@
     <section class="relative pb-16 lg:pb-20">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="card rounded-2xl overflow-hidden">
-                <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}"
+                <img src="{{ $course->image_url }}" alt="{{ $course->title }}"
                      class="w-full max-h-[28rem] object-cover">
             </div>
         </div>
@@ -76,7 +76,7 @@
                    class="card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 block">
                     @if($other->image)
                         <div class="h-40 overflow-hidden bg-alt">
-                            <img src="{{ asset('storage/' . $other->image) }}" alt="{{ $other->title }}" loading="lazy"
+                            <img src="{{ $other->image_url }}" alt="{{ $other->title }}" loading="lazy"
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
                     @endif

@@ -105,6 +105,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Projects Management
     Route::resource('projects', AdminProjectController::class);
 
+    // Background: education & experience (modal-driven, no create/edit/show pages)
+    Route::resource('education', \App\Http\Controllers\Admin\EducationController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->parameters(['education' => 'education']);
+    Route::resource('experiences', \App\Http\Controllers\Admin\ExperienceController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+
     // Blog Posts Management
     Route::resource('blog', AdminBlogPostController::class);
 

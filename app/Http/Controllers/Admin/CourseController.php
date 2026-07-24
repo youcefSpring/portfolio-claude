@@ -63,10 +63,10 @@ class CourseController extends Controller
                 ->store('documents/syllabi', 'public');
         }
 
-        // Handle course image upload
+        // Handle course image upload — stored under public/ like project images,
+        // so it does not depend on the public/storage symlink.
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')
-                ->store('images/courses', 'public');
+            $data['image'] = $this->storeImage($request->file('image'));
         }
 
         // Map is_active to status if necessary
@@ -124,18 +124,13 @@ class CourseController extends Controller
 
         // Handle course image upload
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($course->image) {
-                Storage::disk('public')->delete($course->image);
-            }
-
-            $data['image'] = $request->file('image')
-                ->store('images/courses', 'public');
+            $this->deleteImage($course->image);
+            $data['image'] = $this->storeImage($request->file('image'));
         }
 
         // Handle image removal
-        if ($request->has('remove_image') && $course->image) {
-            Storage::disk('public')->delete($course->image);
+        if ($request->boolean('remove_image') && $course->image) {
+            $this->deleteImage($course->image);
             $data['image'] = null;
         }
 
@@ -168,13 +163,38 @@ class CourseController extends Controller
         }
 
         // Delete image
-        if ($course->image) {
-            Storage::disk('public')->delete($course->image);
-        }
+        $this->deleteImage($course->image);
 
         $course->delete();
 
         return redirect()->route('admin.courses.index')
             ->with('success', 'Course deleted successfully.');
+    }
+
+    /**
+     * Store a course image under public/images/courses and return its relative path.
+     */
+    private function storeImage(\Illuminate\Http\UploadedFile $image): string
+    {
+        $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('images/courses'), $filename);
+
+        return 'images/courses/' . $filename;
+    }
+
+    /**
+     * Delete a course image, whichever location it was uploaded to.
+     */
+    private function deleteImage(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        if (file_exists(public_path($path))) {
+            @unlink(public_path($path));
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

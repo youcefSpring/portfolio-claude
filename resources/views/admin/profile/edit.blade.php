@@ -57,6 +57,16 @@
                                 @enderror
                             </div>
                             <div>
+                                <label for="years_experience" class="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
+                                <input type="number" min="0" max="80" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('years_experience') border-red-500 @enderror"
+                                       id="years_experience" name="years_experience" value="{{ old('years_experience', $user->years_experience) }}"
+                                       placeholder="e.g., 8">
+                                <p class="text-gray-500 text-xs mt-1">Shown in the “By the numbers” block on your homepage. Leave empty to hide it.</p>
+                                @error('years_experience')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
                                 <label for="department" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
                                 <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('department') border-red-500 @enderror"
                                        id="department" name="department" value="{{ old('department', $user->department) }}">
