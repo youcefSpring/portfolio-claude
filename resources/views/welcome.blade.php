@@ -3,106 +3,243 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $teacher->name ?? 'Professional Portfolio' }}</title>
+    <title>{{ $teacher->name ?? config('app.name', 'Portfolio') }}</title>
 
-    <!-- Meta Description -->
-    <meta name="description" content="{{ Str::limit($teacher->bio ?? 'Professional portfolio', 160) }}">
+    @if($teacher && $teacher->bio)
+        <meta name="description" content="{{ Str::limit($teacher->bio, 160) }}">
+    @endif
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Theme must resolve before first paint to avoid a flash -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Inter', 'sans-serif'],
-                        'heading': ['Space Grotesk', 'sans-serif'],
-                    }
-                }
-            }
-        }
+        (function () {
+            const stored = localStorage.getItem('theme');
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+            document.documentElement.classList.add(stored || (prefersLight ? 'light' : 'dark'));
+        })();
     </script>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
+        :root,
+        html.dark {
+            --bg: #0b0b12;
+            --bg-alt: rgba(255, 255, 255, .015);
+            --card: rgba(255, 255, 255, .04);
+            --card-hover: rgba(255, 255, 255, .07);
+            --border: rgba(255, 255, 255, .09);
+            --border-strong: rgba(167, 139, 250, .45);
+            --text-hi: #ffffff;
+            --text-mid: #94a3b8;
+            --text-low: #64748b;
+            --btn-bg: #ffffff;
+            --btn-text: #0b0b12;
+            --grid-line: rgba(255, 255, 255, .045);
+            --accent: #a78bfa;
+            --accent-soft: rgba(139, 92, 246, .12);
+            --logo-invert: 1;
+        }
+
+        html.light {
+            --bg: #fbfbfd;
+            --bg-alt: rgba(15, 23, 42, .025);
+            --card: #ffffff;
+            --card-hover: #ffffff;
+            --border: rgba(15, 23, 42, .1);
+            --border-strong: rgba(124, 58, 237, .45);
+            --text-hi: #0f172a;
+            --text-mid: #475569;
+            --text-low: #64748b;
+            --btn-bg: #0f172a;
+            --btn-text: #ffffff;
+            --grid-line: rgba(15, 23, 42, .05);
+            --accent: #7c3aed;
+            --accent-soft: rgba(124, 58, 237, .08);
+            --logo-invert: 0;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-mid);
         }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
         }
 
+        .t-hi { color: var(--text-hi); }
+        .t-mid { color: var(--text-mid); }
+        .t-low { color: var(--text-low); }
+        .hover-hi:hover { color: var(--text-hi); }
+        .accent { color: var(--accent); }
+        .bg-alt { background: var(--bg-alt); }
+        .border-base { border-color: var(--border); }
+        .section-line { border-top: 1px solid var(--border); }
+
         .gradient-text {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            background: linear-gradient(120deg, #8b5cf6 0%, #6366f1 50%, #0ea5e9 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        html.dark .gradient-text {
+            background: linear-gradient(120deg, #c4b5fd 0%, #818cf8 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease-out;
+        .btn-solid {
+            background: var(--btn-bg);
+            color: var(--btn-text);
         }
+
+        .btn-solid:hover { opacity: .88; }
+
+        .btn-ghost {
+            border: 1px solid var(--border);
+            color: var(--text-hi);
+        }
+
+        .btn-ghost:hover { background: var(--card-hover); }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+
+        html.dark .card { backdrop-filter: blur(12px); }
+
+        .card:hover {
+            border-color: var(--border-strong);
+            background: var(--card-hover);
+        }
+
+        html.light .card { box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+        html.light .card:hover { box-shadow: 0 12px 32px rgba(15, 23, 42, .08); }
+
+        .pill {
+            background: var(--accent-soft);
+            border: 1px solid var(--border);
+            color: var(--accent);
+        }
+
+        /* Layered background: aurora blobs over a faint grid */
+        .aurora::before,
+        .aurora::after {
+            content: '';
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(90px);
+            pointer-events: none;
+            opacity: .5;
+        }
+
+        html.light .aurora::before,
+        html.light .aurora::after { opacity: .22; }
+
+        .aurora::before {
+            width: 34rem; height: 34rem;
+            background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+            top: -8rem; left: -6rem;
+        }
+
+        .aurora::after {
+            width: 30rem; height: 30rem;
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+            bottom: -10rem; right: -8rem;
+        }
+
+        .grid-bg {
+            background-image:
+                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+        }
+
+        .nav-scrolled {
+            background: color-mix(in srgb, var(--bg) 82%, transparent);
+            backdrop-filter: blur(16px);
+        }
+
+        /* Simple-icons logos are single-colour black; flip them in dark mode */
+        .logo-mono { filter: invert(var(--logo-invert)); }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+        }
+
+        .reveal.is-visible { opacity: 1; transform: none; }
+
+        html { scroll-behavior: smooth; }
+        ::selection { background: var(--accent); color: #fff; }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 antialiased">
+<body class="antialiased">
+    @php
+        $navLinks = array_filter([
+            'projects' => $projects->count() ? 'Projects' : null,
+            'courses' => $courses->count() ? 'Courses' : null,
+            'about' => ($teacher && ($teacher->education->count() || $teacher->experiences->count())) ? 'About' : null,
+            'skills' => $featuredSkills->count() ? 'Skills' : null,
+            'publications' => $latestPublications->count() ? 'Publications' : null,
+            'blog' => $latestPosts->count() ? 'Writing' : null,
+        ]);
+    @endphp
+
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b border-base">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="{{ url('/') }}" class="text-xl font-heading font-bold text-gray-900 hover:text-purple-600 transition-colors">
-                    {{ config('app.name', 'Portfolio') }}
+                <a href="{{ url('/') }}" class="text-lg font-heading font-bold t-hi tracking-tight">
+                    {{ $teacher->name ?? config('app.name', 'Portfolio') }}<span class="accent">.</span>
                 </a>
 
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="#about" class="text-gray-600 hover:text-purple-600 transition-colors text-sm font-medium">About</a>
-                    <a href="#experience" class="text-gray-600 hover:text-purple-600 transition-colors text-sm font-medium">Experience</a>
-                    <a href="#skills" class="text-gray-600 hover:text-purple-600 transition-colors text-sm font-medium">Skills</a>
-                    <a href="#projects" class="text-gray-600 hover:text-purple-600 transition-colors text-sm font-medium">Projects</a>
-                    <a href="#publications" class="text-gray-600 hover:text-purple-600 transition-colors text-sm font-medium">Publications</a>
-                    <a href="{{ route('jobs.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">
-                        <i class="fas fa-briefcase mr-1"></i>Work With Me
-                    </a>
+                <div class="hidden md:flex items-center gap-1">
+                    @foreach($navLinks as $anchor => $label)
+                        <a href="#{{ $anchor }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">{{ $label }}</a>
+                    @endforeach
+                    <a href="{{ route('jobs.index') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Work With Me</a>
+
+                    <button type="button" id="theme-toggle" aria-label="Toggle dark mode"
+                            class="ml-1 w-9 h-9 flex items-center justify-center rounded-full border border-base t-mid hover-hi transition-colors">
+                        <i class="fas fa-moon text-sm" data-theme-icon></i>
+                    </button>
+
                     @auth
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-600 hover:text-purple-600 transition-colors font-medium">
+                        <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi transition-colors">
                             <i class="fas fa-user-shield mr-1"></i>Dashboard
                         </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="text-gray-600 hover:text-red-600 transition-colors font-medium">
-                                <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                            <button type="submit" class="px-3 py-2 text-sm font-medium t-low hover:text-red-500 transition-colors">
+                                <i class="fas fa-sign-out-alt"></i>
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:scale-105 transform transition-all duration-200 shadow-md hover:shadow-lg font-medium text-sm">
-                            <i class="fas fa-sign-in-alt mr-1"></i>Login
-                        </a>
+                        <a href="{{ route('login') }}" class="ml-2 px-4 py-2 text-sm font-semibold rounded-full btn-solid transition-opacity">Login</a>
                     @endauth
                 </div>
 
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button type="button" id="mobile-menu-btn"
-                        class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-md">
+                <div class="flex items-center gap-2 md:hidden">
+                    <button type="button" id="theme-toggle-mobile" aria-label="Toggle dark mode"
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-base t-mid">
+                        <i class="fas fa-moon text-sm" data-theme-icon></i>
+                    </button>
+                    <button type="button" id="mobile-menu-btn" class="p-2 t-mid rounded-lg">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
@@ -110,101 +247,206 @@
 
             <!-- Mobile menu -->
             <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2">
-                <div class="flex flex-col space-y-2">
-                    <a href="#about" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">About</a>
-                    <a href="#experience" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Experience</a>
-                    <a href="#skills" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Skills</a>
-                    <a href="#projects" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
-                    <a href="#publications" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Publications</a>
-                    <a href="{{ route('jobs.index') }}" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium"><i class="fas fa-briefcase mr-1"></i>Work With Me</a>
+                <div class="flex flex-col">
+                    @foreach($navLinks as $anchor => $label)
+                        <a href="#{{ $anchor }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">{{ $label }}</a>
+                    @endforeach
+                    <a href="{{ route('jobs.index') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Work With Me</a>
                     @auth
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium"><i class="fas fa-user-shield mr-1"></i>Dashboard</a>
+                        <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Dashboard</a>
                     @endauth
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="pt-32 pb-20 bg-gradient-to-br from-purple-50 to-blue-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center fade-in-up">
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 mb-6 leading-tight font-heading">
-                    {{ $teacher->name ?? 'Professional Developer' }}
-                </h1>
-                <h2 class="text-xl md:text-2xl text-slate-600 mb-8 font-medium">
-                    {{ $teacher->title ?? 'Full-Stack Developer & Researcher' }}
-                </h2>
-                @if($teacher && $teacher->bio)
-                    <p class="text-lg text-slate-700 max-w-3xl mx-auto mb-10 leading-relaxed">
-                        {{ $teacher->bio }}
-                    </p>
-                @endif
+    <!-- Hero -->
+    <header class="relative overflow-hidden aurora pt-36 pb-24 lg:pt-44 lg:pb-32">
+        <div class="absolute inset-0 grid-bg"></div>
 
-                <!-- Social Links -->
-                @if($teacher)
-                    <div class="flex justify-center space-x-4 mb-10">
-                        @if($teacher->github)
-                            <a href="{{ $teacher->github }}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white transition-all transform hover:scale-110">
-                                <i class="fab fa-github text-lg"></i>
-                            </a>
-                        @endif
-                        @if($teacher->linkedin)
-                            <a href="{{ $teacher->linkedin }}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-200 text-slate-700 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110">
-                                <i class="fab fa-linkedin-in text-lg"></i>
-                            </a>
-                        @endif
-                        @if($teacher->twitter)
-                            <a href="{{ $teacher->twitter }}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-200 text-slate-700 hover:bg-blue-400 hover:text-white transition-all transform hover:scale-110">
-                                <i class="fab fa-twitter text-lg"></i>
-                            </a>
-                        @endif
-                        @if($teacher->google_scholar)
-                            <a href="{{ $teacher->google_scholar }}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-200 text-slate-700 hover:bg-red-600 hover:text-white transition-all transform hover:scale-110">
-                                <i class="fas fa-graduation-cap text-lg"></i>
-                            </a>
-                        @endif
-                    </div>
-                @endif
+        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold t-hi leading-[0.95] mb-6">
+                {{ $teacher->name ?? config('app.name', 'Portfolio') }}
+            </h1>
 
-                <div class="flex justify-center space-x-4">
-                    <a href="#projects" class="inline-flex items-center px-8 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg">
-                        View My Work
-                        <i class="fas fa-arrow-down ml-2"></i>
+            @if($teacher && $teacher->title)
+                <p class="text-xl md:text-2xl gradient-text font-semibold mb-8">{{ $teacher->title }}</p>
+            @endif
+
+            @if($teacher && $teacher->bio)
+                <p class="text-base md:text-lg t-mid max-w-2xl mx-auto mb-10 leading-relaxed">{{ $teacher->bio }}</p>
+            @endif
+
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+                @if($projects->count())
+                    <a href="#projects" class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-full btn-solid transition-all hover:scale-105">
+                        View My Work <i class="fas fa-arrow-down ml-2 text-xs"></i>
                     </a>
-                    <a href="#contact" class="inline-flex items-center px-8 py-3 border-2 border-purple-600 text-sm font-medium rounded-lg text-purple-600 bg-white hover:bg-purple-600 hover:text-white transition-all transform hover:scale-105">
-                        Get in Touch
-                        <i class="fas fa-envelope ml-2"></i>
-                    </a>
+                @endif
+                <a href="#contact" class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-full btn-ghost transition-all hover:scale-105">
+                    Get in Touch <i class="fas fa-envelope ml-2 text-xs"></i>
+                </a>
+            </div>
+
+            @if($teacher)
+                <div class="flex justify-center gap-3">
+                    @foreach([
+                        ['url' => $teacher->github, 'icon' => 'fab fa-github'],
+                        ['url' => $teacher->linkedin, 'icon' => 'fab fa-linkedin-in'],
+                        ['url' => $teacher->twitter, 'icon' => 'fab fa-twitter'],
+                        ['url' => $teacher->google_scholar, 'icon' => 'fas fa-graduation-cap'],
+                    ] as $social)
+                        @if($social['url'])
+                            <a href="{{ $social['url'] }}" target="_blank" rel="noopener"
+                               class="w-11 h-11 flex items-center justify-center rounded-full card t-mid transition-all hover:scale-110">
+                                <i class="{{ $social['icon'] }}"></i>
+                            </a>
+                        @endif
+                    @endforeach
                 </div>
+            @endif
+        </div>
+    </header>
+
+    <!-- Projects: every project the admin published, directly under the hero -->
+    @if($projects->count())
+    <section id="projects" class="relative py-20 lg:py-28 section-line">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12 reveal">
+                <div>
+                    <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Portfolio</span>
+                    <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Projects</h2>
+                </div>
+                <p class="text-sm t-low">{{ $projects->count() }} {{ Str::plural('project', $projects->count()) }}</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($projects as $project)
+                    <article class="card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 reveal">
+                        @if($project->images && count($project->images) > 0)
+                            <div class="relative h-44 overflow-hidden bg-alt">
+                                <img src="{{ asset($project->images[0]) }}" alt="{{ $project->title }}" loading="lazy"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                     onerror="this.style.display='none'">
+                            </div>
+                        @endif
+
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold t-hi mb-2">{{ $project->title }}</h3>
+
+                            @if($project->description)
+                                <p class="text-sm t-mid leading-relaxed mb-4">{{ Str::limit($project->description, 110) }}</p>
+                            @endif
+
+                            @if($project->skills && $project->skills->count() > 0)
+                                <div class="flex flex-wrap gap-2 mb-5">
+                                    @foreach($project->skills as $skill)
+                                        <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full pill">{{ $skill->name }}</span>
+                                    @endforeach
+                                </div>
+                            @elseif($project->technologies_used)
+                                <div class="flex flex-wrap gap-2 mb-5">
+                                    @foreach(explode(',', $project->technologies_used) as $tech)
+                                        <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full pill">{{ trim($tech) }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <div class="flex items-center gap-4 text-sm">
+                                @if($project->live_demo_url)
+                                    <a href="{{ $project->live_demo_url }}" target="_blank" rel="noopener" class="font-semibold accent hover:underline">Live Demo →</a>
+                                @endif
+                                @if($project->source_code_url)
+                                    <a href="{{ $project->source_code_url }}" target="_blank" rel="noopener" class="font-semibold t-low hover:underline">Code →</a>
+                                @endif
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
             </div>
         </div>
     </section>
+    @endif
 
-    <!-- About Me Section -->
-    <section id="about" class="py-20 bg-white">
+    <!-- Courses -->
+    @if($courses->count())
+    <section id="courses" class="relative py-20 lg:py-28 section-line bg-alt">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">About Me</h2>
-                <p class="text-xl text-slate-600">Combining technical expertise with research excellence</p>
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12 reveal">
+                <div>
+                    <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Teaching</span>
+                    <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Courses</h2>
+                </div>
+                <a href="{{ route('courses.index') }}" class="text-sm font-semibold accent hover:underline">All courses →</a>
             </div>
 
-            <div class="grid lg:grid-cols-2 gap-12">
-                <!-- Education -->
-                @if($teacher && $teacher->education && $teacher->education->count() > 0)
-                    <div>
-                        <h3 class="text-2xl font-bold text-slate-900 mb-6 font-heading">Education</h3>
-                        <div class="space-y-6">
-                            @foreach($teacher->education->take(2) as $education)
-                                <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:border-purple-300 hover:shadow-lg transition-all">
-                                    <div class="flex items-start justify-between mb-2">
-                                        <h4 class="text-lg font-bold text-slate-900 font-heading">{{ $education->degree }}</h4>
-                                        <span class="text-sm text-slate-500 font-medium">{{ $education->start_date->format('Y') }} - {{ $education->is_current ? 'Present' : $education->end_date->format('Y') }}</span>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($courses as $course)
+                    @php $target = $course->link ?: route('courses.show', $course); @endphp
+                    <a href="{{ $target }}" @if($course->link) target="_blank" rel="noopener" @endif
+                       class="card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 reveal block">
+                        @if($course->image)
+                            <div class="relative h-40 overflow-hidden bg-alt">
+                                <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}" loading="lazy"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                     onerror="this.style.display='none'">
+                            </div>
+                        @endif
+
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold t-hi mb-2">{{ $course->title }}</h3>
+                            @if($course->description)
+                                <p class="text-sm t-mid leading-relaxed mb-4">{{ Str::limit($course->description, 110) }}</p>
+                            @endif
+                            <span class="inline-flex items-center text-sm font-semibold accent">
+                                {{ $course->link ? 'Open course' : 'View details' }}
+                                <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- About: education + counts of what the admin has published -->
+    @if($teacher && ($teacher->education->count() || $teacher->experiences->count()))
+    <section id="about" class="relative py-20 lg:py-28 section-line">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 reveal">
+                <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">About</span>
+                <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Background</h2>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                @if($teacher->education->count())
+                    <div class="reveal">
+                        <h3 class="text-xl font-bold t-hi mb-5">Education</h3>
+                        <div class="space-y-4">
+                            @foreach($teacher->education as $education)
+                                <div class="card rounded-2xl p-6 transition-all">
+                                    <div class="flex items-start justify-between gap-4 mb-2">
+                                        <h4 class="text-base font-bold t-hi">{{ $education->degree }}</h4>
+                                        @if($education->start_date)
+                                            <span class="text-xs t-low font-medium whitespace-nowrap">
+                                                {{ $education->start_date->format('Y') }}
+                                                @if($education->is_current)
+                                                    — Present
+                                                @elseif($education->end_date)
+                                                    — {{ $education->end_date->format('Y') }}
+                                                @endif
+                                            </span>
+                                        @endif
                                     </div>
-                                    <p class="text-purple-600 font-semibold mb-1">{{ $education->field_of_study }}</p>
-                                    <p class="text-slate-600 mb-3">{{ $education->institution }}</p>
+                                    @if($education->field_of_study)
+                                        <p class="accent font-semibold text-sm mb-1">{{ $education->field_of_study }}</p>
+                                    @endif
+                                    @if($education->institution)
+                                        <p class="t-mid text-sm mb-3">{{ $education->institution }}</p>
+                                    @endif
                                     @if($education->description)
-                                        <p class="text-slate-700 text-sm leading-relaxed">{{ $education->description }}</p>
+                                        <p class="t-low text-sm leading-relaxed">{{ $education->description }}</p>
                                     @endif
                                 </div>
                             @endforeach
@@ -212,205 +454,163 @@
                     </div>
                 @endif
 
-                <!-- Quick Stats -->
-                <div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-6 font-heading">Quick Stats</h3>
-                    <div class="grid grid-cols-2 gap-6">
-                        <!-- Years Experience -->
-                        <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center border border-purple-100 hover:shadow-lg transition-all">
-                            <div class="text-4xl font-extrabold gradient-text mb-2">
-                                @if($teacher && $teacher->experiences->count() > 0)
-                                    @php
-                                        $totalYears = 0;
-                                        foreach($teacher->experiences as $exp) {
-                                            $endDate = $exp->is_current ? now() : $exp->end_date;
-                                            $totalYears += $exp->start_date->diffInYears($endDate);
-                                        }
-                                        echo $totalYears;
-                                    @endphp+
-                                @else
-                                    5+
-                                @endif
-                            </div>
-                            <div class="text-slate-600 text-sm font-semibold">Years Experience</div>
-                        </div>
+                @php
+                    // Every stat below is derived from records the admin created — nothing hard-coded.
+                    $stats = [];
 
-                        <!-- Projects -->
-                        <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center border border-purple-100 hover:shadow-lg transition-all">
-                            <div class="text-4xl font-extrabold gradient-text mb-2">{{ $projects->count() }}</div>
-                            <div class="text-slate-600 text-sm font-semibold">Featured Projects</div>
-                        </div>
+                    if ($teacher->experiences->count()) {
+                        $totalYears = 0;
+                        foreach ($teacher->experiences as $exp) {
+                            if (! $exp->start_date) {
+                                continue;
+                            }
+                            $endDate = $exp->is_current ? now() : $exp->end_date;
+                            if ($endDate) {
+                                $totalYears += $exp->start_date->diffInYears($endDate);
+                            }
+                        }
+                        if ($totalYears > 0) {
+                            $stats[] = ['value' => $totalYears, 'label' => 'Years Experience'];
+                        }
+                    }
 
-                        <!-- Publications -->
-                        <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center border border-purple-100 hover:shadow-lg transition-all">
-                            <div class="text-4xl font-extrabold gradient-text mb-2">{{ $latestPublications->count() }}</div>
-                            <div class="text-slate-600 text-sm font-semibold">Publications</div>
-                        </div>
+                    if ($projects->count()) {
+                        $stats[] = ['value' => $projects->count(), 'label' => 'Projects'];
+                    }
+                    if ($courses->count()) {
+                        $stats[] = ['value' => $courses->count(), 'label' => 'Courses'];
+                    }
+                    if ($latestPublications->count()) {
+                        $stats[] = ['value' => $latestPublications->count(), 'label' => 'Publications'];
+                    }
+                    if ($featuredSkills->count()) {
+                        $stats[] = ['value' => $featuredSkills->count(), 'label' => 'Skills'];
+                    }
+                @endphp
 
-                        <!-- Skills -->
-                        <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center border border-purple-100 hover:shadow-lg transition-all">
-                            <div class="text-4xl font-extrabold gradient-text mb-2">{{ $featuredSkills->count() }}</div>
-                            <div class="text-slate-600 text-sm font-semibold">Core Skills</div>
+                @if(count($stats))
+                    <div class="reveal">
+                        <h3 class="text-xl font-bold t-hi mb-5">By the numbers</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            @foreach($stats as $stat)
+                                <div class="card rounded-2xl p-6 text-center transition-all">
+                                    <div class="text-4xl font-extrabold gradient-text mb-1">{{ $stat['value'] }}</div>
+                                    <div class="text-xs font-semibold uppercase tracking-wider t-low">{{ $stat['label'] }}</div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Professional Experience -->
-    @if($teacher && $teacher->experiences && $teacher->experiences->count() > 0)
-    <section id="experience" class="py-20 bg-gradient-to-br from-slate-50 to-purple-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">Professional Experience</h2>
-                <p class="text-xl text-slate-600">My journey in software development and research</p>
-            </div>
-
-            <div class="space-y-8">
-                @foreach($teacher->experiences->take(3) as $index => $experience)
-                    <div class="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-gradient-to-b before:from-purple-600 before:to-blue-600">
-                        <div class="absolute left-0 top-2 w-4 h-4 bg-purple-600 rounded-full border-4 border-white shadow-lg"></div>
-                        <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 hover:border-purple-300 hover:shadow-xl transition-all">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
-                                <div>
-                                    <h3 class="text-xl font-bold text-slate-900 font-heading">{{ $experience->position }}</h3>
-                                    <p class="text-purple-600 font-semibold">{{ $experience->company }}</p>
-                                </div>
-                                <div class="text-sm text-slate-500 font-medium mt-2 md:mt-0">
-                                    {{ $experience->start_date->format('M Y') }} - {{ $experience->is_current ? 'Present' : $experience->end_date->format('M Y') }}
-                                    @if($experience->location)
-                                        <span class="mx-2">•</span>
-                                        <span>{{ $experience->location }}</span>
-                                    @endif
-                                </div>
-                            </div>
-                            @if($experience->description)
-                                <p class="text-slate-700 leading-relaxed">{{ $experience->description }}</p>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
+                @endif
             </div>
         </div>
     </section>
     @endif
 
-    <!-- Skills & Technologies -->
-    @if($featuredSkills && $featuredSkills->count() > 0)
-    <section id="skills" class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">Skills & Technologies</h2>
-                <p class="text-xl text-slate-600">Technologies I work with</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                @foreach($featuredSkills as $skill)
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:border-purple-300 hover:shadow-lg transition-all">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center">
-                                @if($skill->icon)
-                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas {{ $skill->icon }} text-purple-600"></i>
-                                    </div>
-                                @endif
-                                <span class="font-bold text-slate-900 font-heading">{{ $skill->name }}</span>
-                            </div>
-                            <span class="text-sm text-purple-600 font-semibold">{{ $skill->proficiency_label }}</span>
-                        </div>
-                        <div class="w-full bg-slate-200 rounded-full h-2.5">
-                            <div class="bg-gradient-to-r from-purple-600 to-blue-600 h-2.5 rounded-full transition-all" style="width: {{ ($skill->proficiency_level / 5) * 100 }}%"></div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    @endif
-
-    <!-- Featured Projects -->
-    @if($projects && $projects->count() > 0)
-    <section id="projects" class="py-20 bg-gradient-to-br from-slate-50 to-purple-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">Featured Projects</h2>
-                <p class="text-xl text-slate-600">Some of my recent work</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($projects as $project)
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-slate-200 hover:border-purple-300 hover:shadow-2xl transition-all transform hover:-translate-y-2">
-                        @if($project->images && count($project->images) > 0)
-                            <div class="relative h-48 overflow-hidden bg-slate-100">
-                                <img src="{{ asset($project->images[0]) }}"
-                                     alt="{{ $project->title }}"
-                                     class="w-full h-full object-cover"
-                                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2218%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ENo Image%3C/text%3E%3C/svg%3E';">
-                            </div>
-                        @else
-                            <div class="h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
-                                <i class="fas fa-project-diagram text-6xl text-purple-300"></i>
-                            </div>
-                        @endif
-
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading">{{ $project->title }}</h3>
-                            <p class="text-slate-600 mb-4 text-sm leading-relaxed">{{ Str::limit($project->description, 100) }}</p>
-
-                            @if($project->skills && $project->skills->count() > 0)
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach($project->skills->take(3) as $skill)
-                                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">{{ $skill->name }}</span>
-                                    @endforeach
-                                </div>
-                            @elseif($project->technologies_used)
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    @foreach(array_slice(explode(',', $project->technologies_used), 0, 3) as $tech)
-                                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">{{ trim($tech) }}</span>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            <div class="flex items-center space-x-4 text-sm">
-                                @if($project->live_demo_url)
-                                    <a href="{{ $project->live_demo_url }}" target="_blank" class="text-purple-600 hover:text-purple-700 font-semibold transition-colors">
-                                        Live Demo →
-                                    </a>
-                                @endif
-                                @if($project->source_code_url)
-                                    <a href="{{ $project->source_code_url }}" target="_blank" class="text-purple-600 hover:text-purple-700 font-semibold transition-colors">
-                                        Code →
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    @endif
-
-    <!-- Recent Publications -->
-    @if($latestPublications && $latestPublications->count() > 0)
-    <section id="publications" class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">Recent Publications</h2>
-                <p class="text-xl text-slate-600">My research contributions</p>
+    <!-- Experience -->
+    @if($teacher && $teacher->experiences->count())
+    <section id="experience" class="relative py-20 lg:py-28 section-line bg-alt">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 reveal">
+                <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Career</span>
+                <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Experience</h2>
             </div>
 
             <div class="space-y-6">
+                @foreach($teacher->experiences as $experience)
+                    <div class="relative pl-8 reveal">
+                        <span class="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-violet-500 to-sky-500"></span>
+                        <span class="absolute -left-[5px] top-7 w-[11px] h-[11px] rounded-full" style="background: var(--accent); box-shadow: 0 0 0 4px var(--bg);"></span>
+                        <div class="card rounded-2xl p-6 transition-all">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+                                <div>
+                                    <h3 class="text-lg font-bold t-hi">{{ $experience->position }}</h3>
+                                    @if($experience->company)
+                                        <p class="accent font-semibold text-sm">{{ $experience->company }}</p>
+                                    @endif
+                                </div>
+                                @if($experience->start_date)
+                                    <div class="text-xs t-low font-medium">
+                                        {{ $experience->start_date->format('M Y') }}
+                                        @if($experience->is_current)
+                                            — Present
+                                        @elseif($experience->end_date)
+                                            — {{ $experience->end_date->format('M Y') }}
+                                        @endif
+                                        @if($experience->location)
+                                            <span class="mx-1">•</span>{{ $experience->location }}
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                            @if($experience->description)
+                                <p class="t-mid text-sm leading-relaxed">{{ $experience->description }}</p>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- Skills: name + logo, exactly as entered in the admin -->
+    @if($featuredSkills->count())
+    <section id="skills" class="relative py-20 lg:py-28 section-line">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 reveal">
+                <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Stack</span>
+                <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Skills</h2>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                @foreach($featuredSkills as $skill)
+                    <div class="card rounded-2xl p-6 flex flex-col items-center text-center gap-3 transition-all reveal">
+                        <div class="w-12 h-12 flex items-center justify-center">
+                            @if($skill->logo)
+                                <img src="{{ asset('storage/' . $skill->logo) }}" alt="{{ $skill->name }}" loading="lazy" class="w-10 h-10 object-contain">
+                            @elseif($skill->simple_icon)
+                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ $skill->simple_icon }}.svg"
+                                     alt="{{ $skill->name }}" loading="lazy" class="w-9 h-9 object-contain logo-mono">
+                            @elseif($skill->icon)
+                                <i class="{{ Str::startsWith($skill->icon, ['fa', 'bi']) ? $skill->icon : 'fas ' . $skill->icon }} text-2xl accent"></i>
+                            @else
+                                <i class="fas fa-bolt text-2xl accent"></i>
+                            @endif
+                        </div>
+                        <span class="font-semibold t-hi text-sm">{{ $skill->name }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- Publications -->
+    @if($latestPublications->count())
+    <section id="publications" class="relative py-20 lg:py-28 section-line bg-alt">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 reveal">
+                <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Research</span>
+                <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Publications</h2>
+            </div>
+
+            <div class="space-y-4">
                 @foreach($latestPublications as $publication)
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:border-purple-300 hover:shadow-lg transition-all">
-                        <h3 class="text-lg font-bold text-slate-900 mb-2 font-heading">{{ $publication->title }}</h3>
-                        <p class="text-purple-600 font-semibold mb-2 text-sm">{{ $publication->authors }}</p>
-                        <p class="text-slate-600 mb-3 text-sm">{{ $publication->journal ?? $publication->conference }} • {{ $publication->year }}</p>
+                    <div class="card rounded-2xl p-6 transition-all reveal">
+                        <h3 class="text-base font-bold t-hi mb-2">{{ $publication->title }}</h3>
+                        @if($publication->authors)
+                            <p class="accent font-semibold text-sm mb-1">{{ $publication->authors }}</p>
+                        @endif
+                        @if($publication->journal || $publication->conference || $publication->year)
+                            <p class="t-low text-sm mb-3">
+                                {{ $publication->journal ?? $publication->conference }}
+                                @if(($publication->journal || $publication->conference) && $publication->year) • @endif
+                                {{ $publication->year }}
+                            </p>
+                        @endif
                         @if($publication->external_link)
-                            <a href="{{ $publication->external_link }}" target="_blank" class="text-purple-600 hover:text-purple-700 text-sm font-semibold transition-colors inline-flex items-center">
-                                Read More
-                                <i class="fas fa-arrow-right ml-2"></i>
+                            <a href="{{ $publication->external_link }}" target="_blank" rel="noopener" class="inline-flex items-center text-sm font-semibold accent hover:underline">
+                                Read More <i class="fas fa-arrow-right ml-2 text-xs"></i>
                             </a>
                         @endif
                     </div>
@@ -420,23 +620,27 @@
     </section>
     @endif
 
-    <!-- Latest Blog Posts -->
-    @if($latestPosts && $latestPosts->count() > 0)
-    <section id="blog" class="py-20 bg-gradient-to-br from-slate-50 to-purple-50">
+    <!-- Blog -->
+    @if($latestPosts->count())
+    <section id="blog" class="relative py-20 lg:py-28 section-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">Latest Blog Posts</h2>
-                <p class="text-xl text-slate-600">Thoughts and insights</p>
+            <div class="mb-12 reveal">
+                <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Writing</span>
+                <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Latest Posts</h2>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid md:grid-cols-2 gap-6">
                 @foreach($latestPosts as $post)
-                    <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 hover:border-purple-300 hover:shadow-xl transition-all">
-                        <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading">{{ $post->title }}</h3>
-                        <p class="text-slate-600 mb-4 leading-relaxed">{{ $post->excerpt }}</p>
-                        <div class="flex items-center justify-between text-sm text-slate-500">
-                            <span class="font-medium">{{ $post->published_at->format('M d, Y') }}</span>
-                            <span class="font-medium">{{ $post->reading_time }} min read</span>
+                    <div class="card rounded-2xl p-6 transition-all reveal">
+                        <h3 class="text-lg font-bold t-hi mb-3">{{ $post->title }}</h3>
+                        @if($post->excerpt)
+                            <p class="t-mid text-sm leading-relaxed mb-5">{{ $post->excerpt }}</p>
+                        @endif
+                        <div class="flex items-center justify-between text-xs t-low font-medium">
+                            <span>{{ $post->published_at?->format('M d, Y') }}</span>
+                            @if($post->reading_time)
+                                <span>{{ $post->reading_time }} min read</span>
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -445,86 +649,77 @@
     </section>
     @endif
 
-    <!-- Work With Me Section -->
-    @if($recentJobs && $recentJobs->count() > 0)
-    <section class="py-20 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-heading">Work With Me</h2>
-                <p class="text-xl text-slate-600">Current consulting and freelance opportunities</p>
+    <!-- Work With Me -->
+    @if($recentJobs->count())
+    <section class="relative py-20 lg:py-28 section-line bg-alt">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12 reveal">
+                <div>
+                    <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Opportunities</span>
+                    <h2 class="mt-2 text-3xl md:text-5xl font-bold t-hi">Work With Me</h2>
+                </div>
+                <a href="{{ route('jobs.index') }}" class="text-sm font-semibold accent hover:underline">All opportunities →</a>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($recentJobs->take(3) as $job)
-                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-purple-300 hover:shadow-lg transition-all group">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($recentJobs as $job)
+                    <article class="card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 reveal">
                         @if($job->images && count($job->images) > 0)
-                            <div class="relative h-48 overflow-hidden bg-slate-100">
-                                <img src="{{ asset('storage/' . $job->images[0]) }}"
-                                     alt="{{ $job->title }}"
-                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                            <div class="relative h-40 overflow-hidden bg-alt">
+                                <img src="{{ asset('storage/' . $job->images[0]) }}" alt="{{ $job->title }}" loading="lazy"
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @if($job->featured)
-                                    <div class="absolute top-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-md">
-                                        Featured
-                                    </div>
+                                    <span class="absolute top-3 right-3 px-2 py-1 text-[10px] font-bold rounded-full btn-solid">Featured</span>
                                 @endif
                             </div>
-                        @else
-                            <div class="p-6 pb-0">
-                                @if($job->featured)
-                                    <span class="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">
-                                        Featured
-                                    </span>
-                                @endif
+                        @elseif($job->featured)
+                            <div class="px-6 pt-6">
+                                <span class="inline-block px-3 py-1 text-[10px] font-bold rounded-full btn-solid">Featured</span>
                             </div>
                         @endif
 
                         <div class="p-6">
-                            <h3 class="text-xl font-bold text-slate-900 mb-3 font-heading group-hover:text-purple-600 transition-colors">{{ $job->title }}</h3>
-
+                            <h3 class="text-lg font-bold t-hi mb-3">{{ $job->title }}</h3>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">{{ ucfirst($job->project_type) }}</span>
-                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{{ ucfirst(str_replace('-', ' ', $job->location_type)) }}</span>
+                                @if($job->project_type)
+                                    <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full pill">{{ ucfirst($job->project_type) }}</span>
+                                @endif
+                                @if($job->location_type)
+                                    <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full pill">{{ ucfirst(str_replace('-', ' ', $job->location_type)) }}</span>
+                                @endif
                             </div>
-
-                            <p class="text-slate-600 mb-4 text-sm leading-relaxed">{{ Str::limit($job->description, 120) }}</p>
-
-                            <a href="{{ route('jobs.show', $job) }}" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold text-sm transition-colors">
-                                View Details
-                                <i class="fas fa-arrow-right ml-2"></i>
+                            @if($job->description)
+                                <p class="text-sm t-mid leading-relaxed mb-5">{{ Str::limit($job->description, 110) }}</p>
+                            @endif
+                            <a href="{{ route('jobs.show', $job) }}" class="inline-flex items-center text-sm font-semibold accent hover:underline">
+                                View Details <i class="fas fa-arrow-right ml-2 text-xs"></i>
                             </a>
                         </div>
-                    </div>
+                    </article>
                 @endforeach
-            </div>
-
-            <div class="text-center mt-12">
-                <a href="{{ route('jobs.index') }}" class="inline-flex items-center px-8 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg">
-                    View All Opportunities
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </a>
             </div>
         </div>
     </section>
     @endif
 
-    <!-- Contact CTA -->
-    <section id="contact" class="py-20 bg-gradient-to-br from-purple-600 to-blue-600">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6 font-heading">Let's Work Together</h2>
-            <p class="text-xl text-purple-100 mb-10 leading-relaxed">
-                Interested in collaboration or have a project in mind?
-            </p>
-            <div class="flex justify-center space-x-4">
+    <!-- Contact -->
+    <section id="contact" class="relative overflow-hidden aurora py-24 lg:py-32 section-line">
+        <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold t-hi mb-5">Get in touch</h2>
+            <div class="flex flex-wrap justify-center gap-3 mt-8">
+                @if($teacher && $teacher->email)
+                    <a href="mailto:{{ $teacher->email }}" class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-full btn-solid transition-all hover:scale-105">
+                        <i class="fas fa-envelope mr-2"></i>{{ $teacher->email }}
+                    </a>
+                @endif
                 @if($teacher && $teacher->linkedin)
-                    <a href="{{ $teacher->linkedin }}" target="_blank" class="inline-flex items-center px-8 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg">
-                        <i class="fab fa-linkedin mr-2"></i>
-                        Connect on LinkedIn
+                    <a href="{{ $teacher->linkedin }}" target="_blank" rel="noopener" class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-full btn-ghost transition-all hover:scale-105">
+                        <i class="fab fa-linkedin mr-2"></i>LinkedIn
                     </a>
                 @endif
                 @if($teacher && $teacher->github)
-                    <a href="{{ $teacher->github }}" target="_blank" class="inline-flex items-center px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105">
-                        <i class="fab fa-github mr-2"></i>
-                        View GitHub
+                    <a href="{{ $teacher->github }}" target="_blank" rel="noopener" class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-full btn-ghost transition-all hover:scale-105">
+                        <i class="fab fa-github mr-2"></i>GitHub
                     </a>
                 @endif
             </div>
@@ -532,52 +727,73 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-slate-400">&copy; {{ date('Y') }} {{ $teacher->name ?? 'Portfolio' }}. All rights reserved.</p>
+    <footer class="section-line py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm t-low">
+            <p>&copy; {{ date('Y') }} {{ $teacher->name ?? config('app.name', 'Portfolio') }}. All rights reserved.</p>
+            <a href="#" class="hover:underline">Back to top ↑</a>
         </div>
     </footer>
 
-    <!-- Scroll to Top Button -->
-    <button id="scrollTop" class="fixed bottom-8 right-8 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 rounded-full shadow-lg hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-110 hidden">
-        <i class="fas fa-arrow-up"></i>
+    <!-- Scroll to top -->
+    <button id="scrollTop" class="fixed bottom-6 right-6 z-40 w-11 h-11 hidden items-center justify-center rounded-full btn-solid shadow-lg transition-all hover:scale-110">
+        <i class="fas fa-arrow-up text-sm"></i>
     </button>
 
-    <!-- Scripts -->
     <script>
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
+        // Theme switcher
+        const root = document.documentElement;
+        const themeIcons = document.querySelectorAll('[data-theme-icon]');
 
-        // Scroll to top button
+        function paintThemeIcon() {
+            const isDark = root.classList.contains('dark');
+            themeIcons.forEach(i => i.className = (isDark ? 'fas fa-sun' : 'fas fa-moon') + ' text-sm');
+        }
+
+        function toggleTheme() {
+            const isDark = root.classList.contains('dark');
+            root.classList.remove(isDark ? 'dark' : 'light');
+            root.classList.add(isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            paintThemeIcon();
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        document.getElementById('theme-toggle-mobile').addEventListener('click', toggleTheme);
+        paintThemeIcon();
+
+        // Nav background + scroll-to-top visibility
+        const nav = document.getElementById('nav');
         const scrollTopBtn = document.getElementById('scrollTop');
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTopBtn.classList.remove('hidden');
-            } else {
-                scrollTopBtn.classList.add('hidden');
-            }
-        });
 
-        scrollTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        function onScroll() {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+            scrollTopBtn.classList.toggle('hidden', window.scrollY < 400);
+            scrollTopBtn.classList.toggle('flex', window.scrollY >= 400);
+        }
 
-        // Mobile menu toggle
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Mobile menu
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        // Reveal on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.transitionDelay = Math.min(i * 60, 240) + 'ms';
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
             });
-        }
+        }, { rootMargin: '0px 0px -10% 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>

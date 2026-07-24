@@ -23,6 +23,7 @@ class Course extends Model
         'credits',
         'slug',
         'description',
+        'link',
         'content',
         'objectives',
         'learning_objectives',

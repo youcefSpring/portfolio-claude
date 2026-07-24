@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Models\Course;
 use App\Models\JobOffer;
 use App\Models\Project;
 use App\Models\User;
@@ -23,11 +24,7 @@ class HomeController extends Controller
     {
         // Get the main admin user (our profile)
         $teacher = User::where('role', 'admin')
-            ->with(['experiences' => function($query) {
-                $query->latest()->take(3);
-            }, 'education' => function($query) {
-                $query->latest()->take(2);
-            }])
+            ->with(['experiences' => fn($query) => $query->latest(), 'education' => fn($query) => $query->latest()])
             ->first();
 
         // Get ALL active projects with tags and skills
@@ -48,12 +45,16 @@ class HomeController extends Controller
         // Get featured skills
         $featuredSkills = Skill::where('is_featured', true)
             ->ordered()
-            ->limit(8)
             ->get();
 
         // Get latest publications
         $latestPublications = Publication::latest()
             ->limit(3)
+            ->get();
+
+        // Get latest published courses
+        $courses = Course::where('is_published', true)
+            ->latest()
             ->get();
 
         // Get recent active job offers
@@ -71,6 +72,7 @@ class HomeController extends Controller
             'latestPosts',
             'featuredSkills',
             'latestPublications',
+            'courses',
             'recentJobs'
         ));
     }

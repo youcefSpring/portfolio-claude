@@ -66,8 +66,8 @@ class SkillController extends Controller
             'name' => 'required|string|max:255|unique:skills,name',
             'slug' => 'nullable|string|max:255|unique:skills,slug',
             'description' => 'nullable|string',
-            'category' => 'required|in:programming,framework,database,tool,design,soft_skill,other',
-            'proficiency_level' => 'required|integer|min:1|max:5',
+            'category' => 'nullable|in:programming,framework,database,tool,design,soft_skill,other',
+            'proficiency_level' => 'nullable|integer|min:1|max:5',
             'icon' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg,webp|max:2048',
             'simple_icon' => 'nullable|string|max:255',
@@ -83,6 +83,8 @@ class SkillController extends Controller
 
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['category'] = $validated['category'] ?? 'other';
+        $validated['proficiency_level'] = $validated['proficiency_level'] ?? 3;
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
@@ -130,8 +132,8 @@ class SkillController extends Controller
             'name' => 'required|string|max:255|unique:skills,name,' . $skill->id,
             'slug' => 'nullable|string|max:255|unique:skills,slug,' . $skill->id,
             'description' => 'nullable|string',
-            'category' => 'required|in:programming,framework,database,tool,design,soft_skill,other',
-            'proficiency_level' => 'required|integer|min:1|max:5',
+            'category' => 'nullable|in:programming,framework,database,tool,design,soft_skill,other',
+            'proficiency_level' => 'nullable|integer|min:1|max:5',
             'icon' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg,webp|max:2048',
             'simple_icon' => 'nullable|string|max:255',
@@ -147,6 +149,14 @@ class SkillController extends Controller
 
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['sort_order'] = $validated['sort_order'] ?? $skill->sort_order;
+        $validated['category'] = $validated['category'] ?? $skill->category ?? 'other';
+        $validated['proficiency_level'] = $validated['proficiency_level'] ?? $skill->proficiency_level ?? 3;
+
+        // Handle logo removal
+        if ($request->boolean('remove_logo') && $skill->logo) {
+            Storage::disk('public')->delete($skill->logo);
+            $validated['logo'] = null;
+        }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
