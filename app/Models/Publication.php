@@ -41,21 +41,22 @@ class Publication extends Model
     /**
      * Best public link for the publication.
      *
-     * The admin form saves `url` and `doi`; older rows only carry
-     * `external_link`. Prefer whichever is actually filled in.
+     * A DOI is the canonical, permanent address, so it wins when present.
+     * Otherwise fall back to the plain URL, then to the legacy external_link
+     * column that older rows still use.
      */
     public function getLinkUrlAttribute(): ?string
     {
-        foreach ([$this->external_link, $this->url] as $link) {
-            if (filled($link)) {
-                return $link;
-            }
-        }
-
         if (filled($this->doi)) {
             return \Illuminate\Support\Str::startsWith($this->doi, ['http://', 'https://'])
                 ? $this->doi
                 : 'https://doi.org/' . ltrim($this->doi, '/');
+        }
+
+        foreach ([$this->url, $this->external_link] as $link) {
+            if (filled($link)) {
+                return $link;
+            }
         }
 
         return null;

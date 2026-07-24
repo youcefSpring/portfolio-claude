@@ -25,24 +25,28 @@ class PublicationLinkTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_link_url_prefers_external_link_then_url_then_doi(): void
+    public function test_link_url_prefers_doi_then_url_then_external_link(): void
     {
-        $withExternal = new Publication([
+        // A DOI is the canonical address, so it wins over everything else.
+        $withDoi = new Publication([
             'external_link' => 'https://example.com/external',
             'url' => 'https://example.com/url',
             'doi' => '10.1109/tas.2024.8.2.112',
         ]);
-        $this->assertSame('https://example.com/external', $withExternal->link_url);
+        $this->assertSame('https://doi.org/10.1109/tas.2024.8.2.112', $withDoi->link_url);
 
+        // No DOI: use the publication URL.
         $withUrl = new Publication([
+            'external_link' => 'https://example.com/external',
             'url' => 'https://example.com/url',
-            'doi' => '10.1109/tas.2024.8.2.112',
         ]);
         $this->assertSame('https://example.com/url', $withUrl->link_url);
 
-        $withDoi = new Publication(['doi' => '10.1109/tas.2024.8.2.112']);
-        $this->assertSame('https://doi.org/10.1109/tas.2024.8.2.112', $withDoi->link_url);
+        // Neither: fall back to the legacy column.
+        $withExternal = new Publication(['external_link' => 'https://example.com/external']);
+        $this->assertSame('https://example.com/external', $withExternal->link_url);
 
+        // A DOI already given as a full URL is passed through untouched.
         $withFullDoi = new Publication(['doi' => 'https://doi.org/10.1109/x']);
         $this->assertSame('https://doi.org/10.1109/x', $withFullDoi->link_url);
 
@@ -61,6 +65,7 @@ class PublicationLinkTest extends TestCase
                 'status' => 'published',
                 'year' => 2024,
                 'url' => 'https://example.com/paper.pdf',
+                // no DOI on this one — the URL must be used
             ])
             ->assertRedirect(route('admin.publications.index'));
 
