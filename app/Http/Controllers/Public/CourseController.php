@@ -14,9 +14,9 @@ class CourseController extends Controller
      */
     public function index(): View
     {
-        $courses = Course::active()
+        $courses = Course::where('is_published', true)
             ->with('user')
-            ->orderBy('start_date', 'desc')
+            ->latest()
             ->paginate(12);
 
         return view('public.courses.index', compact('courses'));
@@ -27,10 +27,8 @@ class CourseController extends Controller
      */
     public function show(Course $course): View
     {
-        // Ensure course is active or return 404
-        if ($course->status !== 'active') {
-            abort(404);
-        }
+        // Only published courses are publicly visible
+        abort_unless($course->is_published, 404);
 
         return view('public.courses.show', compact('course'));
     }
