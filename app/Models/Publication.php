@@ -39,6 +39,43 @@ class Publication extends Model
     ];
 
     /**
+     * Best public link for the publication.
+     *
+     * The admin form saves `url` and `doi`; older rows only carry
+     * `external_link`. Prefer whichever is actually filled in.
+     */
+    public function getLinkUrlAttribute(): ?string
+    {
+        foreach ([$this->external_link, $this->url] as $link) {
+            if (filled($link)) {
+                return $link;
+            }
+        }
+
+        if (filled($this->doi)) {
+            return \Illuminate\Support\Str::startsWith($this->doi, ['http://', 'https://'])
+                ? $this->doi
+                : 'https://doi.org/' . ltrim($this->doi, '/');
+        }
+
+        return null;
+    }
+
+    /**
+     * Public URL for an uploaded publication PDF, wherever it was stored.
+     */
+    public function getFileUrlAttribute(): ?string
+    {
+        if (! $this->publication_file_path) {
+            return null;
+        }
+
+        return file_exists(public_path($this->publication_file_path))
+            ? asset($this->publication_file_path)
+            : asset('storage/' . $this->publication_file_path);
+    }
+
+    /**
      * Get the user that owns the publication.
      */
     public function user(): BelongsTo

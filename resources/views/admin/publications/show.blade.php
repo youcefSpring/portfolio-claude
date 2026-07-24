@@ -162,8 +162,8 @@
                             <i class="fas fa-search mr-2"></i>View DOI
                         </a>
                     @endif
-                    @if($publication->pdf_file)
-                        <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                    @if($publication->publication_file_path)
+                        <a href="{{ $publication->file_url }}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
                             <i class="fas fa-file-pdf mr-2"></i>Download PDF
                         </a>
                     @endif
@@ -252,7 +252,7 @@
         </div>
 
         <!-- Files and Links -->
-        @if($publication->pdf_file || $publication->url || $publication->doi)
+        @if($publication->publication_file_path || $publication->url || $publication->doi)
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div class="p-4 lg:p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -261,8 +261,8 @@
                     </h3>
 
                     <div class="space-y-3">
-                        @if($publication->pdf_file)
-                            <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                        @if($publication->publication_file_path)
+                            <a href="{{ $publication->file_url }}" target="_blank" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
                                 <i class="fas fa-file-pdf mr-2"></i>Download PDF
                             </a>
                         @endif

@@ -59,8 +59,7 @@ class PublicationController extends Controller
         }
 
         if ($request->hasFile('publication_file')) {
-            $data['publication_file_path'] = $request->file('publication_file')
-                ->store('publications', 'local');
+            $data['publication_file_path'] = $this->storeFile($request->file('publication_file'));
         }
 
         $publication = Publication::create($data);
@@ -100,12 +99,8 @@ class PublicationController extends Controller
         }
 
         if ($request->hasFile('publication_file')) {
-            if ($publication->publication_file_path) {
-                Storage::disk('local')->delete($publication->publication_file_path);
-            }
-
-            $data['publication_file_path'] = $request->file('publication_file')
-                ->store('publications', 'local');
+            $this->deleteFile($publication->publication_file_path);
+            $data['publication_file_path'] = $this->storeFile($request->file('publication_file'));
         }
 
         $publication->update($data);
@@ -122,14 +117,40 @@ class PublicationController extends Controller
     {
         //$this->authorize('delete', $publication);
 
-        if ($publication->publication_file_path) {
-            Storage::disk('local')->delete($publication->publication_file_path);
-        }
+        $this->deleteFile($publication->publication_file_path);
 
         $publication->tags()->detach();
         $publication->delete();
 
         return redirect()->route('admin.publications.index')
             ->with('success', 'Publication deleted successfully.');
+    }
+
+    /**
+     * Store a publication PDF under public/documents/publications so it is
+     * directly downloadable, and return its relative path.
+     */
+    private function storeFile(\Illuminate\Http\UploadedFile $file): string
+    {
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('documents/publications'), $filename);
+
+        return 'documents/publications/' . $filename;
+    }
+
+    /**
+     * Delete a publication PDF, whichever location it was uploaded to.
+     */
+    private function deleteFile(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        if (file_exists(public_path($path))) {
+            @unlink(public_path($path));
+        }
+
+        Storage::disk('local')->delete($path);
     }
 }

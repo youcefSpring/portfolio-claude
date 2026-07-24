@@ -203,13 +203,13 @@
 
                             <!-- PDF File -->
                             <div>
-                                <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">PDF File</label>
+                                <label for="publication_file" class="block text-sm font-medium text-gray-700 mb-2">PDF File</label>
                                 <input type="file"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('pdf_file') border-red-500 @enderror"
-                                       id="pdf_file"
-                                       name="pdf_file"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('publication_file') border-red-500 @enderror"
+                                       id="publication_file"
+                                       name="publication_file"
                                        accept=".pdf">
-                                @error('pdf_file')
+                                @error('publication_file')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                                 <p class="text-gray-500 text-sm mt-1">Upload the publication PDF file (max 20MB)</p>
@@ -443,7 +443,7 @@
         });
 
         // File size validation
-        const pdfFileInput = document.getElementById('pdf_file');
+        const pdfFileInput = document.getElementById('publication_file');
         pdfFileInput.addEventListener('change', function() {
             if (this.files[0]) {
                 const fileSize = this.files[0].size / 1024 / 1024; // Size in MB

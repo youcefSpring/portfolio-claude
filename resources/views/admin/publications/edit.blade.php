@@ -34,243 +34,219 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="space-y-6">
-                            <!-- Publication Title -->
-                            <div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <!-- Title -->
+                            <div class="md:col-span-2">
                                 <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Publication Title <span class="text-red-500">*</span></label>
-                                <input type="text"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('title') border-red-500 @enderror"
-                                       id="title"
-                                       name="title"
-                                       value="{{ old('title', $publication->title) }}"
-                                       required>
+                                <input type="text" id="title" name="title" value="{{ old('title', $publication->title) }}" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('title') border-red-500 @enderror">
                                 @error('title')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <!-- Authors -->
-                            <div>
+                            <div class="md:col-span-2">
                                 <label for="authors" class="block text-sm font-medium text-gray-700 mb-2">Authors <span class="text-red-500">*</span></label>
-                                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('authors') border-red-500 @enderror"
-                                          id="authors"
-                                          name="authors"
-                                          rows="2"
-                                          required>{{ old('authors', $publication->authors) }}</textarea>
+                                <textarea id="authors" name="authors" rows="2" required
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('authors') border-red-500 @enderror">{{ old('authors', $publication->authors) }}</textarea>
+                                <p class="text-gray-500 text-xs mt-1">Citation format, e.g. “Smith, J., Doe, A., &amp; Johnson, M.”</p>
                                 @error('authors')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
-                                <p class="text-gray-500 text-sm mt-1">List all authors in proper citation format (e.g., "Smith, J., Doe, A., & Johnson, M.")</p>
                             </div>
 
-                        <!-- Type and Status -->
-                        <div class="col-md-6">
-                            <label for="type" class="form-label">Publication Type <span class="text-danger">*</span></label>
-                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
-                                <option value="">Select Type</option>
-                                <option value="journal" {{ old('type', $publication->type) === 'journal' ? 'selected' : '' }}>Journal Article</option>
-                                <option value="conference" {{ old('type', $publication->type) === 'conference' ? 'selected' : '' }}>Conference Paper</option>
-                                <option value="book" {{ old('type', $publication->type) === 'book' ? 'selected' : '' }}>Book</option>
-                                <option value="book_chapter" {{ old('type', $publication->type) === 'book_chapter' ? 'selected' : '' }}>Book Chapter</option>
-                                <option value="thesis" {{ old('type', $publication->type) === 'thesis' ? 'selected' : '' }}>Thesis</option>
-                                <option value="report" {{ old('type', $publication->type) === 'report' ? 'selected' : '' }}>Report</option>
-                                <option value="preprint" {{ old('type', $publication->type) === 'preprint' ? 'selected' : '' }}>Preprint</option>
-                            </select>
-                            @error('type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="status" class="form-label">Publication Status</label>
-                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status">
-                                <option value="published" {{ old('status', $publication->status) === 'published' ? 'selected' : '' }}>Published</option>
-                                <option value="accepted" {{ old('status', $publication->status) === 'accepted' ? 'selected' : '' }}>Accepted</option>
-                                <option value="under_review" {{ old('status', $publication->status) === 'under_review' ? 'selected' : '' }}>Under Review</option>
-                                <option value="in_preparation" {{ old('status', $publication->status) === 'in_preparation' ? 'selected' : '' }}>In Preparation</option>
-                            </select>
-                            @error('status')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Journal/Venue Information -->
-                        <div class="col-md-6">
-                            <label for="journal_name" class="form-label">Journal/Conference Name</label>
-                            <input type="text"
-                                   class="form-control @error('journal_name') is-invalid @enderror"
-                                   id="journal_name"
-                                   name="journal_name"
-                                   value="{{ old('journal_name', $publication->journal_name) }}">
-                            @error('journal_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="venue" class="form-label">Venue/Publisher</label>
-                            <input type="text"
-                                   class="form-control @error('venue') is-invalid @enderror"
-                                   id="venue"
-                                   name="venue"
-                                   value="{{ old('venue', $publication->venue) }}">
-                            @error('venue')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Publication Details -->
-                        <div class="col-md-4">
-                            <label for="volume" class="form-label">Volume</label>
-                            <input type="text"
-                                   class="form-control @error('volume') is-invalid @enderror"
-                                   id="volume"
-                                   name="volume"
-                                   value="{{ old('volume', $publication->volume) }}">
-                            @error('volume')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="issue" class="form-label">Issue</label>
-                            <input type="text"
-                                   class="form-control @error('issue') is-invalid @enderror"
-                                   id="issue"
-                                   name="issue"
-                                   value="{{ old('issue', $publication->issue) }}">
-                            @error('issue')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="pages" class="form-label">Pages</label>
-                            <input type="text"
-                                   class="form-control @error('pages') is-invalid @enderror"
-                                   id="pages"
-                                   name="pages"
-                                   value="{{ old('pages', $publication->pages) }}"
-                                   placeholder="e.g., 123-145">
-                            @error('pages')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                            <!-- Publication Year -->
+                            <!-- Type -->
                             <div>
-                                <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Publication Year <span class="text-red-500">*</span></label>
-                                <input type="number"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('year') border-red-500 @enderror"
-                                       id="year"
-                                       name="year"
-                                       min="1900"
-                                       max="{{ date('Y') + 5 }}"
-                                       value="{{ old('year', $publication->year) }}"
-                                       required>
-                                @error('year')
+                                <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Publication Type <span class="text-red-500">*</span></label>
+                                <select id="type" name="type" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('type') border-red-500 @enderror">
+                                    <option value="">Select Type</option>
+                                    @foreach([
+                                        'journal' => 'Journal Article',
+                                        'conference' => 'Conference Paper',
+                                        'book' => 'Book',
+                                        'book_chapter' => 'Book Chapter',
+                                        'thesis' => 'Thesis',
+                                        'report' => 'Report',
+                                        'preprint' => 'Preprint',
+                                    ] as $value => $label)
+                                        <option value="{{ $value }}" {{ old('type', $publication->type) === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('type')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                        <!-- DOI and URLs -->
-                        <div class="col-md-6">
-                            <label for="doi" class="form-label">DOI</label>
-                            <input type="text"
-                                   class="form-control @error('doi') is-invalid @enderror"
-                                   id="doi"
-                                   name="doi"
-                                   value="{{ old('doi', $publication->doi) }}"
-                                   placeholder="e.g., 10.1000/182">
-                            @error('doi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <!-- Status -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Publication Status <span class="text-red-500">*</span></label>
+                                <select id="status" name="status" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('status') border-red-500 @enderror">
+                                    @foreach([
+                                        'published' => 'Published',
+                                        'accepted' => 'Accepted',
+                                        'under_review' => 'Under Review',
+                                        'in_preparation' => 'In Preparation',
+                                    ] as $value => $label)
+                                        <option value="{{ $value }}" {{ old('status', $publication->status) === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('status')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                        <div class="col-md-6">
-                            <label for="url" class="form-label">Publication URL</label>
-                            <input type="url"
-                                   class="form-control @error('url') is-invalid @enderror"
-                                   id="url"
-                                   name="url"
-                                   value="{{ old('url', $publication->url) }}">
-                            @error('url')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <!-- Journal / Venue -->
+                            <div>
+                                <label for="journal_name" class="block text-sm font-medium text-gray-700 mb-2">Journal / Conference Name</label>
+                                <input type="text" id="journal_name" name="journal_name" value="{{ old('journal_name', $publication->journal) }}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('journal_name') border-red-500 @enderror">
+                                @error('journal_name')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                        <!-- PDF File -->
-                        <div class="col-12">
-                            <label for="pdf_file" class="form-label">PDF File</label>
-                            @if($publication->pdf_file)
-                                <div class="mb-2">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-file-pdf text-danger"></i>
-                                        <span>Current PDF: {{ basename($publication->pdf_file) }}</span>
-                                        <a href="{{ Storage::url($publication->pdf_file) }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-eye"></i> View
+                            <div>
+                                <label for="venue" class="block text-sm font-medium text-gray-700 mb-2">Venue / Publisher</label>
+                                <input type="text" id="venue" name="venue" value="{{ old('venue', $publication->venue) }}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('venue') border-red-500 @enderror">
+                                @error('venue')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Volume / Issue / Pages / Year -->
+                            <div class="md:col-span-2 grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label for="volume" class="block text-sm font-medium text-gray-700 mb-2">Volume</label>
+                                    <input type="text" id="volume" name="volume" value="{{ old('volume', $publication->volume) }}"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('volume') border-red-500 @enderror">
+                                    @error('volume')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="issue" class="block text-sm font-medium text-gray-700 mb-2">Issue</label>
+                                    <input type="text" id="issue" name="issue" value="{{ old('issue', $publication->issue) }}"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('issue') border-red-500 @enderror">
+                                    @error('issue')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="pages" class="block text-sm font-medium text-gray-700 mb-2">Pages</label>
+                                    <input type="text" id="pages" name="pages" value="{{ old('pages', $publication->pages) }}" placeholder="123-145"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('pages') border-red-500 @enderror">
+                                    @error('pages')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Year <span class="text-red-500">*</span></label>
+                                    <input type="number" id="year" name="year" min="1900" max="{{ date('Y') + 1 }}" required
+                                           value="{{ old('year', $publication->year) }}"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('year') border-red-500 @enderror">
+                                    @error('year')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- DOI / URL -->
+                            <div>
+                                <label for="doi" class="block text-sm font-medium text-gray-700 mb-2">DOI</label>
+                                <input type="text" id="doi" name="doi" value="{{ old('doi', $publication->doi) }}" placeholder="10.1109/tas.2024.8.2.112"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('doi') border-red-500 @enderror">
+                                <p class="text-gray-500 text-xs mt-1">Used as the public link when no URL is set.</p>
+                                @error('doi')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="url" class="block text-sm font-medium text-gray-700 mb-2">Publication URL</label>
+                                <input type="url" id="url" name="url" value="{{ old('url', $publication->url) }}" placeholder="https://..."
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('url') border-red-500 @enderror">
+                                <p class="text-gray-500 text-xs mt-1">Shown as “Read More” on the homepage.</p>
+                                @error('url')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- PDF -->
+                            <div class="md:col-span-2">
+                                <label for="publication_file" class="block text-sm font-medium text-gray-700 mb-2">PDF File</label>
+
+                                @if($publication->publication_file_path)
+                                    <div class="flex flex-wrap items-center gap-3 mb-3 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                                        <i class="fas fa-file-pdf text-red-500"></i>
+                                        <span class="text-sm text-gray-700">{{ basename($publication->publication_file_path) }}</span>
+                                        <a href="{{ $publication->file_url }}" target="_blank"
+                                           class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                                            <i class="fas fa-eye mr-1"></i>View
                                         </a>
                                     </div>
-                                    <p class="form-text mb-2">Upload a new PDF to replace the current one</p>
+                                @endif
+
+                                <input type="file" id="publication_file" name="publication_file" accept=".pdf"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('publication_file') border-red-500 @enderror">
+                                <p class="text-gray-500 text-xs mt-1">PDF only — max 20MB. Uploading replaces the current file.</p>
+                                @error('publication_file')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Abstract -->
+                            <div class="md:col-span-2">
+                                <label for="abstract" class="block text-sm font-medium text-gray-700 mb-2">Abstract</label>
+                                <textarea id="abstract" name="abstract" rows="6"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('abstract') border-red-500 @enderror">{{ old('abstract', $publication->abstract) }}</textarea>
+                                @error('abstract')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Keywords -->
+                            <div class="md:col-span-2">
+                                <label for="keywords" class="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                                <textarea id="keywords" name="keywords" rows="2"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('keywords') border-red-500 @enderror">{{ old('keywords', $publication->keywords) }}</textarea>
+                                <p class="text-gray-500 text-xs mt-1">Comma-separated research topics</p>
+                                @error('keywords')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Tags -->
+                            @if(isset($tags) && $tags->count() > 0)
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                                        @foreach($tags as $tag)
+                                            <label class="flex items-center gap-2 text-sm text-gray-700">
+                                                <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                                                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                       {{ in_array($tag->id, old('tags', $publication->tags->pluck('id')->toArray())) ? 'checked' : '' }}>
+                                                <span>{{ $tag->name }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                    <p class="text-gray-500 text-xs mt-1">Categorise this publication</p>
                                 </div>
                             @endif
-                            <input type="file"
-                                   class="form-control @error('pdf_file') is-invalid @enderror"
-                                   id="pdf_file"
-                                   name="pdf_file"
-                                   accept=".pdf">
-                            @error('pdf_file')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Upload a new PDF file to replace the current one (max 20MB)</div>
-                        </div>
 
-                        <!-- Abstract -->
-                        <div class="col-12">
-                            <label for="abstract" class="form-label">Abstract</label>
-                            <textarea class="form-control @error('abstract') is-invalid @enderror"
-                                      id="abstract"
-                                      name="abstract"
-                                      rows="6">{{ old('abstract', $publication->abstract) }}</textarea>
-                            @error('abstract')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Publication abstract or summary</div>
-                        </div>
-
-                        <!-- Keywords -->
-                        <div class="col-12">
-                            <label for="keywords" class="form-label">Keywords</label>
-                            <textarea class="form-control @error('keywords') is-invalid @enderror"
-                                      id="keywords"
-                                      name="keywords"
-                                      rows="2">{{ old('keywords', $publication->keywords) }}</textarea>
-                            @error('keywords')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Comma-separated keywords or research topics</div>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="col-12">
-                            <label for="notes" class="form-label">Notes</label>
-                            <textarea class="form-control @error('notes') is-invalid @enderror"
-                                      id="notes"
-                                      name="notes"
-                                      rows="3">{{ old('notes', $publication->notes) }}</textarea>
-                            @error('notes')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Additional notes or comments about this publication</div>
-                        </div>
-
-                            <!-- Submit Buttons -->
-                            <div class="flex flex-col sm:flex-row sm:justify-between pt-6 border-t border-gray-100 gap-4">
+                            <!-- Actions -->
+                            <div class="md:col-span-2 flex flex-col sm:flex-row sm:justify-between gap-3 pt-4 border-t border-gray-100">
                                 <a href="{{ route('admin.publications.show', $publication) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
                                     <i class="fas fa-times mr-2"></i>Cancel
                                 </a>
-                                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                                    <i class="fas fa-check mr-2"></i>Update Publication
+                                <button type="submit" class="inline-flex items-center justify-center px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    <i class="fas fa-save mr-2"></i>Update Publication
                                 </button>
                             </div>
                         </div>
@@ -280,72 +256,6 @@
         </div>
 
         <div class="lg:col-span-1">
-            <!-- Visibility Settings -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-                <div class="p-4 lg:p-6 border-b border-gray-100">
-                    <h2 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <i class="fas fa-eye mr-2 text-blue-600"></i>
-                        Visibility
-                    </h2>
-                </div>
-                <div class="p-4 lg:p-6">
-                    <div class="space-y-3 mb-4">
-                        <div class="flex items-start">
-                            <input class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="radio" name="is_published" id="published" value="1" {{ old('is_published', $publication->is_published) == '1' ? 'checked' : '' }}>
-                            <label class="ml-3 block text-sm" for="published">
-                                <span class="font-medium text-gray-900">Published</span>
-                                <span class="text-gray-500 block text-xs">Visible to all visitors</span>
-                            </label>
-                        </div>
-                        <div class="flex items-start">
-                            <input class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="radio" name="is_published" id="draft" value="0" {{ old('is_published', $publication->is_published) == '0' ? 'checked' : '' }}>
-                            <label class="ml-3 block text-sm" for="draft">
-                                <span class="font-medium text-gray-900">Draft</span>
-                                <span class="text-gray-500 block text-xs">Only visible to you</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start">
-                        <input class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $publication->is_featured) ? 'checked' : '' }}>
-                        <label class="ml-3 block text-sm" for="is_featured">
-                            <span class="font-medium text-gray-900">Featured Publication</span>
-                            <span class="text-gray-500 block text-xs">Highlight this publication</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tags -->
-            @if(isset($tags) && $tags->count() > 0)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-                <div class="p-4 lg:p-6 border-b border-gray-100">
-                    <h2 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <i class="fas fa-tags mr-2 text-blue-600"></i>
-                        Tags
-                    </h2>
-                </div>
-                <div class="p-4 lg:p-6">
-                    <div class="space-y-2 max-h-48 overflow-y-auto">
-                        @foreach($tags as $tag)
-                            <div class="flex items-center">
-                                <input type="checkbox"
-                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                       id="tag_{{ $tag->id }}"
-                                       name="tags[]"
-                                       value="{{ $tag->id }}"
-                                       {{ in_array($tag->id, old('tags', $publication->tags->pluck('id')->toArray())) ? 'checked' : '' }}>
-                                <label class="ml-2 text-sm text-gray-700" for="tag_{{ $tag->id }}">
-                                    {{ $tag->name }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
-                    <p class="text-gray-500 text-xs mt-3">Select tags to categorize this publication</p>
-                </div>
-            </div>
-            @endif
-
             <!-- Citation Preview -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
                 <div class="p-4 lg:p-6 border-b border-gray-100">
@@ -380,10 +290,10 @@
                         <span class="font-medium text-gray-900">{{ $publication->updated_at->format('M j, Y') }}</span>
                     </div>
 
-                    @if($publication->is_published)
+                    @if($publication->link_url)
                         <div class="pt-3">
-                            <a href="{{ url('/publications/' . Str::slug($publication->title)) }}" target="_blank" class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-medium">
-                                <i class="fas fa-eye mr-2"></i>View Public Page
+                            <a href="{{ $publication->link_url }}" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-medium">
+                                <i class="fas fa-external-link-alt mr-2"></i>Open Public Link
                             </a>
                         </div>
                     @endif
@@ -470,7 +380,7 @@
         });
 
         // File size validation
-        const pdfFileInput = document.getElementById('pdf_file');
+        const pdfFileInput = document.getElementById('publication_file');
         pdfFileInput.addEventListener('change', function() {
             if (this.files[0]) {
                 const fileSize = this.files[0].size / 1024 / 1024; // Size in MB

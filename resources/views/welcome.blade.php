@@ -598,8 +598,8 @@
                                 {{ $publication->year }}
                             </p>
                         @endif
-                        @if($publication->external_link)
-                            <a href="{{ $publication->external_link }}" target="_blank" rel="noopener" class="inline-flex items-center text-sm font-semibold accent hover:underline">
+                        @if($publication->link_url)
+                            <a href="{{ $publication->link_url }}" target="_blank" rel="noopener" class="inline-flex items-center text-sm font-semibold accent hover:underline">
                                 Read More <i class="fas fa-arrow-right ml-2 text-xs"></i>
                             </a>
                         @endif
