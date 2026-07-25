@@ -172,6 +172,13 @@
             backdrop-filter: blur(16px);
         }
 
+        /* Mobile menu panel needs its own background: the nav is transparent
+           until scrolled, so links would otherwise sit on top of the hero. */
+        .mobile-panel {
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+
         /* Simple-icons logos are single-colour black; flip them in dark mode */
         .logo-mono { filter: invert(var(--logo-invert)); }
 
@@ -246,7 +253,7 @@
             </div>
 
             <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2">
+            <div id="mobile-menu" class="hidden md:hidden mobile-panel pb-4 pt-2">
                 <div class="flex flex-col">
                     @foreach($navLinks as $anchor => $label)
                         <a href="#{{ $anchor }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">{{ $label }}</a>

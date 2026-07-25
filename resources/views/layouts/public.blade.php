@@ -163,6 +163,13 @@
             backdrop-filter: blur(16px);
         }
 
+        /* Mobile menu panel needs its own background: the nav is transparent
+           until scrolled, so links would otherwise sit on top of page content. */
+        .mobile-panel {
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+
         .prose-plain { line-height: 1.75; white-space: pre-line; }
 
         html { scroll-behavior: smooth; }
@@ -185,10 +192,10 @@
                     {{ $siteOwner->name ?? config('app.name', 'Portfolio') }}<span class="accent">.</span>
                 </a>
 
-                <div class="flex items-center gap-1">
-                    <a href="{{ url('/') }}" class="hidden sm:inline-block px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Home</a>
-                    <a href="{{ route('courses.index') }}" class="hidden sm:inline-block px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Courses</a>
-                    <a href="{{ route('jobs.index') }}" class="hidden sm:inline-block px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Work With Me</a>
+                <div class="hidden sm:flex items-center gap-1">
+                    <a href="{{ url('/') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Home</a>
+                    <a href="{{ route('courses.index') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Courses</a>
+                    <a href="{{ route('jobs.index') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Work With Me</a>
 
                     <button type="button" id="theme-toggle" aria-label="Toggle dark mode"
                             class="ml-1 w-9 h-9 flex items-center justify-center rounded-full border border-base t-mid hover-hi transition-colors">
@@ -199,6 +206,29 @@
                         <a href="{{ route('admin.dashboard') }}" class="ml-1 px-3 py-2 text-sm font-medium t-mid hover-hi transition-colors">
                             <i class="fas fa-user-shield"></i>
                         </a>
+                    @endauth
+                </div>
+
+                <div class="flex items-center gap-2 sm:hidden">
+                    <button type="button" id="theme-toggle-mobile" aria-label="Toggle dark mode"
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-base t-mid">
+                        <i class="fas fa-moon text-sm" data-theme-icon></i>
+                    </button>
+                    <button type="button" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false"
+                            class="p-2 t-mid rounded-lg">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden sm:hidden mobile-panel pb-4 pt-2">
+                <div class="flex flex-col">
+                    <a href="{{ url('/') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Home</a>
+                    <a href="{{ route('courses.index') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Courses</a>
+                    <a href="{{ route('jobs.index') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Work With Me</a>
+                    @auth
+                        <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Dashboard</a>
                     @endauth
                 </div>
             </div>
@@ -224,15 +254,30 @@
             themeIcons.forEach(i => i.className = (isDark ? 'fas fa-sun' : 'fas fa-moon') + ' text-sm');
         }
 
-        document.getElementById('theme-toggle').addEventListener('click', function () {
+        function toggleTheme() {
             const isDark = root.classList.contains('dark');
             root.classList.remove(isDark ? 'dark' : 'light');
             root.classList.add(isDark ? 'light' : 'dark');
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
             paintThemeIcon();
-        });
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        document.getElementById('theme-toggle-mobile').addEventListener('click', toggleTheme);
 
         paintThemeIcon();
+
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function setMenu(open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            mobileMenuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            mobileMenuBtn.querySelector('i').className = open ? 'fas fa-xmark' : 'fas fa-bars';
+        }
+
+        mobileMenuBtn.addEventListener('click', () => setMenu(mobileMenu.classList.contains('hidden')));
+        mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 
         const nav = document.getElementById('nav');
         window.addEventListener('scroll', () => nav.classList.toggle('nav-scrolled', window.scrollY > 40), { passive: true });
