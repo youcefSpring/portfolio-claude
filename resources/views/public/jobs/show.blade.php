@@ -20,11 +20,11 @@
 
 @section('content')
 <!-- Header -->
-<header class="relative overflow-hidden aurora pt-32 pb-16 lg:pt-40 lg:pb-20">
+<header class="relative overflow-hidden aurora pt-24 pb-8 lg:pt-28 lg:pb-10">
     <div class="absolute inset-0 grid-bg"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav class="flex items-center gap-2 text-sm t-low mb-6">
+        <nav class="flex items-center gap-2 text-xs t-low mb-3">
             <a href="{{ url('/') }}" class="hover-hi transition-colors">Home</a>
             <span>/</span>
             <a href="{{ route('jobs.index') }}" class="hover-hi transition-colors">Work With Me</a>
@@ -33,14 +33,14 @@
         </nav>
 
         @if($jobOffer->featured)
-            <span class="inline-block mb-4 px-2.5 py-1 text-[11px] font-semibold rounded-full pill">
+            <span class="inline-block mb-2 px-2.5 py-1 text-[11px] font-semibold rounded-full pill">
                 <i class="fas fa-star mr-1"></i>Featured
             </span>
         @endif
 
-        <h1 class="text-4xl md:text-6xl font-extrabold t-hi leading-tight mb-6">{{ $jobOffer->title }}</h1>
+        <h1 class="text-3xl md:text-4xl font-extrabold t-hi leading-tight mb-3">{{ $jobOffer->title }}</h1>
 
-        <div class="flex flex-wrap gap-2 mb-4">
+        <div class="flex flex-wrap gap-2 mb-2">
             <span class="px-3 py-1 text-xs font-semibold rounded-full pill"><i class="fas fa-briefcase mr-1"></i>{{ ucfirst($jobOffer->project_type) }}</span>
             <span class="px-3 py-1 text-xs font-semibold rounded-full pill"><i class="fas fa-location-dot mr-1"></i>{{ ucfirst(str_replace('-', ' ', $jobOffer->location_type)) }}</span>
             @if($jobOffer->duration)
@@ -51,7 +51,7 @@
             @endif
         </div>
 
-        <p class="text-sm t-low">Posted {{ $jobOffer->published_at->diffForHumans() }}</p>
+        <p class="text-xs t-low">Posted {{ $jobOffer->published_at->diffForHumans() }}</p>
     </div>
 </header>
 
