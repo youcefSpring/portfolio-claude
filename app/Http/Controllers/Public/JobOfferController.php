@@ -8,7 +8,6 @@ use App\Models\JobApplication;
 use App\Models\JobOffer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class JobOfferController extends Controller
@@ -114,7 +113,7 @@ class JobOfferController extends Controller
         }
 
         // Create the application
-        $application = JobApplication::create([
+        JobApplication::create([
             'job_offer_id' => $jobOffer->id,
             'full_name' => $request->full_name,
             'email' => $request->email,
