@@ -16,18 +16,18 @@
 
 @section('content')
 <!-- Header -->
-<header class="relative overflow-hidden aurora pt-32 pb-16 lg:pt-40 lg:pb-20">
+<header class="relative overflow-hidden aurora pt-24 pb-8 lg:pt-28 lg:pb-10">
     <div class="absolute inset-0 grid-bg"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <span class="text-xs font-semibold tracking-[0.2em] uppercase accent">Opportunities</span>
-        <h1 class="mt-2 text-4xl md:text-6xl font-extrabold t-hi">Work With Me</h1>
-        <p class="mt-4 text-base t-mid max-w-2xl leading-relaxed">
+        <h1 class="mt-1 text-3xl md:text-4xl font-extrabold t-hi">Work With Me</h1>
+        <p class="mt-2 text-sm t-mid max-w-2xl leading-relaxed">
             Current consulting and freelance opportunities. I'm always open to projects and collaborations that challenge and inspire.
         </p>
 
         <!-- Filters -->
-        <form method="GET" action="{{ route('jobs.index') }}" class="mt-10 grid grid-cols-1 md:grid-cols-12 gap-3">
+        <form method="GET" action="{{ route('jobs.index') }}" class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-3">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search titles, descriptions..."
                    aria-label="Search opportunities"
                    class="field md:col-span-5 px-4 py-2.5 text-sm rounded-xl transition-colors">
