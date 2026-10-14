@@ -184,56 +184,7 @@
         $siteOwner = \App\Models\User::where('role', 'admin')->first();
     @endphp
 
-    <!-- Navigation -->
-    <nav id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b border-base">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="{{ url('/') }}" class="text-lg font-heading font-bold t-hi tracking-tight">
-                    {{ $siteOwner->name ?? config('app.name', 'Portfolio') }}<span class="accent">.</span>
-                </a>
-
-                <div class="hidden sm:flex items-center gap-1">
-                    <a href="{{ url('/') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Home</a>
-                    <a href="{{ route('courses.index') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Courses</a>
-                    <a href="{{ route('jobs.index') }}" class="px-3 py-2 text-sm font-medium t-mid hover-hi rounded-lg transition-colors">Work With Me</a>
-
-                    <button type="button" id="theme-toggle" aria-label="Toggle dark mode"
-                            class="ml-1 w-9 h-9 flex items-center justify-center rounded-full border border-base t-mid hover-hi transition-colors">
-                        <i class="fas fa-moon text-sm" data-theme-icon></i>
-                    </button>
-
-                    @auth
-                        <a href="{{ route('admin.dashboard') }}" class="ml-1 px-3 py-2 text-sm font-medium t-mid hover-hi transition-colors">
-                            <i class="fas fa-user-shield"></i>
-                        </a>
-                    @endauth
-                </div>
-
-                <div class="flex items-center gap-2 sm:hidden">
-                    <button type="button" id="theme-toggle-mobile" aria-label="Toggle dark mode"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-base t-mid">
-                        <i class="fas fa-moon text-sm" data-theme-icon></i>
-                    </button>
-                    <button type="button" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false"
-                            class="p-2 t-mid rounded-lg">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden sm:hidden mobile-panel pb-4 pt-2">
-                <div class="flex flex-col">
-                    <a href="{{ url('/') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Home</a>
-                    <a href="{{ route('courses.index') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Courses</a>
-                    <a href="{{ route('jobs.index') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Work With Me</a>
-                    @auth
-                        <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 text-sm font-medium t-mid rounded-lg">Dashboard</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+    @include('partials.public-nav', ['brand' => $siteOwner->name ?? config('app.name', 'Portfolio')])
 
     @yield('content')
 
