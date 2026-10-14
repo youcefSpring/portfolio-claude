@@ -21,6 +21,10 @@ class JobApplication extends Model
         'full_name',
         'email',
         'phone',
+        'github_url',
+        'linkedin_url',
+        'telegram',
+        'portfolio_url',
         'cv_file_path',
         'cover_letter',
         'status',
@@ -195,6 +199,14 @@ class JobApplication extends Model
         }
 
         return '';
+    }
+
+    /**
+     * Get the Telegram profile URL from the stored username.
+     */
+    public function getTelegramUrlAttribute(): string
+    {
+        return $this->telegram ? 'https://t.me/' . $this->telegram : '';
     }
 
     /**

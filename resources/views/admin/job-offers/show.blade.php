@@ -160,6 +160,20 @@
                                     @if($application->phone)
                                         <p class="text-sm text-gray-600">{{ $application->phone }}</p>
                                     @endif
+                                    <div class="flex flex-wrap gap-3 mt-1 text-sm">
+                                        @if($application->github_url)
+                                            <a href="{{ $application->github_url }}" target="_blank" rel="noopener" class="text-gray-600 hover:text-gray-900"><i class="fab fa-github mr-1"></i>GitHub</a>
+                                        @endif
+                                        @if($application->linkedin_url)
+                                            <a href="{{ $application->linkedin_url }}" target="_blank" rel="noopener" class="text-gray-600 hover:text-blue-700"><i class="fab fa-linkedin mr-1"></i>LinkedIn</a>
+                                        @endif
+                                        @if($application->telegram)
+                                            <a href="{{ $application->telegram_url }}" target="_blank" rel="noopener" class="text-gray-600 hover:text-sky-600"><i class="fab fa-telegram mr-1"></i>{{ '@' . $application->telegram }}</a>
+                                        @endif
+                                        @if($application->portfolio_url)
+                                            <a href="{{ $application->portfolio_url }}" target="_blank" rel="noopener" class="text-gray-600 hover:text-purple-700"><i class="fas fa-globe mr-1"></i>Portfolio</a>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="flex flex-col items-end gap-2">
                                     @if($application->status == 'pending')

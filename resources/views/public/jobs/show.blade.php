@@ -143,8 +143,9 @@
                         <div>
                             <label for="phone" class="block text-xs font-semibold t-hi mb-1.5">Phone number <span class="text-red-500">*</span></label>
                             <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" required
-                                   placeholder="+1 (555) 123-4567"
+                                   placeholder="0555 12 34 56"
                                    class="field w-full px-4 py-2.5 text-sm rounded-xl @error('phone') field-error @enderror">
+                            <p class="mt-1 text-xs t-low">Algerian number (+213 or 0…)</p>
                             @error('phone')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
 
@@ -155,6 +156,25 @@
                             <p class="mt-1 text-xs t-low">PDF, DOC, DOCX (max 5MB)</p>
                             @error('cv_file')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @foreach([
+                            ['github_url', 'GitHub', 'fab fa-github', 'url', 'https://github.com/username'],
+                            ['linkedin_url', 'LinkedIn', 'fab fa-linkedin', 'url', 'https://linkedin.com/in/username'],
+                            ['telegram', 'Telegram', 'fab fa-telegram', 'text', '@username'],
+                            ['portfolio_url', 'Portfolio', 'fas fa-globe', 'url', 'https://your-portfolio.com'],
+                        ] as [$name, $label, $icon, $type, $placeholder])
+                            <div>
+                                <label for="{{ $name }}" class="block text-xs font-semibold t-hi mb-1.5">
+                                    <i class="{{ $icon }} mr-1"></i>{{ $label }} <span class="t-low font-normal">(optional)</span>
+                                </label>
+                                <input type="{{ $type }}" id="{{ $name }}" name="{{ $name }}" value="{{ old($name) }}"
+                                       placeholder="{{ $placeholder }}"
+                                       class="field w-full px-4 py-2.5 text-sm rounded-xl @error($name) field-error @enderror">
+                                @error($name)<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            </div>
+                        @endforeach
                     </div>
 
                     <div>
