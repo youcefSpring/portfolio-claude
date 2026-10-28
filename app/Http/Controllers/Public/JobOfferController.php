@@ -13,11 +13,11 @@ use Illuminate\View\View;
 class JobOfferController extends Controller
 {
     /**
-     * Display a listing of active job offers.
+     * Display a listing of active and closed job offers.
      */
     public function index(Request $request): View
     {
-        $query = JobOffer::active()
+        $query = JobOffer::listed()
             ->published()
             ->with(['user', 'skills']);
 
@@ -40,8 +40,9 @@ class JobOfferController extends Controller
             });
         }
 
-        // Order: featured first, then by most recent
-        $jobOffers = $query->orderBy('featured', 'desc')
+        // Order: open offers first, then featured, then by most recent
+        $jobOffers = $query->orderByRaw("status = 'closed'")
+                           ->orderBy('featured', 'desc')
                            ->orderBy('published_at', 'desc')
                            ->paginate(12);
 
@@ -67,8 +68,8 @@ class JobOfferController extends Controller
      */
     public function show(JobOffer $jobOffer): View
     {
-        // Ensure job offer is active or return 404
-        if (!$jobOffer->isActive()) {
+        // Closed offers stay visible but can't be applied to; others return 404
+        if (!$jobOffer->isActive() && !$jobOffer->isClosed()) {
             abort(404);
         }
 

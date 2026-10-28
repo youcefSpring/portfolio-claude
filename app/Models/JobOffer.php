@@ -110,6 +110,14 @@ class JobOffer extends Model
     }
 
     /**
+     * Scope a query to job offers visible on the public site (active or closed).
+     */
+    public function scopeListed($query)
+    {
+        return $query->whereIn('status', ['active', 'closed']);
+    }
+
+    /**
      * Scope a query to only include featured job offers.
      */
     public function scopeFeatured($query)

@@ -38,6 +38,12 @@
             </span>
         @endif
 
+        @if($jobOffer->isClosed())
+            <span class="inline-block mb-2 px-2.5 py-1 text-[11px] font-semibold rounded-full bg-red-500/10 text-red-500">
+                <i class="fas fa-lock mr-1"></i>Closed
+            </span>
+        @endif
+
         <h1 class="text-3xl md:text-4xl font-extrabold t-hi leading-tight mb-3">{{ $jobOffer->title }}</h1>
 
         <div class="flex flex-wrap gap-2 mb-2">
@@ -117,6 +123,14 @@
             @endif
 
             <!-- Application form -->
+            @if($jobOffer->isClosed())
+            <div id="apply" class="card rounded-2xl p-6 text-center">
+                <i class="fas fa-lock text-2xl t-low mb-3"></i>
+                <h2 class="text-xl font-bold t-hi mb-2">Applications closed</h2>
+                <p class="text-sm t-mid">This offer is no longer accepting applications.</p>
+                <a href="{{ route('jobs.index') }}" class="mt-5 inline-block px-6 py-3 text-sm font-semibold rounded-full btn-solid transition-all">Browse open offers</a>
+            </div>
+            @else
             <div id="apply" class="card rounded-2xl p-6">
                 <h2 class="text-xl font-bold t-hi mb-6">Apply for this position</h2>
 
@@ -190,6 +204,7 @@
                     </button>
                 </form>
             </div>
+            @endif
         </div>
 
         <!-- Sidebar -->
@@ -210,7 +225,11 @@
                     @endif
                     <div class="flex justify-between gap-4"><dt class="t-low">Posted</dt><dd class="t-hi font-medium text-right">{{ $jobOffer->published_at->format('M d, Y') }}</dd></div>
                 </dl>
-                <a href="#apply" class="mt-6 block text-center px-6 py-3 text-sm font-semibold rounded-full btn-solid transition-all">Apply now</a>
+                @if($jobOffer->isClosed())
+                    <span class="mt-6 block text-center px-6 py-3 text-sm font-semibold rounded-full pill"><i class="fas fa-lock mr-1"></i>Applications closed</span>
+                @else
+                    <a href="#apply" class="mt-6 block text-center px-6 py-3 text-sm font-semibold rounded-full btn-solid transition-all">Apply now</a>
+                @endif
             </div>
 
             @if($relatedJobs->count())
@@ -244,7 +263,7 @@
 
 @push('scripts')
 <script>
-    document.getElementById('cv_file').addEventListener('change', function () {
+    document.getElementById('cv_file')?.addEventListener('change', function () {
         const file = this.files[0];
         if (file && file.size > 5 * 1024 * 1024) {
             alert('File size must not exceed 5MB. Please choose a smaller file.');
@@ -252,7 +271,7 @@
         }
     });
 
-    document.getElementById('applicationForm').addEventListener('submit', function (e) {
+    document.getElementById('applicationForm')?.addEventListener('submit', function (e) {
         if (!confirm('Are you sure you want to submit this application? Please review your information before proceeding.')) {
             e.preventDefault();
         }

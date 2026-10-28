@@ -86,6 +86,12 @@
                                 </span>
                             @endif
 
+                            @if($job->isClosed())
+                                <span class="self-start mb-3 px-2.5 py-1 text-[11px] font-semibold rounded-full bg-red-500/10 text-red-500">
+                                    <i class="fas fa-lock mr-1"></i>Closed
+                                </span>
+                            @endif
+
                             <h2 class="text-lg font-bold t-hi mb-3">{{ $job->title }}</h2>
 
                             <div class="flex flex-wrap gap-2 mb-4">
@@ -117,7 +123,7 @@
                             </div>
 
                             <span class="inline-flex items-center text-sm font-semibold accent">
-                                View details & apply
+                                {{ $job->isClosed() ? 'View details' : 'View details & apply' }}
                                 <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
                             </span>
                         </div>
