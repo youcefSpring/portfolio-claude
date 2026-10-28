@@ -9,7 +9,10 @@ use App\Models\JobOffer;
 use App\Models\Skill;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use ZipArchive;
 
 class JobOfferController extends Controller
 {
@@ -188,5 +191,48 @@ class JobOfferController extends Controller
         ]);
 
         return back()->with('success', 'Job offer status updated successfully.');
+    }
+
+    /**
+     * Download all applicants' CVs for a job offer as a ZIP archive.
+     */
+    public function downloadCvs(JobOffer $jobOffer): BinaryFileResponse|RedirectResponse
+    {
+        $applications = $jobOffer->applications()->whereNotNull('cv_file_path')->get();
+
+        $zipPath = tempnam(sys_get_temp_dir(), 'cvs_');
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            return back()->with('error', 'Could not create ZIP archive.');
+        }
+
+        $added = 0;
+        $usedNames = [];
+        foreach ($applications as $application) {
+            $filePath = public_path($application->cv_file_path);
+            if (! is_file($filePath)) {
+                continue;
+            }
+
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+            $baseName = Str::slug($application->full_name) ?: 'applicant-'.$application->id;
+            $name = $baseName.'_CV.'.$extension;
+            if (isset($usedNames[$name])) {
+                $name = $baseName.'-'.$application->id.'_CV.'.$extension;
+            }
+            $usedNames[$name] = true;
+
+            $zip->addFile($filePath, $name);
+            $added++;
+        }
+        $zip->close();
+
+        if ($added === 0) {
+            @unlink($zipPath);
+
+            return back()->with('error', 'No CV files found for this job offer.');
+        }
+
+        return response()->download($zipPath, $jobOffer->slug.'-cvs.zip')->deleteFileAfterSend(true);
     }
 }

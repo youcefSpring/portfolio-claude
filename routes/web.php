@@ -141,6 +141,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('job-offers', AdminJobOfferController::class);
     Route::post('/job-offers/{jobOffer}/toggle-featured', [AdminJobOfferController::class, 'toggleFeatured'])->name('job-offers.toggle-featured');
     Route::put('/job-offers/{jobOffer}/status', [AdminJobOfferController::class, 'updateStatus'])->name('job-offers.update-status');
+    Route::get('/job-offers/{jobOffer}/download-cvs', [AdminJobOfferController::class, 'downloadCvs'])->name('job-offers.download-cvs');
 
     // Job Applications Management
     Route::name('job-applications.')->group(function () {

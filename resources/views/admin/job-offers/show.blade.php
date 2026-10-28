@@ -141,11 +141,19 @@
                         <i class="fas fa-paper-plane mr-2 text-green-600"></i>
                         Applications ({{ $stats['total'] }})
                     </span>
-                    @if($stats['pending'] > 0)
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                            {{ $stats['pending'] }} pending
-                        </span>
-                    @endif
+                    <span class="flex items-center gap-2">
+                        @if($stats['pending'] > 0)
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                {{ $stats['pending'] }} pending
+                            </span>
+                        @endif
+                        @if($jobOffer->applications->whereNotNull('cv_file_path')->count() > 0)
+                            <a href="{{ route('admin.job-offers.download-cvs', $jobOffer) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-file-archive mr-2"></i>Download All CVs
+                            </a>
+                        @endif
+                    </span>
                 </h2>
             </div>
 
@@ -331,6 +339,7 @@
 
                 <form method="POST" action="{{ route('admin.job-offers.update-status', $jobOffer) }}" class="space-y-2">
                     @csrf
+                    @method('PUT')
                     <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="active" {{ $jobOffer->status === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="filled" {{ $jobOffer->status === 'filled' ? 'selected' : '' }}>Filled</option>
