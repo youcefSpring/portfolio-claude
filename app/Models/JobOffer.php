@@ -135,6 +135,14 @@ class JobOffer extends Model
     }
 
     /**
+     * Check if job offer is closed.
+     */
+    public function isClosed(): bool
+    {
+        return $this->status === 'closed';
+    }
+
+    /**
      * Check if job offer is filled.
      */
     public function isFilled(): bool

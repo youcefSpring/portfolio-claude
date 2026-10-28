@@ -26,6 +26,10 @@
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <i class="fas fa-circle mr-1" style="font-size: 6px;"></i>Active
                 </span>
+            @elseif($jobOffer->status == 'closed')
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    <i class="fas fa-lock mr-1"></i>Closed
+                </span>
             @elseif($jobOffer->status == 'filled')
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                     <i class="fas fa-check mr-1"></i>Filled
@@ -342,6 +346,7 @@
                     @method('PUT')
                     <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="active" {{ $jobOffer->status === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="closed" {{ $jobOffer->status === 'closed' ? 'selected' : '' }}>Closed</option>
                         <option value="filled" {{ $jobOffer->status === 'filled' ? 'selected' : '' }}>Filled</option>
                         <option value="cancelled" {{ $jobOffer->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>

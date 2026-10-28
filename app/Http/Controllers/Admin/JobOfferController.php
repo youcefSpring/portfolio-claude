@@ -183,7 +183,7 @@ class JobOfferController extends Controller
     public function updateStatus(Request $request, JobOffer $jobOffer): RedirectResponse
     {
         $request->validate([
-            'status' => 'required|in:active,filled,cancelled',
+            'status' => 'required|in:active,closed,filled,cancelled',
         ]);
 
         $jobOffer->update([

@@ -33,7 +33,7 @@ class UpdateJobOfferRequest extends FormRequest
             'location' => ['nullable', 'string', 'max:255'],
             'skills_required' => ['nullable', 'array'],
             'skills_required.*' => ['string'],
-            'status' => ['required', 'in:active,filled,cancelled'],
+            'status' => ['required', 'in:active,closed,filled,cancelled'],
             'featured' => ['boolean'],
             'published_at' => ['nullable', 'date'],
             'skill_ids' => ['nullable', 'array'],

@@ -208,6 +208,7 @@
                         <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('status') border-red-500 @enderror"
                                 id="status" name="status" required>
                             <option value="active" {{ old('status', $jobOffer->status) === 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="closed" {{ old('status', $jobOffer->status) === 'closed' ? 'selected' : '' }}>Closed</option>
                             <option value="filled" {{ old('status', $jobOffer->status) === 'filled' ? 'selected' : '' }}>Filled</option>
                             <option value="cancelled" {{ old('status', $jobOffer->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
