@@ -25,12 +25,38 @@ class ProjectController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Project::with(['user', 'tags']);
+        $query = Project::with(['user', 'tags', 'skills']);
 
         // Search functionality
         if ($request->has('search') && $request->search) {
-            $query->where('title', 'like', '%' . $request->search . '%')
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
                   ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter by tag
+        if ($request->has('tag') && $request->tag) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('tags.id', $request->tag);
+            });
+        }
+
+        // Filter by skill
+        if ($request->has('skill') && $request->skill) {
+            $query->whereHas('skills', function ($q) use ($request) {
+                $q->where('skills.id', $request->skill);
+            });
+        }
+
+        // Status counts for the tabs, respecting the other filters
+        $counts = (clone $query)->toBase()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+        $statusCounts = ['' => $counts->sum()];
+        foreach (['active', 'featured', 'archived'] as $status) {
+            $statusCounts[$status] = $counts[$status] ?? 0;
         }
 
         // Filter by status
@@ -38,19 +64,13 @@ class ProjectController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Filter by tag
-        if ($request->has('tag') && $request->tag) {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('slug', $request->tag);
-            });
-        }
-
         $projects = $query->latest()->paginate(10);
 
-        // Get tags for filter
+        // Get tags and skills for filters
         $tags = Tag::orderBy('name')->get();
+        $skills = Skill::ordered()->get();
 
-        return view('admin.projects.index', compact('projects', 'tags'));
+        return view('admin.projects.index', compact('projects', 'tags', 'skills', 'statusCounts'));
     }
 
     /**

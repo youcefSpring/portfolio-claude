@@ -12,6 +12,19 @@ class JobApplication extends Model
     use HasFactory;
 
     /**
+     * Application statuses and their labels, in review order.
+     *
+     * @var array<string, string>
+     */
+    public const STATUSES = [
+        'pending' => 'Pending',
+        'reviewed' => 'Reviewed',
+        'shortlisted' => 'Shortlisted',
+        'accepted' => 'Accepted',
+        'rejected' => 'Rejected',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

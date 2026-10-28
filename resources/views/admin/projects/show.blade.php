@@ -200,12 +200,10 @@
                         <dd>
                             @if($project->status === 'active')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Active</span>
-                            @elseif($project->status === 'completed')
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Completed</span>
-                            @elseif($project->status === 'on-hold')
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">On Hold</span>
-                            @elseif($project->status === 'cancelled')
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Cancelled</span>
+                            @elseif($project->status === 'featured')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-star mr-1"></i>Featured</span>
+                            @elseif($project->status === 'archived')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"><i class="fas fa-archive mr-1"></i>Archived</span>
                             @else
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">{{ ucfirst($project->status) }}</span>
                             @endif
@@ -219,17 +217,10 @@
                         </div>
                     @endif
 
-                    @if($project->start_date)
+                    @if($project->date_completed)
                         <div>
-                            <dt class="text-sm font-medium text-gray-900 mb-1">Start Date</dt>
-                            <dd class="text-sm text-gray-600">{{ $project->start_date->format('F d, Y') }}</dd>
-                        </div>
-                    @endif
-
-                    @if($project->end_date)
-                        <div>
-                            <dt class="text-sm font-medium text-gray-900 mb-1">End Date</dt>
-                            <dd class="text-sm text-gray-600">{{ $project->end_date->format('F d, Y') }}</dd>
+                            <dt class="text-sm font-medium text-gray-900 mb-1">Completed</dt>
+                            <dd class="text-sm text-gray-600">{{ $project->date_completed->format('F d, Y') }}</dd>
                         </div>
                     @endif
 

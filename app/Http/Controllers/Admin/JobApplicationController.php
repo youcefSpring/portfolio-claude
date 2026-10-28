@@ -7,9 +7,9 @@ use App\Models\JobApplication;
 use App\Models\JobOffer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class JobApplicationController extends Controller
 {
@@ -44,15 +44,17 @@ class JobApplicationController extends Controller
         // Get job offers for filter
         $jobOffers = JobOffer::orderBy('title')->get();
 
-        // Get statistics
-        $stats = [
-            'total' => JobApplication::count(),
-            'pending' => JobApplication::where('status', 'pending')->count(),
-            'reviewed' => JobApplication::where('status', 'reviewed')->count(),
-            'shortlisted' => JobApplication::where('status', 'shortlisted')->count(),
-            'accepted' => JobApplication::where('status', 'accepted')->count(),
-            'rejected' => JobApplication::where('status', 'rejected')->count(),
-        ];
+        // Get statistics (scoped to the selected job offer so tab counts match the list)
+        $counts = JobApplication::query()
+            ->when($request->job_offer_id, fn ($q, $id) => $q->where('job_offer_id', $id))
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $stats = ['total' => $counts->sum()];
+        foreach (array_keys(JobApplication::STATUSES) as $status) {
+            $stats[$status] = $counts[$status] ?? 0;
+        }
 
         return view('admin.job-applications.index', compact('applications', 'jobOffers', 'stats'));
     }
@@ -89,15 +91,18 @@ class JobApplicationController extends Controller
     /**
      * Download applicant CV.
      */
-    public function downloadCv(JobApplication $jobApplication): StreamedResponse
+    public function downloadCv(JobApplication $jobApplication): BinaryFileResponse
     {
-        if (!$jobApplication->cv_file_path || !Storage::disk('public')->exists($jobApplication->cv_file_path)) {
+        // CVs are uploaded to public/cvs (see Public\JobOfferController::apply), not the storage disk
+        $path = $jobApplication->cv_file_path ? public_path($jobApplication->cv_file_path) : null;
+
+        if (!$path || !is_file($path)) {
             abort(404, 'CV file not found.');
         }
 
-        return Storage::disk('public')->download(
-            $jobApplication->cv_file_path,
-            $jobApplication->full_name . '_CV.' . pathinfo($jobApplication->cv_file_path, PATHINFO_EXTENSION)
+        return response()->download(
+            $path,
+            Str::slug($jobApplication->full_name) . '_CV.' . pathinfo($path, PATHINFO_EXTENSION)
         );
     }
 
@@ -106,9 +111,13 @@ class JobApplicationController extends Controller
      */
     public function destroy(JobApplication $jobApplication): RedirectResponse
     {
+        $deletedFromShowPage = url()->previous() === route('admin.job-applications.show', $jobApplication);
+
         $jobApplication->delete();
 
-        return back()->with('success', 'Application deleted successfully.');
+        $redirect = $deletedFromShowPage ? redirect()->route('admin.job-applications.index') : back();
+
+        return $redirect->with('success', 'Application deleted successfully.');
     }
 
     /**

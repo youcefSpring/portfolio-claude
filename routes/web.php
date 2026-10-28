@@ -146,14 +146,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Job Applications Management
     Route::name('job-applications.')->group(function () {
         Route::get('/job-applications', [JobApplicationController::class, 'index'])->name('index');
+
+        // Bulk Operations (registered before {jobApplication} so "bulk-delete" isn't bound as an id)
+        Route::post('/job-applications/bulk-status', [JobApplicationController::class, 'bulkUpdateStatus'])->name('bulk-status');
+        Route::delete('/job-applications/bulk-delete', [JobApplicationController::class, 'bulkDelete'])->name('bulk-delete');
+
         Route::get('/job-applications/{jobApplication}', [JobApplicationController::class, 'show'])->name('show');
         Route::put('/job-applications/{jobApplication}/status', [JobApplicationController::class, 'updateStatus'])->name('update-status');
         Route::get('/job-applications/{jobApplication}/download-cv', [JobApplicationController::class, 'downloadCv'])->name('download-cv');
         Route::delete('/job-applications/{jobApplication}', [JobApplicationController::class, 'destroy'])->name('destroy');
-
-        // Bulk Operations
-        Route::post('/job-applications/bulk-status', [JobApplicationController::class, 'bulkUpdateStatus'])->name('bulk-status');
-        Route::delete('/job-applications/bulk-delete', [JobApplicationController::class, 'bulkDelete'])->name('bulk-delete');
     });
 
     // Profile Management
