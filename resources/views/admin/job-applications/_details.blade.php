@@ -46,16 +46,55 @@
     <section>
         <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">CV / Resume</h3>
         <div class="flex gap-2">
-            <a href="{{ $application->cv_url }}" target="_blank"
-               class="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
-                <i class="fas fa-file-pdf mr-2"></i>View CV
-            </a>
+            @if(Str::lower(pathinfo($application->cv_path, PATHINFO_EXTENSION)) === 'pdf')
+                {{-- PDFs preview inline; the iframe only loads on first open --}}
+                <button type="button" data-cv-toggle
+                        class="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-file-pdf mr-2"></i><span data-cv-label>View CV</span>
+                </button>
+            @else
+                <a href="{{ $application->cv_url }}" target="_blank"
+                   class="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-file-word mr-2"></i>View CV
+                </a>
+            @endif
             <a href="{{ route('admin.job-applications.download-cv', $application) }}"
                class="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">
                 <i class="fas fa-download mr-2"></i>Download
             </a>
         </div>
+        <div data-cv-frame class="hidden mt-3">
+            <iframe data-src="{{ $application->cv_url }}" title="CV of {{ $application->full_name }}"
+                    class="w-full h-[75vh] rounded-lg border border-gray-200 bg-gray-50"></iframe>
+            <a href="{{ $application->cv_url }}" target="_blank" rel="noopener" class="inline-flex items-center mt-2 text-xs text-gray-500 hover:text-blue-600">
+                <i class="fas fa-external-link-alt mr-1.5"></i>Open in new tab
+            </a>
+        </div>
     </section>
+
+    @once
+    @push('scripts')
+    <script>
+    // Toggle the inline CV preview and widen the slide-over while it's showing
+    document.addEventListener('click', function (e) {
+        const toggle = e.target.closest('[data-cv-toggle]');
+        if (!toggle) return;
+        const section = toggle.closest('section');
+        const frame = section.querySelector('[data-cv-frame]');
+        const iframe = frame.querySelector('iframe');
+        const opening = frame.classList.contains('hidden');
+        if (opening && !iframe.src) iframe.src = iframe.dataset.src;
+        frame.classList.toggle('hidden', !opening);
+        toggle.querySelector('[data-cv-label]').textContent = opening ? 'Hide CV' : 'View CV';
+        const panelBody = toggle.closest('[data-panel-body], #applicant-panel-body');
+        if (panelBody) {
+            panelBody.classList.toggle('max-w-lg', !opening);
+            panelBody.classList.toggle('max-w-3xl', opening);
+        }
+    });
+    </script>
+    @endpush
+    @endonce
 @endif
 
 @if($application->cover_letter)
