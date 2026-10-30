@@ -48,10 +48,13 @@
 
         /* Sidebar transitions */
         #sidebar {
+            width: var(--sidebar-width);
             transition: all 0.3s ease;
         }
 
         #content {
+            margin-left: var(--sidebar-width);
+            min-width: 0;
             transition: all 0.3s ease;
         }
 
@@ -114,6 +117,12 @@
                 position: fixed;
                 z-index: 50;
                 width: var(--sidebar-width);
+                overflow: hidden;
+            }
+
+            #sidebar .menu-text,
+            #sidebar .sidebar-header h3 {
+                opacity: 1;
             }
 
             #sidebar.mobile-expanded {
@@ -150,131 +159,102 @@
 </head>
 <body class="h-full bg-gray-50 overflow-x-hidden">
     <!-- Sidebar -->
-    <nav id="sidebar" class="fixed top-0 left-0 h-full bg-slate-800 text-white shadow-xl z-30" style="width: var(--sidebar-width);">
+    <nav id="sidebar" class="fixed top-0 left-0 h-full flex flex-col bg-slate-800 text-white shadow-xl z-30">
         <!-- Sidebar Header -->
-        <div class="flex items-center p-6 border-b border-slate-700">
+        <div class="sidebar-header flex items-center px-6 py-5 border-b border-slate-700 shrink-0">
             <i class="fas fa-chalkboard-teacher text-2xl text-blue-400 mr-3"></i>
-            <h3 class="text-xl font-semibold menu-text">Teacher Dashboard</h3>
+            <h3 class="text-lg font-semibold menu-text whitespace-nowrap truncate min-w-0">Teacher Dashboard</h3>
+            <button type="button" id="sidebarClose" class="md:hidden ml-auto -mr-2 p-2 text-gray-400 hover:text-white" aria-label="Close menu">
+                <i class="fas fa-xmark text-xl"></i>
+            </button>
         </div>
 
+        @php
+            // Day-to-day pages stay visible; portfolio content is grouped below.
+            $mainLinks = [
+                ['admin.dashboard', 'admin.dashboard', 'fa-home', 'Dashboard'],
+                ['admin.job-offers.index', 'admin.job-offers.*', 'fa-briefcase', 'Job Offers'],
+                ['admin.job-applications.index', 'admin.job-applications.*', 'fa-paper-plane', 'Applications'],
+                ['admin.contact.index', 'admin.contact.*', 'fa-envelope', 'Messages'],
+                ['admin.projects.index', 'admin.projects.*', 'fa-project-diagram', 'Projects'],
+                ['admin.blog.index', 'admin.blog.*', 'fa-blog', 'Blog Posts'],
+            ];
+            $contentLinks = [
+                ['admin.courses.index', 'admin.courses.*', 'fa-book', 'Courses'],
+                ['admin.publications.index', 'admin.publications.*', 'fa-file-alt', 'Publications'],
+                ['admin.education.index', 'admin.education.*', 'fa-graduation-cap', 'Education'],
+                ['admin.experiences.index', 'admin.experiences.*', 'fa-timeline', 'Experience'],
+                ['admin.skills.index', 'admin.skills.*', 'fa-star', 'Skills'],
+                ['admin.tags.index', 'admin.tags.*', 'fa-tags', 'Tags'],
+            ];
+            $contentOpen = collect($contentLinks)->contains(fn ($link) => request()->routeIs($link[1]));
+            $unreadMessages = $stats['unread_messages'] ?? 0;
+        @endphp
+
         <!-- Navigation Menu -->
-        <div class="p-4">
-            <ul class="space-y-2">
-                <li>
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.dashboard') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-home w-6 text-center mr-3"></i>
-                        <span class="menu-text">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.courses.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.courses.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-book w-6 text-center mr-3"></i>
-                        <span class="menu-text">Courses</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.projects.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.projects.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-project-diagram w-6 text-center mr-3"></i>
-                        <span class="menu-text">Projects</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.blog.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.blog.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-blog w-6 text-center mr-3"></i>
-                        <span class="menu-text">Blog Posts</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.publications.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.publications.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-file-alt w-6 text-center mr-3"></i>
-                        <span class="menu-text">Publications</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.contact.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.contact.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-envelope w-6 text-center mr-3"></i>
-                        <span class="menu-text">Messages</span>
-                        @if(isset($stats) && ($stats['unread_messages'] ?? 0) > 0)
-                            <span class="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                {{ $stats['unread_messages'] }}
-                            </span>
-                        @endif
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.job-offers.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.job-offers.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-briefcase w-6 text-center mr-3"></i>
-                        <span class="menu-text">Job Offers</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.job-applications.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.job-applications.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-paper-plane w-6 text-center mr-3"></i>
-                        <span class="menu-text">Applications</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.education.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.education.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-graduation-cap w-6 text-center mr-3"></i>
-                        <span class="menu-text">Education</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.experiences.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.experiences.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-timeline w-6 text-center mr-3"></i>
-                        <span class="menu-text">Experience</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.skills.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.skills.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-star w-6 text-center mr-3"></i>
-                        <span class="menu-text">Skills</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.tags.index') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.tags.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-tags w-6 text-center mr-3"></i>
-                        <span class="menu-text">Tags</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.profile.edit') }}" class="flex items-center p-3 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs('admin.profile.*') ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
-                        <i class="fas fa-user w-6 text-center mr-3"></i>
-                        <span class="menu-text">Profile</span>
-                    </a>
-                </li>
+        <div class="p-3 flex-1 overflow-y-auto overflow-x-hidden">
+            <ul class="space-y-1">
+                @foreach($mainLinks as [$route, $pattern, $icon, $label])
+                    <li>
+                        <a href="{{ route($route) }}" class="flex items-center px-3 py-2.5 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs($pattern) ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
+                            <i class="fas {{ $icon }} w-6 text-center mr-3"></i>
+                            <span class="menu-text">{{ $label }}</span>
+                            @if($route === 'admin.contact.index' && $unreadMessages > 0)
+                                <span class="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $unreadMessages }}</span>
+                            @endif
+                        </a>
+                    </li>
+                @endforeach
             </ul>
+
+            <details class="group/content mt-3 pt-3 border-t border-slate-700" {{ $contentOpen ? 'open' : '' }}>
+                <summary class="flex items-center px-3 py-2.5 rounded-lg text-gray-400 hover:bg-slate-700 hover:text-white cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                    <i class="fas fa-layer-group w-6 text-center mr-3 ml-1"></i>
+                    <span class="menu-text text-sm font-medium">Portfolio content</span>
+                    <i class="fas fa-chevron-down menu-text ml-auto text-xs transition-transform group-open/content:rotate-180"></i>
+                </summary>
+                <ul class="space-y-1 mt-1">
+                    @foreach($contentLinks as [$route, $pattern, $icon, $label])
+                        <li>
+                            <a href="{{ route($route) }}" class="flex items-center px-3 py-2.5 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-all duration-200 border-l-4 {{ request()->routeIs($pattern) ? 'border-blue-400 bg-slate-700 text-white' : 'border-transparent' }}">
+                                <i class="fas {{ $icon }} w-6 text-center mr-3"></i>
+                                <span class="menu-text">{{ $label }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </details>
         </div>
 
         <!-- Sidebar Footer -->
-        <div class="absolute bottom-0 w-full p-4 border-t border-slate-700">
+        <a href="{{ route('admin.profile.edit') }}" class="block w-full p-4 border-t border-slate-700 shrink-0 hover:bg-slate-700 transition-colors {{ request()->routeIs('admin.profile.*') ? 'bg-slate-700' : '' }}">
             <div class="flex items-center">
                 <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
-                     alt="User" class="w-10 h-10 rounded-full mr-3">
-                <div class="menu-text">
-                    <h6 class="text-sm font-medium">Dr. Sarah Johnson</h6>
-                    <p class="text-xs text-gray-400">Professor</p>
+                     alt="User" class="w-10 h-10 rounded-full mr-3 shrink-0">
+                <div class="menu-text min-w-0">
+                    <h6 class="text-sm font-medium truncate">Dr. Sarah Johnson</h6>
+                    <p class="text-xs text-gray-400">Profile settings</p>
                 </div>
             </div>
-        </div>
+        </a>
     </nav>
 
     <!-- Overlay for mobile -->
     <div class="overlay"></div>
 
     <!-- Main Content -->
-    <div id="content" class="min-h-screen" style="margin-left: var(--sidebar-width);">
+    <div id="content" class="min-h-screen">
         <!-- Top Bar -->
-        <div class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <button id="sidebarToggle" class="lg:hidden text-gray-600 hover:text-gray-900 mr-4">
+        <div class="sticky top-0 z-20 bg-white shadow-sm border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center min-w-0">
+                    <button id="sidebarToggle" class="lg:hidden -ml-2 mr-2 p-2 text-gray-600 hover:text-gray-900" aria-label="Open menu">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <h1 class="text-2xl font-semibold text-gray-900">@yield('page-title', 'Dashboard')</h1>
+                    <h1 class="text-lg sm:text-2xl font-semibold text-gray-900 truncate">@yield('page-title', 'Dashboard')</h1>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4 shrink-0">
                     <!-- Notifications -->
                     <div class="relative">
                         <button class="text-gray-600 hover:text-gray-900 relative">
@@ -284,8 +264,8 @@
                     </div>
 
                     <!-- User Dropdown -->
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                    <div class="relative group" id="userMenu">
+                        <button type="button" id="userMenuButton" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
                             <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
                                  alt="User" class="w-8 h-8 rounded-full">
                             <span class="hidden md:block text-sm font-medium">Dr. Sarah Johnson</span>
@@ -293,7 +273,7 @@
                         </button>
 
                         <!-- Dropdown Menu -->
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-[.open]:opacity-100 group-[.open]:visible transition-all duration-200 z-10">
                             <div class="py-2">
                                 <a href="{{ route('admin.profile.edit') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                     <i class="fas fa-user w-4 mr-3"></i>
@@ -319,7 +299,7 @@
         </div>
 
         <!-- Page Content -->
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
             @yield('content')
         </div>
     </div>
@@ -342,35 +322,74 @@
             const sidebarToggle = document.getElementById('sidebarToggle');
             const overlay = document.querySelector('.overlay');
 
+            function setSidebar(open) {
+                sidebar.classList.toggle('mobile-expanded', open);
+                // Stop the page scrolling behind the drawer on phones
+                document.body.classList.toggle('overflow-hidden', open && window.innerWidth <= 768);
+
+                // Keep the current page's link in view when the menu is long
+                const activeLink = sidebar.querySelector('a.border-blue-400');
+                if (open && activeLink) {
+                    activeLink.scrollIntoView({ block: 'nearest' });
+                }
+            }
+
             // Toggle sidebar on mobile
             if (sidebarToggle) {
                 sidebarToggle.addEventListener('click', function(e) {
                     e.preventDefault();
-                    sidebar.classList.toggle('mobile-expanded');
+                    setSidebar(!sidebar.classList.contains('mobile-expanded'));
+                });
+            }
+
+            const sidebarClose = document.getElementById('sidebarClose');
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function() {
+                    setSidebar(false);
                 });
             }
 
             // Close sidebar when clicking on overlay
             if (overlay) {
                 overlay.addEventListener('click', function() {
-                    sidebar.classList.remove('mobile-expanded');
+                    setSidebar(false);
                 });
             }
 
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    setSidebar(false);
+                }
+            });
+
             // Close sidebar when clicking on menu items on mobile
-            if (window.innerWidth <= 768) {
-                const menuLinks = document.querySelectorAll('#sidebar a[href]');
-                menuLinks.forEach(function(link) {
-                    link.addEventListener('click', function() {
-                        sidebar.classList.remove('mobile-expanded');
-                    });
+            document.querySelectorAll('#sidebar a[href]').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        setSidebar(false);
+                    }
+                });
+            });
+
+            // User menu: hover only works with a mouse, so also toggle on tap
+            const userMenu = document.getElementById('userMenu');
+            const userMenuButton = document.getElementById('userMenuButton');
+            if (userMenu && userMenuButton) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('open');
+                });
+                document.addEventListener('click', function(e) {
+                    if (!userMenu.contains(e.target)) {
+                        userMenu.classList.remove('open');
+                    }
                 });
             }
 
             // Auto-resize handling
             window.addEventListener('resize', function() {
                 if (window.innerWidth >= 1024) {
-                    sidebar.classList.remove('mobile-expanded');
+                    setSidebar(false);
                 }
             });
         });
